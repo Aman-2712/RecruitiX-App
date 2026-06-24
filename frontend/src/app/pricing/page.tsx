@@ -84,7 +84,7 @@ export default function PricingPage() {
       unlocked: [true, true, true, true, true, true, true, true, true, true, true],
       cta: "Contact Enterprise Sales",
       popular: false,
-      color: "border-slate-900 bg-slate-950 text-white"
+      color: "border-slate-900 bg-slate-950 text-slate-900"
     }
   ];
 
@@ -110,7 +110,7 @@ export default function PricingPage() {
           <div className="bg-blue-600 text-white p-2 rounded-lg flex items-center justify-center">
             <Bot size={20} />
           </div>
-          <span className="text-xl font-bold text-slate-900 tracking-tight">Recruit<span className="text-blue-600">AI</span></span>
+          <span className="text-xl font-bold text-slate-900 tracking-tight">Recruit<span className="text-blue-600">X</span></span>
         </Link>
         <div className="flex items-center gap-4">
           <Link href="/login" className="text-sm font-semibold text-slate-700 hover:text-blue-600 transition-colors px-4 py-2">
@@ -189,7 +189,7 @@ export default function PricingPage() {
                 <ul className="space-y-3.5 pt-4 border-t border-slate-100/10 border-slate-200">
                   {p.limits.map((l) => (
                     <li key={l} className="flex items-center gap-2.5 text-sm font-bold">
-                      <Zap size={14} className={isEnterprise ? "text-blue-400" : "text-blue-600"} />
+                      <Zap size={14} className={isEnterprise ? "text-blue-500" : "text-blue-600"} />
                       {l}
                     </li>
                   ))}
@@ -212,7 +212,7 @@ export default function PricingPage() {
                   href="/register"
                   className={`w-full py-3.5 rounded-xl font-bold text-sm text-center block shadow-sm hover:shadow transition-all ${
                     isEnterprise 
-                      ? "bg-white text-slate-950 hover:bg-slate-100" 
+                      ? "bg-white text-slate-900 hover:bg-slate-100" 
                       : p.popular
                         ? "bg-blue-600 hover:bg-blue-700 text-white shadow-blue-600/10 hover:shadow-blue-600/20"
                         : "bg-slate-100 hover:bg-slate-200 text-slate-800"
@@ -323,9 +323,9 @@ export default function PricingPage() {
       <footer className="border-t border-slate-200 bg-white py-12 px-6">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 text-sm text-slate-500">
           <div className="flex items-center gap-2 font-bold text-slate-900">
-            <Bot size={16} className="text-blue-600" /> Recruitix
+            <Bot size={16} className="text-blue-600" /> RecruitX
           </div>
-          <div>&copy; 2026 Recruitix Platform. All rights reserved.</div>
+          <div>&copy; 2026 RecruitX Platform. All rights reserved.</div>
         </div>
       </footer>
     </div>

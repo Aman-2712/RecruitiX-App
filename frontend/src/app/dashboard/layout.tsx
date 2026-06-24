@@ -76,7 +76,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <div className="bg-blue-600 text-white p-2 rounded-lg flex items-center justify-center">
             <Bot size={20} />
           </div>
-          <span className="brand-logo text-slate-800">Recruit<span className="text-blue-600">ix</span></span>
+          <span className="brand-logo text-slate-800">Recruit<span className="text-blue-600">X</span></span>
         </div>
 
         {/* Navigation */}
@@ -142,7 +142,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <div className="bg-blue-600 text-white p-2 rounded-lg flex items-center justify-center">
               <Bot size={20} />
             </div>
-            <span className="brand-logo text-slate-800">Recruit<span className="text-blue-600">ix</span></span>
+            <span className="brand-logo text-slate-800">Recruit<span className="text-blue-600">X</span></span>
           </div>
           <button onClick={() => setSidebarOpen(false)} className="text-slate-400 hover:text-slate-600">
             <X size={20} />
@@ -206,7 +206,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <div className="bg-blue-600 text-white p-1.5 rounded-lg">
               <Bot size={16} />
             </div>
-            <span className="brand-logo text-slate-800">Recruit<span className="text-blue-600">ix</span></span>
+            <span className="brand-logo text-slate-800">Recruit<span className="text-blue-600">X</span></span>
           </div>
           <div className="w-6"></div> {/* placeholder to align header */}
         </header>

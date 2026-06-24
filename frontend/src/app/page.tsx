@@ -12,7 +12,7 @@ export default function LandingPage() {
           <div className="bg-blue-600 text-white p-2 rounded-lg flex items-center justify-center pulse-primary">
             <Bot size={20} className="stroke-[2.5]" />
           </div>
-          <span className="brand-logo text-slate-800">Recruit<span className="text-blue-600">ix</span></span>
+          <span className="brand-logo text-slate-800">Recruit<span className="text-blue-600">X</span></span>
         </Link>
         <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-600">
           <a href="#features" className="hover:text-blue-600 transition-colors">Features</a>
@@ -33,13 +33,13 @@ export default function LandingPage() {
       <section className="relative px-6 pt-20 pb-24 md:pt-28 md:pb-32 max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-16">
         <div className="flex-1 space-y-6 text-center lg:text-left">
           <div className="inline-flex items-center gap-2 bg-blue-50 border border-blue-100 px-3 py-1 rounded-full text-blue-700 text-xs font-semibold uppercase tracking-wider">
-            <Zap size={12} className="fill-blue-700" /> Introducing Recruitix v1.0
+            <Zap size={12} className="fill-blue-700" /> Introducing RecruitX v1.0
           </div>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight leading-none">
-            Screen thousands of resumes in <span className="text-blue-600">minutes</span>, not weeks.
+            Discover world-class talent on <span className="text-blue-600">autopilot</span>.
           </h1>
           <p className="text-lg text-slate-600 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
-            Recruitix is your autonomous recruitment assistant. Automatically parse, score, and rank candidates against any job description with deep AI insights. Eliminate 80% of manual screening work.
+            RecruitX is your autonomous recruitment assistant. Automatically parse, score, and rank candidates against any job description with deep AI insights. Eliminate 80% of manual screening work.
           </p>
           <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4 pt-2">
             <Link href="/register" className="bg-blue-600 hover:bg-blue-700 text-white text-base font-semibold px-6 py-3.5 rounded-xl shadow-lg shadow-blue-600/10 hover:shadow-blue-600/20 transition-all flex items-center gap-2">
@@ -61,7 +61,7 @@ export default function LandingPage() {
                 <div className="h-3 w-3 rounded-full bg-slate-300"></div>
                 <div className="h-3 w-3 rounded-full bg-slate-300"></div>
               </div>
-              <div className="bg-slate-200/60 px-3 py-1 rounded-md text-xs font-medium text-slate-500">recruitix.com/dashboard</div>
+              <div className="bg-slate-200/60 px-3 py-1 rounded-md text-xs font-medium text-slate-500">recruitx.com/dashboard</div>
               <div className="w-10"></div>
             </div>
             
@@ -143,11 +143,11 @@ export default function LandingPage() {
       {/* Features Grid */}
       <section id="features" className="py-24 px-6 max-w-7xl mx-auto">
         <div className="text-center space-y-4 mb-20">
-          <h2 className="text-3xl md:text-4xl font-extrabold text-slate-950">
+          <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900">
             Everything you need for smart recruiting.
           </h2>
           <p className="text-slate-600 max-w-2xl mx-auto">
-            Recruitix automates the heavy-lifting of candidate screening while leaving final human judgments to your HR experts.
+            RecruitX automates the heavy-lifting of candidate screening while leaving final human judgments to your HR experts.
           </p>
         </div>
 
@@ -223,17 +223,17 @@ export default function LandingPage() {
               <Sparkles size={12} className="fill-blue-700" /> Seamless Integration
             </div>
             <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight leading-none">
-              How Recruitix Works
+              How RecruitX Works
             </h2>
             <p className="text-slate-500 font-medium leading-relaxed">
-              Skip the manual screening pile. Recruitix automates candidate ranking and evaluation in four simple, highly secure steps.
+              Skip the manual screening pile. RecruitX automates candidate ranking and evaluation in four simple, highly secure steps.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {/* Step 1 */}
             <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all space-y-5 relative overflow-hidden group">
-              <div className="absolute right-4 top-4 text-slate-100 font-black text-6xl select-none transition-colors group-hover:text-blue-50">01</div>
+              <div className="absolute right-4 top-4 text-slate-900/10 font-black text-6xl select-none transition-colors group-hover:text-blue-50/20">01</div>
               <div className="p-3 bg-blue-50 text-blue-600 rounded-xl w-fit relative z-10">
                 <Briefcase size={22} />
               </div>
@@ -247,7 +247,7 @@ export default function LandingPage() {
 
             {/* Step 2 */}
             <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all space-y-5 relative overflow-hidden group">
-              <div className="absolute right-4 top-4 text-slate-100 font-black text-6xl select-none transition-colors group-hover:text-blue-50">02</div>
+              <div className="absolute right-4 top-4 text-slate-900/10 font-black text-6xl select-none transition-colors group-hover:text-blue-50/20">02</div>
               <div className="p-3 bg-blue-50 text-blue-600 rounded-xl w-fit relative z-10">
                 <FileText size={22} />
               </div>
@@ -261,7 +261,7 @@ export default function LandingPage() {
 
             {/* Step 3 */}
             <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all space-y-5 relative overflow-hidden group">
-              <div className="absolute right-4 top-4 text-slate-100 font-black text-6xl select-none transition-colors group-hover:text-blue-50">03</div>
+              <div className="absolute right-4 top-4 text-slate-900/10 font-black text-6xl select-none transition-colors group-hover:text-blue-50/20">03</div>
               <div className="p-3 bg-blue-50 text-blue-600 rounded-xl w-fit relative z-10">
                 <Cpu size={22} />
               </div>
@@ -275,7 +275,7 @@ export default function LandingPage() {
 
             {/* Step 4 */}
             <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all space-y-5 relative overflow-hidden group">
-              <div className="absolute right-4 top-4 text-slate-100 font-black text-6xl select-none transition-colors group-hover:text-blue-50">04</div>
+              <div className="absolute right-4 top-4 text-slate-900/10 font-black text-6xl select-none transition-colors group-hover:text-blue-50/20">04</div>
               <div className="p-3 bg-blue-50 text-blue-600 rounded-xl w-fit relative z-10">
                 <CheckCircle size={22} />
               </div>
@@ -294,9 +294,9 @@ export default function LandingPage() {
       <footer className="mt-auto border-t border-slate-200 bg-white py-12 px-6">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 text-sm text-slate-500">
           <div className="flex items-center gap-2 font-bold text-slate-900">
-            <Bot size={16} className="text-blue-600" /> Recruitix
+            <Bot size={16} className="text-blue-600" /> RecruitX
           </div>
-          <div>&copy; 2026 Recruitix Platform. All rights reserved.</div>
+          <div>&copy; 2026 RecruitX Platform. All rights reserved.</div>
           <div className="flex gap-6">
             <a href="#" className="hover:text-blue-600">Privacy Policy</a>
             <a href="#" className="hover:text-blue-600">Terms of Service</a>
