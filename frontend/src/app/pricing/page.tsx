@@ -72,6 +72,7 @@ export default function PricingPage() {
       ],
       features: [
         "Everything in Growth",
+        "Unlimited Bulk Resume Uploads",
         "ATS Integrations",
         "SSO Authentication",
         "White Labeling",

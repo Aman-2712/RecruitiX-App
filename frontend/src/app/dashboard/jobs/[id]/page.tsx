@@ -107,6 +107,7 @@ export default function JobDetails() {
       await fetchData();
     } catch (err: any) {
       setUploadErrors([err.message || "Failed to upload resumes."]);
+      setUploadProgress(""); // Clear progress on request failure
     } finally {
       setUploading(false);
       if (fileInputRef.current) {
@@ -259,16 +260,26 @@ export default function JobDetails() {
           </div>
 
           {/* Upload Status / Errors */}
-          {(uploading || uploadProgress) && (
-            <div className="p-4 bg-blue-50/50 border border-blue-100 rounded-xl space-y-2.5">
-              <div className="flex items-center gap-2 text-xs font-bold text-blue-700">
-                {uploading ? <Loader className="animate-spin" size={14} /> : <CheckCircle size={14} className="text-emerald-600" />}
-                {uploadProgress}
-              </div>
+          {(uploading || uploadProgress || uploadErrors.length > 0) && (
+            <div className={`p-4 rounded-xl space-y-2.5 border ${
+              uploadErrors.length > 0 && !uploading 
+                ? "bg-red-50/50 border-red-200 text-red-800" 
+                : "bg-blue-50/50 border-blue-100 text-blue-800"
+            }`}>
+              {(uploading || uploadProgress) && (
+                <div className="flex items-center gap-2 text-xs font-bold text-slate-800">
+                  {uploading ? <Loader className="animate-spin text-blue-600" size={14} /> : <CheckCircle size={14} className="text-emerald-600" />}
+                  {uploadProgress}
+                </div>
+              )}
               
               {uploadErrors.length > 0 && (
-                <div className="pt-2 border-t border-blue-100 space-y-1.5">
-                  <span className="text-[10px] font-extrabold text-red-500 uppercase tracking-wide block">Processing Warnings:</span>
+                <div className={`pt-2 space-y-1.5 ${uploading || uploadProgress ? "border-t border-slate-100" : ""}`}>
+                  <span className={`text-[10px] font-extrabold uppercase tracking-wide block ${
+                    uploadErrors.length > 0 && !uploading ? "text-red-500" : "text-slate-400"
+                  }`}>
+                    {uploading ? "Processing Warnings:" : "Errors/Warnings:"}
+                  </span>
                   <div className="max-h-24 overflow-y-auto space-y-1">
                     {uploadErrors.map((err, idx) => (
                       <p key={idx} className="text-[10px] text-red-600 leading-tight font-semibold flex items-start gap-1">
