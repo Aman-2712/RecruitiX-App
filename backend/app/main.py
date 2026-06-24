@@ -92,7 +92,8 @@ def startup_event():
                     "AI Candidate Ranking",
                     "Candidate Management",
                     "Basic Analytics",
-                    "Email Support"
+                    "Email Support",
+                    "Bulk Resume Upload"
                 ])
             },
             {
@@ -153,6 +154,13 @@ def startup_event():
             existing = db.query(SubscriptionPlan).filter(SubscriptionPlan.name == plan["name"]).first()
             if not existing:
                 db.add(SubscriptionPlan(**plan))
+            else:
+                existing.monthly_price = plan["monthly_price"]
+                existing.yearly_price = plan["yearly_price"]
+                existing.job_limit = plan["job_limit"]
+                existing.resume_limit = plan["resume_limit"]
+                existing.user_limit = plan["user_limit"]
+                existing.features_json = plan["features_json"]
         db.commit()
 
         # 2. Auto-migrate existing users to default Organization

@@ -62,13 +62,20 @@ def upload_resumes(
                 detail=f"Uploading {len(files)} file(s) would exceed your plan's monthly limit ({usage.resumes_processed}/{plan.resume_limit} processed). Please upgrade your plan."
             )
 
-    # Check for Bulk Upload feature lock (Growth/Enterprise only)
-    if len(files) > 1:
-        features = json.loads(plan.features_json or "[]")
-        if "Bulk Resume Upload" not in features:
+    # Check for Bulk Upload limits based on subscription plan
+    current_plan = current_user.organization.current_plan.upper()
+    num_files = len(files)
+    
+    if num_files > 1:
+        if current_plan == "STARTER" and num_files > 15:
             raise HTTPException(
                 status_code=403,
-                detail=f"Bulk Resume Upload is locked on plan {current_user.organization.current_plan}. Please upgrade to Growth or Enterprise to upload multiple files at once."
+                detail=f"Bulk upload limit exceeded. The STARTER plan is limited to 15 resumes per upload (you tried to upload {num_files}). Please upgrade to Growth or Enterprise to upload more at once."
+            )
+        elif current_plan == "GROWTH" and num_files > 50:
+            raise HTTPException(
+                status_code=403,
+                detail=f"Bulk upload limit exceeded. The GROWTH plan is limited to 50 resumes per upload (you tried to upload {num_files}). Please upgrade to Enterprise for unlimited bulk uploads."
             )
         
     job_data = {

@@ -255,7 +255,7 @@ export default function DashboardOverview() {
               <div className="flex items-start gap-2.5">
                 <CheckCircle2 size={16} className="text-emerald-500 mt-0.5 flex-shrink-0" />
                 <p className="leading-tight">
-                  <span className="font-bold text-slate-800">Bulk uploads:</span> You can select up to 50 resumes at once. Recruitix runs parallel scoring analysis.
+                  <span className="font-bold text-slate-800">Bulk uploads:</span> You can select multiple resumes at once. Bulk limits: Starter (15), Growth (50), Enterprise (Unlimited).
                 </p>
               </div>
               <div className="flex items-start gap-2.5">

@@ -24,7 +24,8 @@ export default function PricingPage() {
         "AI Candidate Ranking",
         "Candidate Management",
         "Basic Analytics",
-        "Email Support"
+        "Email Support",
+        "Bulk Resume Upload (up to 15 at once)"
       ],
       unlocked: [true, true, true, true, true, true, false, false, false, false, false],
       cta: "Start Screening Free",
@@ -49,7 +50,7 @@ export default function PricingPage() {
         "Advanced Analytics",
         "Priority Support",
         "AI HR Copilot Insights",
-        "Bulk Resume Upload",
+        "Bulk Resume Upload (up to 50 at once)",
         "Advanced Search & Filters",
         "API Integration Access",
         "Hiring Funnel Analytics"
@@ -92,7 +93,7 @@ export default function PricingPage() {
     { category: "Core Parsing", name: "AI Candidate Ranking", desc: "Rank lists sorted by overall compatibility rating" },
     { category: "Collaboration", name: "Candidate Pipeline Funnel", desc: "Applied, Shortlisted, Interviewed stages workflow" },
     { category: "AI Copilot", name: "HR Copilot Insights", desc: "Written recommendations and gaps analysis" },
-    { category: "AI Copilot", name: "Bulk Resume Upload", desc: "Upload and parse up to 50 files concurrently" },
+    { category: "AI Copilot", name: "Bulk Resume Upload", desc: "Upload files in bulk: Starter (15), Growth (50), Enterprise (Unlimited)" },
     { category: "Analytics", name: "Advanced Search & Filters", desc: "Detailed search bar + match score sliders" },
     { category: "Analytics", name: "Hiring Funnel Analytics", desc: "Pipeline stage distributions histograms" },
     { category: "Integration", name: "API Access", desc: "Programmatic access to matching and parsing engines" },
