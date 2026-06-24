@@ -1,43 +1,43 @@
 @import "tailwindcss";
 
 @theme {
-  /* Override Default Theme Colors for Polaris Frost & Royal Sapphire Dark Mode */
-  --color-white: #131a26;                  /* Main Card Background */
-  --color-slate-50: #0b0f17;               /* Page Main Background */
-  --color-slate-100: #1b2333;              /* Muted secondary background */
-  --color-slate-200: #222f47;              /* Border color */
-  --color-slate-300: #314366;              /* Active border / hover elements */
-  --color-slate-400: #8b9bb4;              /* Muted / secondary text */
-  --color-slate-500: #a1b0c7;              /* Secondary description text */
-  --color-slate-600: #b8c5d9;              /* Medium bright text */
-  --color-slate-700: #d0daf0;              /* High emphasis body text */
-  --color-slate-800: #e6eefc;              /* Subheading / key info */
+  /* Override Default Theme Colors for Obsidian & Gold Dark Mode */
+  --color-white: #111112;                  /* Main Card Background */
+  --color-slate-50: #070708;               /* Page Main Background */
+  --color-slate-100: #161618;              /* Muted secondary background */
+  --color-slate-200: #222225;              /* Border color */
+  --color-slate-300: #333338;              /* Active border / hover elements */
+  --color-slate-400: #8e8e93;              /* Muted / secondary text */
+  --color-slate-500: #a1a1a6;              /* Secondary description text */
+  --color-slate-600: #c7c7cc;              /* Medium bright text */
+  --color-slate-700: #e5e5ea;              /* High emphasis body text */
+  --color-slate-800: #f2f2f7;              /* Subheading / key info */
   --color-slate-900: #ffffff;              /* Title / Heading text */
-  --color-slate-950: #06090f;              /* Extreme dark background */
+  --color-slate-950: #030304;              /* Extreme dark background */
 
-  /* Override Blue/Teal colors for Ice Blue/Cobalt Accents */
-  --color-blue-50: rgba(56, 189, 248, 0.08);  /* Very soft ice-blue glow background */
-  --color-blue-100: rgba(56, 189, 248, 0.2);  /* Muted ice-blue outline */
-  --color-blue-200: rgba(56, 189, 248, 0.35); 
-  --color-blue-500: #38bdf8;                  /* Vibrant Ice Blue */
-  --color-blue-600: #2563eb;                  /* Primary Royal Cobalt action buttons */
-  --color-blue-700: #1d4ed8;                  /* Hover Cobalt */
-  --color-blue-800: #1e40af;
-  --color-blue-900: #1e3a8a;
+  /* Override Blue/Teal colors for Gold/Amber Accents */
+  --color-blue-50: rgba(217, 119, 6, 0.08);  /* Very soft gold glow background */
+  --color-blue-100: rgba(217, 119, 6, 0.2);  /* Muted gold outline */
+  --color-blue-200: rgba(217, 119, 6, 0.35); 
+  --color-blue-500: #fbbf24;                  /* Vibrant Gold */
+  --color-blue-600: #d97706;                  /* Primary Amber/Gold action buttons */
+  --color-blue-700: #b45309;                  /* Hover Gold */
+  --color-blue-800: #92400e;
+  --color-blue-900: #78350f;
   
   /* Update root CSS variables to align */
-  --background: #0b0f17;
+  --background: #070708;
   --foreground: #ffffff;
-  --card: #131a26;
-  --card-foreground: #d0daf0;
-  --primary: #2563eb;
-  --primary-foreground: #ffffff;
-  --border: #222f47;
-  --ring: #38bdf8;
-  --muted: #1b2333;
-  --muted-foreground: #8b9bb4;
+  --card: #111112;
+  --card-foreground: #e5e5ea;
+  --primary: #d97706;
+  --primary-foreground: #070708;
+  --border: #222225;
+  --ring: #fbbf24;
+  --muted: #161618;
+  --muted-foreground: #8e8e93;
   --success: #10b981;
-  --warning: #f59e0b;
+  --warning: #fbbf24;
   --destructive: #ef4444;
 }
 
@@ -67,43 +67,43 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: #333338;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: #d97706;
 }
 
 /* Custom Utilities */
 .glass {
-  background: rgba(255, 255, 255, 0.7);
+  background: rgba(17, 17, 18, 0.75);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .glow {
-  box-shadow: 0 0 20px rgba(37, 99, 235, 0.1);
+  box-shadow: 0 0 20px rgba(217, 119, 6, 0.1);
 }
 
 .premium-border {
-  border: 1px solid rgba(226, 232, 240, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 /* Animate typing or loading indicators */
 @keyframes pulse-ring {
   0% {
     transform: scale(0.95);
-    box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.5);
+    box-shadow: 0 0 0 0 rgba(217, 119, 6, 0.5);
   }
   70% {
     transform: scale(1);
-    box-shadow: 0 0 0 6px rgba(37, 99, 235, 0);
+    box-shadow: 0 0 0 6px rgba(217, 119, 6, 0);
   }
   100% {
     transform: scale(0.95);
-    box-shadow: 0 0 0 0 rgba(37, 99, 235, 0);
+    box-shadow: 0 0 0 0 rgba(217, 119, 6, 0);
   }
 }
 
@@ -124,7 +124,7 @@ body {
 }
 
 .gradient-loader {
-  background: linear-gradient(270deg, #3b82f6, #60a5fa, #1d4ed8);
+  background: linear-gradient(270deg, #d97706, #fbbf24, #b45309);
   background-size: 600% 600%;
   animation: progress-loading 2s ease infinite;
 }
