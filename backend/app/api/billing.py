@@ -229,32 +229,42 @@ def api_create_checkout_session(
 
 @router.post("/webhook/stripe")
 async def stripe_webhook(request: Request, db: Session = Depends(get_db)):
-    event = await construct_stripe_event(request)
-    
-    if event['type'] == 'checkout.session.completed':
-        session = event['data']['object']
+    try:
+        event = await construct_stripe_event(request)
         
-        org_id_str = session.get("metadata", {}).get("organization_id")
-        plan_name = session.get("metadata", {}).get("plan_name")
-        billing_cycle = session.get("metadata", {}).get("billing_cycle", "MONTHLY")
+        # Stripe v8+ uses object attribute access
+        event_type = getattr(event, "type", None) or event.get("type")
         
-        if org_id_str and plan_name:
-            org = db.query(Organization).filter(Organization.id == int(org_id_str)).first()
-            if org:
-                plan = db.query(SubscriptionPlan).filter(SubscriptionPlan.name == plan_name.upper()).first()
-                if plan:
-                    org.current_plan = plan.name
-                    org.plan_status = "ACTIVE"
-                    org.billing_cycle = billing_cycle.upper()
-                    org.subscription_start = datetime.datetime.utcnow()
-                    org.subscription_end = datetime.datetime.utcnow() + datetime.timedelta(days=365 if billing_cycle.upper() == "YEARLY" else 30)
-                    
-                    usage = db.query(UsageTracking).filter(UsageTracking.organization_id == org.id).first()
-                    if usage:
-                        usage.billing_period_start = org.subscription_start
-                        usage.billing_period_end = org.subscription_end
-                        usage.resumes_processed = 0
+        if event_type == 'checkout.session.completed':
+            # Handle both object and dict access depending on Stripe version
+            session = getattr(getattr(event, "data", {}), "object", {}) if hasattr(event, "data") else event.get("data", {}).get("object", {})
+            
+            metadata = getattr(session, "metadata", None) or session.get("metadata", {}) or {}
+            
+            org_id_str = metadata.get("organization_id")
+            plan_name = metadata.get("plan_name")
+            billing_cycle = metadata.get("billing_cycle", "MONTHLY")
+            
+            if org_id_str and plan_name:
+                org = db.query(Organization).filter(Organization.id == int(org_id_str)).first()
+                if org:
+                    plan = db.query(SubscriptionPlan).filter(SubscriptionPlan.name == plan_name.upper()).first()
+                    if plan:
+                        org.current_plan = plan.name
+                        org.plan_status = "ACTIVE"
+                        org.billing_cycle = billing_cycle.upper()
+                        org.subscription_start = datetime.datetime.utcnow()
+                        org.subscription_end = datetime.datetime.utcnow() + datetime.timedelta(days=365 if billing_cycle.upper() == "YEARLY" else 30)
                         
-                    db.commit()
-    
-    return {"status": "success"}
+                        usage = db.query(UsageTracking).filter(UsageTracking.organization_id == org.id).first()
+                        if usage:
+                            usage.billing_period_start = org.subscription_start
+                            usage.billing_period_end = org.subscription_end
+                            usage.resumes_processed = 0
+                            
+                        db.commit()
+        
+        return {"status": "success"}
+    except Exception as e:
+        print(f"Stripe Webhook Error: {str(e)}")
+        return {"status": "error", "message": str(e)}
