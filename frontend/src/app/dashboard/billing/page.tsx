@@ -48,12 +48,10 @@ export default function BillingWorkspace() {
     setError("");
     setSuccess("");
     try {
-      const res = await api.upgradePlan(planName, cycle);
-      setSuccess(`Successfully upgraded to ${planName} plan!`);
-      await fetchData();
+      const res = await api.createCheckoutSession(planName, cycle);
+      window.location.href = res.url;
     } catch (err: any) {
-      setError(err.message || "Failed to upgrade subscription.");
-    } finally {
+      setError(err.message || "Failed to create checkout session.");
       setUpdating(false);
     }
   };
@@ -76,22 +74,7 @@ export default function BillingWorkspace() {
     }
   };
 
-  // Helper mock webhook trigger to test the webhook payment endpoint
-  const handleTriggerWebhook = async (planName: string) => {
-    if (!subscription) return;
-    setUpdating(true);
-    setError("");
-    setSuccess("");
-    try {
-      await api.triggerMockPaymentWebhook(subscription.organization_id, planName, cycle);
-      setSuccess(`Webhook payment processed: Upgraded to ${planName}!`);
-      await fetchData();
-    } catch (err: any) {
-      setError(err.message || "Failed to trigger mock payment webhook.");
-    } finally {
-      setUpdating(false);
-    }
-  };
+
 
   if (loading) {
     return (
@@ -315,15 +298,7 @@ export default function BillingWorkspace() {
                         </button>
                       )}
                       
-                      {/* Webhook developer tool button */}
-                      {!isCurrent && (
-                        <button
-                          onClick={() => handleTriggerWebhook(p.name)}
-                          className="w-full mt-1.5 text-center text-[9px] font-black text-slate-400 hover:text-blue-600 py-1 transition-colors border border-dashed border-slate-200 hover:border-blue-200 rounded-lg"
-                        >
-                          Dev: Simulate Webhook Payment
-                        </button>
-                      )}
+
                     </div>
                   </div>
                 );

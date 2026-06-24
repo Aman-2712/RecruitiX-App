@@ -1,12 +1,13 @@
 import json
 import datetime
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Request
 from sqlalchemy.orm import Session
 from pydantic import BaseModel
 from typing import List, Optional
 from app.core.database import get_db
 from app.core.security import get_current_user
 from app.models import SubscriptionPlan, Organization, UsageTracking, User
+from app.services.payment_service import create_checkout_session, construct_stripe_event
 
 router = APIRouter(prefix="/api/billing", tags=["billing"])
 
@@ -208,3 +209,52 @@ def payment_webhook(req: WebhookRequest, db: Session = Depends(get_db)):
         
     db.commit()
     return {"status": "success", "message": f"Webhook processed: Organization {org.id} upgraded to {plan.name}"}
+
+@router.post("/create-checkout-session")
+def api_create_checkout_session(
+    req: UpgradeRequest, 
+    current_user: User = Depends(get_current_user), 
+    db: Session = Depends(get_db)
+):
+    org = current_user.organization
+    if not org:
+        raise HTTPException(status_code=400, detail="User does not belong to an organization")
+        
+    plan = db.query(SubscriptionPlan).filter(SubscriptionPlan.name == req.plan_name.upper()).first()
+    if not plan:
+        raise HTTPException(status_code=404, detail=f"Plan {req.plan_name} not found")
+        
+    url = create_checkout_session(org.id, plan.name, req.billing_cycle)
+    return {"url": url}
+
+@router.post("/webhook/stripe")
+async def stripe_webhook(request: Request, db: Session = Depends(get_db)):
+    event = await construct_stripe_event(request)
+    
+    if event['type'] == 'checkout.session.completed':
+        session = event['data']['object']
+        
+        org_id_str = session.get("metadata", {}).get("organization_id")
+        plan_name = session.get("metadata", {}).get("plan_name")
+        billing_cycle = session.get("metadata", {}).get("billing_cycle", "MONTHLY")
+        
+        if org_id_str and plan_name:
+            org = db.query(Organization).filter(Organization.id == int(org_id_str)).first()
+            if org:
+                plan = db.query(SubscriptionPlan).filter(SubscriptionPlan.name == plan_name.upper()).first()
+                if plan:
+                    org.current_plan = plan.name
+                    org.plan_status = "ACTIVE"
+                    org.billing_cycle = billing_cycle.upper()
+                    org.subscription_start = datetime.datetime.utcnow()
+                    org.subscription_end = datetime.datetime.utcnow() + datetime.timedelta(days=365 if billing_cycle.upper() == "YEARLY" else 30)
+                    
+                    usage = db.query(UsageTracking).filter(UsageTracking.organization_id == org.id).first()
+                    if usage:
+                        usage.billing_period_start = org.subscription_start
+                        usage.billing_period_end = org.subscription_end
+                        usage.resumes_processed = 0
+                        
+                    db.commit()
+    
+    return {"status": "success"}

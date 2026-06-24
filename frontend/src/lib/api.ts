@@ -365,7 +365,14 @@ export const api = {
   async triggerMockPaymentWebhook(orgId: number, planName: string, billingCycle: string = "MONTHLY"): Promise<any> {
     return request<any>("/api/billing/webhook/payment", {
       method: "POST",
-      body: JSON.stringify({ organization_id: orgId, plan_name: planName, billing_cycle: billingCycle }),
+      body: { organization_id: orgId, plan_name: planName, billing_cycle: billingCycle }
+    });
+  },
+
+  async createCheckoutSession(planName: string, billingCycle: string = "MONTHLY"): Promise<{url: string}> {
+    return request<{url: string}>("/api/billing/create-checkout-session", {
+      method: "POST",
+      body: { plan_name: planName, billing_cycle: billingCycle }
     });
   },
 
