@@ -1,41 +1,41 @@
 @import "tailwindcss";
 
 @theme {
-  /* Override Default Theme Colors for Obsidian & Gold Dark Mode */
-  --color-white: #111112;                  /* Main Card Background */
-  --color-slate-50: #070708;               /* Page Main Background */
-  --color-slate-100: #161618;              /* Muted secondary background */
-  --color-slate-200: #222225;              /* Border color */
-  --color-slate-300: #333338;              /* Active border / hover elements */
-  --color-slate-400: #8e8e93;              /* Muted / secondary text */
-  --color-slate-500: #a1a1a6;              /* Secondary description text */
-  --color-slate-600: #c7c7cc;              /* Medium bright text */
-  --color-slate-700: #e5e5ea;              /* High emphasis body text */
-  --color-slate-800: #f2f2f7;              /* Subheading / key info */
+  /* Override Default Theme Colors for Midnight Luxury Black & Gold Mode */
+  --color-white: #141414;                  /* Main Card Background */
+  --color-slate-50: #0a0a0a;               /* Page Main Background */
+  --color-slate-100: #1f1f1f;              /* Muted secondary background */
+  --color-slate-200: #2d271e;              /* Deep gold-tinted bronze borders */
+  --color-slate-300: #3f3627;              /* Active border / hover elements */
+  --color-slate-400: #8e8679;              /* Muted champagne text */
+  --color-slate-500: #a89f90;              /* Secondary description text */
+  --color-slate-600: #c3baa9;              /* Medium bright text */
+  --color-slate-700: #dfd6c4;              /* High emphasis body text */
+  --color-slate-800: #faeed7;              /* Subheading / key info */
   --color-slate-900: #ffffff;              /* Title / Heading text */
-  --color-slate-950: #030304;              /* Extreme dark background */
+  --color-slate-950: #050505;              /* Extreme carbon black background */
 
-  /* Override Blue/Teal colors for Gold/Amber Accents */
-  --color-blue-50: rgba(217, 119, 6, 0.08);  /* Very soft gold glow background */
-  --color-blue-100: rgba(217, 119, 6, 0.2);  /* Muted gold outline */
+  /* Override Blue/Teal colors for Luxury Gold Accents */
+  --color-blue-50: rgba(217, 119, 6, 0.08);   /* Very soft gold glow background */
+  --color-blue-100: rgba(217, 119, 6, 0.2);   /* Muted gold outline */
   --color-blue-200: rgba(217, 119, 6, 0.35); 
-  --color-blue-500: #fbbf24;                  /* Vibrant Gold */
-  --color-blue-600: #d97706;                  /* Primary Amber/Gold action buttons */
+  --color-blue-500: #fbbf24;                  /* Champagne gold */
+  --color-blue-600: #d97706;                  /* Primary Luxury Gold buttons */
   --color-blue-700: #b45309;                  /* Hover Gold */
   --color-blue-800: #92400e;
   --color-blue-900: #78350f;
   
   /* Update root CSS variables to align */
-  --background: #070708;
+  --background: #0a0a0a;
   --foreground: #ffffff;
-  --card: #111112;
-  --card-foreground: #e5e5ea;
+  --card: #141414;
+  --card-foreground: #dfd6c4;
   --primary: #d97706;
-  --primary-foreground: #070708;
-  --border: #222225;
+  --primary-foreground: #ffffff;
+  --border: #2d271e;
   --ring: #fbbf24;
-  --muted: #161618;
-  --muted-foreground: #8e8e93;
+  --muted: #1f1f1f;
+  --muted-foreground: #8e8679;
   --success: #10b981;
   --warning: #fbbf24;
   --destructive: #ef4444;
@@ -67,43 +67,43 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #333338;
+  background: #cbd5e1;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #d97706;
+  background: #94a3b8;
 }
 
 /* Custom Utilities */
 .glass {
-  background: rgba(17, 17, 18, 0.75);
+  background: rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.4);
 }
 
 .glow {
-  box-shadow: 0 0 20px rgba(217, 119, 6, 0.1);
+  box-shadow: 0 0 20px rgba(37, 99, 235, 0.1);
 }
 
 .premium-border {
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(226, 232, 240, 0.8);
 }
 
 /* Animate typing or loading indicators */
 @keyframes pulse-ring {
   0% {
     transform: scale(0.95);
-    box-shadow: 0 0 0 0 rgba(217, 119, 6, 0.5);
+    box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.5);
   }
   70% {
     transform: scale(1);
-    box-shadow: 0 0 0 6px rgba(217, 119, 6, 0);
+    box-shadow: 0 0 0 6px rgba(37, 99, 235, 0);
   }
   100% {
     transform: scale(0.95);
-    box-shadow: 0 0 0 0 rgba(217, 119, 6, 0);
+    box-shadow: 0 0 0 0 rgba(37, 99, 235, 0);
   }
 }
 
@@ -124,7 +124,7 @@ body {
 }
 
 .gradient-loader {
-  background: linear-gradient(270deg, #d97706, #fbbf24, #b45309);
+  background: linear-gradient(270deg, #3b82f6, #60a5fa, #1d4ed8);
   background-size: 600% 600%;
   animation: progress-loading 2s ease infinite;
 }
