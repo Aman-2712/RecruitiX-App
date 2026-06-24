@@ -1,16 +1,41 @@
 @import "tailwindcss";
 
-:root {
-  --background: #f8fafc;
-  --foreground: #0f172a;
-  --card: #ffffff;
-  --card-foreground: #0f172a;
-  --primary: #2563eb;
-  --primary-foreground: #ffffff;
-  --border: #e2e8f0;
-  --ring: #3b82f6;
-  --muted: #f1f5f9;
-  --muted-foreground: #64748b;
+@theme {
+  /* Override Default Theme Colors for Obsidian & Emerald Dark Mode */
+  --color-white: #121314;                  /* Main Card Background */
+  --color-slate-50: #090a0b;               /* Page Main Background */
+  --color-slate-100: #1b1c1e;              /* Muted secondary background */
+  --color-slate-200: #232426;              /* Border color */
+  --color-slate-300: #2e3033;              /* Active border / hover elements */
+  --color-slate-400: #8892b0;              /* Muted / secondary text */
+  --color-slate-500: #a8b2d1;              /* Secondary description text */
+  --color-slate-600: #ccd6f6;              /* Medium bright text */
+  --color-slate-700: #e2e8f0;              /* High emphasis body text */
+  --color-slate-800: #f1f5f9;              /* Subheading / key info */
+  --color-slate-900: #ffffff;              /* Title / Heading text */
+  --color-slate-950: #050606;              /* Extreme dark background */
+
+  /* Override Blue/Teal colors for Emerald/Cyan Glow */
+  --color-blue-50: rgba(16, 185, 129, 0.08);  /* Very soft emerald glow background */
+  --color-blue-100: rgba(16, 185, 129, 0.2);  /* Muted emerald outline / highlight */
+  --color-blue-200: rgba(16, 185, 129, 0.35); 
+  --color-blue-500: #0ea5e9;                  /* Cyan actions */
+  --color-blue-600: #10b981;                  /* Primary Emerald action buttons */
+  --color-blue-700: #059669;                  /* Hover Emerald */
+  --color-blue-800: #065f46;
+  --color-blue-900: #022c22;
+  
+  /* Update root CSS variables to align */
+  --background: #090a0b;
+  --foreground: #ffffff;
+  --card: #121314;
+  --card-foreground: #e2e8f0;
+  --primary: #10b981;
+  --primary-foreground: #090a0b;
+  --border: #232426;
+  --ring: #10b981;
+  --muted: #1b1c1e;
+  --muted-foreground: #8892b0;
   --success: #10b981;
   --warning: #f59e0b;
   --destructive: #ef4444;
