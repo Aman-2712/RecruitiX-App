@@ -146,6 +146,7 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
   const response = await fetch(`${API_BASE_URL}${endpoint}`, {
     ...options,
     headers,
+    cache: "no-store",
   });
 
   if (response.status === 401) {
