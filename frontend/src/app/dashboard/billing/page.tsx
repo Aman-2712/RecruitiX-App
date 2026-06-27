@@ -73,9 +73,14 @@ export default function BillingWorkspace() {
         description: `Upgrade to ${planName} Plan`,
         order_id: orderData.order_id,
         notes: orderData.notes,
-        handler: function (response: any) {
-          setSuccess("Payment successful! Upgrading your account shortly...");
-          setTimeout(() => fetchData(), 3000);
+        handler: async function (response: any) {
+          try {
+            await api.upgradePlan(planName, cycle);
+          } catch (e) {
+            console.error("Upgrade API failed", e);
+          }
+          setSuccess("Payment successful! Upgrading your account...");
+          fetchData();
         },
         prefill: {
           name: subscription?.organization_name || "Company",
