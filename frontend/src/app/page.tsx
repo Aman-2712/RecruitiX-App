@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { ArrowRight, Bot, Cpu, FileText, CheckCircle, Shield, Zap, Briefcase, Sparkles } from "lucide-react";
+import Logo from "@/components/Logo";
 
 export default function LandingPage() {
   return (
@@ -9,10 +10,7 @@ export default function LandingPage() {
       {/* Header */}
       <header className="sticky top-0 z-55 w-full glass border-b border-slate-200/80 px-6 py-4 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2">
-          <div className="bg-blue-600 text-white p-2 rounded-lg flex items-center justify-center pulse-primary">
-            <Bot size={20} className="stroke-[2.5]" />
-          </div>
-          <span className="brand-logo text-slate-800">Recruit<span className="text-blue-600">X</span></span>
+          <Logo className="h-6" />
         </Link>
         <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-600">
           <a href="#features" className="hover:text-blue-600 transition-colors">Features</a>
@@ -33,13 +31,13 @@ export default function LandingPage() {
       <section className="relative px-6 pt-20 pb-24 md:pt-28 md:pb-32 max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-16">
         <div className="flex-1 space-y-6 text-center lg:text-left">
           <div className="inline-flex items-center gap-2 bg-blue-50 border border-blue-100 px-3 py-1 rounded-full text-blue-700 text-xs font-semibold uppercase tracking-wider">
-            <Zap size={12} className="fill-blue-700" /> Introducing RecruitX v1.0
+            <Zap size={12} className="fill-blue-700" /> Introducing Hirecue v1.0
           </div>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight leading-none">
             Discover world-class talent on <span className="text-blue-600">autopilot</span>.
           </h1>
           <p className="text-lg text-slate-600 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
-            RecruitX is your autonomous recruitment assistant. Automatically parse, score, and rank candidates against any job description with deep AI insights. Eliminate 80% of manual screening work.
+            Hirecue is your autonomous recruitment assistant. Automatically parse, score, and rank candidates against any job description with deep AI insights. Eliminate 80% of manual screening work.
           </p>
           <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4 pt-2">
             <Link href="/register" className="bg-blue-600 hover:bg-blue-700 text-white text-base font-semibold px-6 py-3.5 rounded-xl shadow-lg shadow-blue-600/10 hover:shadow-blue-600/20 transition-all flex items-center gap-2">
@@ -61,7 +59,7 @@ export default function LandingPage() {
                 <div className="h-3 w-3 rounded-full bg-slate-300"></div>
                 <div className="h-3 w-3 rounded-full bg-slate-300"></div>
               </div>
-              <div className="bg-slate-200/60 px-3 py-1 rounded-md text-xs font-medium text-slate-500">recruitx.com/dashboard</div>
+              <div className="bg-slate-200/60 px-3 py-1 rounded-md text-xs font-medium text-slate-500">hirecue.com/dashboard</div>
               <div className="w-10"></div>
             </div>
             
@@ -147,7 +145,7 @@ export default function LandingPage() {
             Everything you need for smart recruiting.
           </h2>
           <p className="text-slate-600 max-w-2xl mx-auto">
-            RecruitX automates the heavy-lifting of candidate screening while leaving final human judgments to your HR experts.
+            Hirecue automates the heavy-lifting of candidate screening while leaving final human judgments to your HR experts.
           </p>
         </div>
 
@@ -223,10 +221,10 @@ export default function LandingPage() {
               <Sparkles size={12} className="fill-blue-700" /> Seamless Integration
             </div>
             <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight leading-none">
-              How RecruitX Works
+              How Hirecue Works
             </h2>
             <p className="text-slate-500 font-medium leading-relaxed">
-              Skip the manual screening pile. RecruitX automates candidate ranking and evaluation in four simple, highly secure steps.
+              Skip the manual screening pile. Hirecue automates candidate ranking and evaluation in four simple, highly secure steps.
             </p>
           </div>
 
@@ -294,9 +292,9 @@ export default function LandingPage() {
       <footer className="mt-auto border-t border-slate-200 bg-white py-12 px-6">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 text-sm text-slate-500">
           <div className="flex items-center gap-2 font-bold text-slate-900">
-            <Bot size={16} className="text-blue-600" /> RecruitX
+            <Bot size={16} className="text-blue-600" /> Hirecue
           </div>
-          <div>&copy; 2026 RecruitX Platform. All rights reserved.</div>
+          <div>&copy; 2026 Hirecue Platform. All rights reserved.</div>
           <div className="flex gap-6">
             <a href="#" className="hover:text-blue-600">Privacy Policy</a>
             <a href="#" className="hover:text-blue-600">Terms of Service</a>

@@ -193,7 +193,7 @@ class TestSecurityAndHardening(unittest.TestCase):
         try:
             reload(sec)
             self.assertIsNotNone(sec.SECRET_KEY)
-            self.assertNotEqual(sec.SECRET_KEY, "recruitix_super_secret_jwt_key_13579")
+            self.assertNotEqual(sec.SECRET_KEY, "hirecue_super_secret_jwt_key_13579")
             self.assertEqual(len(sec.SECRET_KEY), 64) # secrets.token_hex(32) is 64 chars
         finally:
             # Restore env

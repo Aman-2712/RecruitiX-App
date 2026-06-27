@@ -249,7 +249,7 @@ export default function DashboardOverview() {
               <div className="flex items-start gap-2.5">
                 <CheckCircle2 size={16} className="text-emerald-500 mt-0.5 flex-shrink-0" />
                 <p className="leading-tight">
-                  <span className="font-bold text-slate-800">Job requirements:</span> Paste your complete PDF JD in the job screen. Recruitix automatically creates structured keywords.
+                  <span className="font-bold text-slate-800">Job requirements:</span> Paste your complete PDF JD in the job screen. Hirecue automatically creates structured keywords.
                 </p>
               </div>
               <div className="flex items-start gap-2.5">

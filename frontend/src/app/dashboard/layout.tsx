@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Bot, LayoutDashboard, Briefcase, BarChart3, LogOut, User, Menu, X, CreditCard } from "lucide-react";
 import { api, User as UserType } from "@/lib/api";
+import Logo from "@/components/Logo";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -14,8 +15,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
-    const token = localStorage.getItem("recruitix_token");
-    const userStr = localStorage.getItem("recruitix_user");
+    const token = localStorage.getItem("hirecue_token");
+    const userStr = localStorage.getItem("hirecue_user");
     
     if (!token || !userStr) {
       router.push("/login");
@@ -29,7 +30,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       api.getCurrentUser()
         .then((user) => {
           setCurrentUser(user);
-          localStorage.setItem("recruitix_user", JSON.stringify(user));
+          localStorage.setItem("hirecue_user", JSON.stringify(user));
         })
         .catch(() => {
           // ignore, keep cached user details
@@ -59,10 +60,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     return (
       <div className="flex h-screen w-screen items-center justify-center bg-slate-50">
         <div className="flex flex-col items-center gap-3">
-          <div className="bg-blue-600 text-white p-3 rounded-xl pulse-primary">
-            <Bot size={32} />
-          </div>
-          <span className="text-sm font-semibold text-slate-500">Loading Recruitix Dashboard...</span>
+          <Logo className="h-10" />
+          <span className="text-sm font-semibold text-slate-500">Loading Hirecue Dashboard...</span>
         </div>
       </div>
     );
@@ -72,11 +71,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     <div className="flex h-screen w-screen overflow-hidden bg-slate-50">
       {/* Sidebar for Desktop */}
       <aside className="hidden md:flex flex-col w-64 border-r border-slate-200 bg-white h-full flex-shrink-0">
-        <div className="px-6 py-5 border-b border-slate-100 flex items-center gap-2">
-          <div className="bg-blue-600 text-white p-2 rounded-lg flex items-center justify-center">
-            <Bot size={20} />
-          </div>
-          <span className="brand-logo text-slate-800">Recruit<span className="text-blue-600">X</span></span>
+        <div className="px-6 py-5 border-b border-slate-100 flex items-center">
+          <Logo className="h-6" />
         </div>
 
         {/* Navigation */}
@@ -138,11 +134,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         }`}
       >
         <div className="px-6 py-5 border-b border-slate-100 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="bg-blue-600 text-white p-2 rounded-lg flex items-center justify-center">
-              <Bot size={20} />
-            </div>
-            <span className="brand-logo text-slate-800">Recruit<span className="text-blue-600">X</span></span>
+          <div className="flex items-center">
+            <Logo className="h-6" />
           </div>
           <button onClick={() => setSidebarOpen(false)} className="text-slate-400 hover:text-slate-600">
             <X size={20} />
@@ -202,12 +195,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <button onClick={() => setSidebarOpen(true)} className="text-slate-500 hover:text-slate-700 focus:outline-none">
             <Menu size={22} />
           </button>
-          <div className="flex items-center gap-2">
-            <div className="bg-blue-600 text-white p-1.5 rounded-lg">
-              <Bot size={16} />
-            </div>
-            <span className="brand-logo text-slate-800">Recruit<span className="text-blue-600">X</span></span>
-          </div>
+          <Logo className="h-6" />
           <div className="w-6"></div> {/* placeholder to align header */}
         </header>
 

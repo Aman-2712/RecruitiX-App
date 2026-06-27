@@ -28,7 +28,7 @@ def override_get_db():
         db.close()
 
 
-class TestRecruitixBilling(unittest.TestCase):
+class TestHirecueBilling(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         # Dispose any existing engine connections and delete file

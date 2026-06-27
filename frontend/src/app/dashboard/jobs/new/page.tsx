@@ -135,7 +135,7 @@ export default function NewJobPosting() {
             <h3 className="font-bold text-slate-900">AI Requirement Extractor</h3>
           </div>
           <p className="text-xs text-slate-500 leading-relaxed font-medium">
-            Paste a raw job description description or draft below. Recruitix will automatically extract the Title, Required Skills, and experience parameters.
+            Paste a raw job description description or draft below. Hirecue will automatically extract the Title, Required Skills, and experience parameters.
           </p>
           <div className="space-y-3">
             <textarea

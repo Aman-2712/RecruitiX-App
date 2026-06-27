@@ -3,7 +3,8 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Bot, Mail, Lock, ArrowRight, Loader } from "lucide-react";
+import { Mail, Lock, Loader, ArrowRight } from "lucide-react";
+import Logo from "@/components/Logo";
 import { api } from "@/lib/api";
 
 export default function LoginPage() {
@@ -88,8 +89,8 @@ export default function LoginPage() {
       <div className="w-full max-w-md bg-white rounded-2xl border border-slate-200 shadow-xl p-8 space-y-6 glow">
         {/* Brand */}
         <div className="flex flex-col items-center text-center space-y-2">
-          <Link href="/" className="bg-blue-600 text-white p-3 rounded-xl flex items-center justify-center pulse-primary mb-2">
-            <Bot size={28} className="stroke-[2.5]" />
+          <Link href="/" className="mb-2">
+            <Logo className="h-12" />
           </Link>
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Welcome back</h1>
           <p className="text-sm text-slate-500">Sign in to manage your hiring pipelines</p>
@@ -165,7 +166,7 @@ export default function LoginPage() {
         </div>
 
         <div className="pt-2 text-center text-sm text-slate-500 font-medium border-t border-slate-100">
-          New to Recruitix?{" "}
+          New to Hirecue?{" "}
           <Link href="/register" className="text-blue-600 hover:underline">
             Create an account
           </Link>

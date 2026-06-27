@@ -6,7 +6,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 # Set environment variables for testing
-os.environ["DATABASE_URL"] = "sqlite:///./test_recruitix.db"
+os.environ["DATABASE_URL"] = "sqlite:///./test_hirecue.db"
 os.environ["JWT_SECRET_KEY"] = "test_secret_key_12345"
 # Clear OpenAI key to ensure Mock mode is tested
 os.environ["OPENAI_API_KEY"] = ""
@@ -18,7 +18,7 @@ from app.models import SubscriptionPlan, User, Organization, UsageTracking, Job,
 
 
 # Create test database engine
-engine = create_engine("sqlite:///./test_recruitix.db", connect_args={"check_same_thread": False})
+engine = create_engine("sqlite:///./test_hirecue.db", connect_args={"check_same_thread": False})
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 def override_get_db():
@@ -29,14 +29,14 @@ def override_get_db():
         db.close()
 
 
-class TestRecruitix(unittest.TestCase):
+class TestHirecue(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         # Dispose any existing engine connections and delete file
         try:
             engine.dispose()
-            if os.path.exists("test_recruitix.db"):
-                os.remove("test_recruitix.db")
+            if os.path.exists("test_hirecue.db"):
+                os.remove("test_hirecue.db")
         except Exception:
             pass
             
@@ -72,8 +72,8 @@ class TestRecruitix(unittest.TestCase):
         Base.metadata.drop_all(bind=engine)
         engine.dispose()
         try:
-            if os.path.exists("test_recruitix.db"):
-                os.remove("test_recruitix.db")
+            if os.path.exists("test_hirecue.db"):
+                os.remove("test_hirecue.db")
         except Exception:
             pass
         try:
@@ -85,7 +85,7 @@ class TestRecruitix(unittest.TestCase):
     def test_complete_recruitment_flow(self):
         # 1. Register User
         register_payload = {
-            "email": "recruiter@recruitix.com",
+            "email": "recruiter@hirecue.com",
             "password": "SecurePassword123",
             "full_name": "Jane Recruiter",
             "role": "HR_MANAGER"
@@ -95,7 +95,7 @@ class TestRecruitix(unittest.TestCase):
         
         # Verify email using database token
         db = TestingSessionLocal()
-        user = db.query(User).filter(User.email == "recruiter@recruitix.com").first()
+        user = db.query(User).filter(User.email == "recruiter@hirecue.com").first()
         verification_token = user.verification_token
         db.close()
         
@@ -104,14 +104,14 @@ class TestRecruitix(unittest.TestCase):
         
         # Login to obtain access token
         login_payload = {
-            "email": "recruiter@recruitix.com",
+            "email": "recruiter@hirecue.com",
             "password": "SecurePassword123"
         }
         res_login = self.client.post("/api/auth/login-json", json=login_payload)
         self.assertEqual(res_login.status_code, 200)
         data = res_login.json()
         self.assertIn("access_token", data)
-        self.assertEqual(data["user"]["email"], "recruiter@recruitix.com")
+        self.assertEqual(data["user"]["email"], "recruiter@hirecue.com")
         self.assertEqual(data["user"]["role"], "HR_MANAGER")
         
         token = data["access_token"]
@@ -119,7 +119,7 @@ class TestRecruitix(unittest.TestCase):
 
         # 2. Login JSON
         login_payload = {
-            "email": "recruiter@recruitix.com",
+            "email": "recruiter@hirecue.com",
             "password": "SecurePassword123"
         }
         res = self.client.post("/api/auth/login-json", json=login_payload)
@@ -228,7 +228,7 @@ class TestRecruitix(unittest.TestCase):
     def test_auto_classify_candidates(self):
         # 1. Register and Login
         register_payload = {
-            "email": "classifier@recruitix.com",
+            "email": "classifier@hirecue.com",
             "password": "SecurePassword123",
             "full_name": "Classifier Recruiter",
             "role": "HR_MANAGER"
@@ -238,7 +238,7 @@ class TestRecruitix(unittest.TestCase):
         
         # Verify email using database token
         db = TestingSessionLocal()
-        user = db.query(User).filter(User.email == "classifier@recruitix.com").first()
+        user = db.query(User).filter(User.email == "classifier@hirecue.com").first()
         verification_token = user.verification_token
         db.close()
         
@@ -247,7 +247,7 @@ class TestRecruitix(unittest.TestCase):
         
         # Login to obtain access token
         login_payload = {
-            "email": "classifier@recruitix.com",
+            "email": "classifier@hirecue.com",
             "password": "SecurePassword123"
         }
         res_login = self.client.post("/api/auth/login-json", json=login_payload)

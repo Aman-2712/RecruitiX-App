@@ -8,7 +8,7 @@ from pypdf import PdfReader
 from docx import Document
 from openai import OpenAI
 
-logger = logging.getLogger("recruitix.ai_service")
+logger = logging.getLogger("hirecue.ai_service")
 
 # Setup OpenAI Client
 openai_api_key = os.getenv("OPENAI_API_KEY", "")

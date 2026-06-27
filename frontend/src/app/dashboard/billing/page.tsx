@@ -69,7 +69,7 @@ export default function BillingWorkspace() {
         key: orderData.key_id,
         amount: orderData.amount,
         currency: orderData.currency,
-        name: "RecruitiX",
+        name: "Hirecue",
         description: `Upgrade to ${planName} Plan`,
         order_id: orderData.order_id,
         handler: function (response: any) {
@@ -390,7 +390,7 @@ export default function BillingWorkspace() {
             <p className="text-xs text-slate-500 leading-relaxed font-semibold">
               If your recruitment team exceeds 5,000 resume reviews/month, get in touch with our enterprise consulting sales for a customized API rate or high-volume processing quotas.
             </p>
-            <a href="mailto:sales@recruitix.com" className="text-xs font-bold text-blue-600 hover:text-blue-700 block">
+            <a href="mailto:sales@hirecue.com" className="text-xs font-bold text-blue-600 hover:text-blue-700 block">
               Contact Enterprise Sales →
             </a>
           </div>

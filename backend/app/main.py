@@ -19,7 +19,7 @@ from app.api.billing import router as billing_router
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
-    title="Recruitix API",
+    title="Hirecue API",
     description="AI-powered Recruitment & Resume Screening Platform API",
     version="1.0.0"
 )
@@ -193,7 +193,7 @@ def startup_event():
 @app.get("/")
 def read_root():
     return {
-        "app": "Recruitix API Gateway",
+        "app": "Hirecue API Gateway",
         "status": "online",
         "version": "1.0.0",
         "documentation": "/docs"

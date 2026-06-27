@@ -70,12 +70,12 @@ class TestGoogleAuth(unittest.TestCase):
     def test_google_auth_registration_and_login(self):
         # 1. Test registration of a new user via Google mock token
         mock_payload = {
-            "token": "mock_token:google_user@recruitix.com"
+            "token": "mock_token:google_user@hirecue.com"
         }
         res = self.client.post("/api/auth/google", json=mock_payload)
         self.assertEqual(res.status_code, 200)
         data = res.json()
-        self.assertEqual(data["user"]["email"], "google_user@recruitix.com")
+        self.assertEqual(data["user"]["email"], "google_user@hirecue.com")
         self.assertEqual(data["user"]["full_name"], "Google_User")
         token = data["access_token"]
         
@@ -92,7 +92,7 @@ class TestGoogleAuth(unittest.TestCase):
         self.assertEqual(res.status_code, 200)
         data_login = res.json()
         self.assertEqual(data_login["user"]["id"], data["user"]["id"])
-        self.assertEqual(data_login["user"]["email"], "google_user@recruitix.com")
+        self.assertEqual(data_login["user"]["email"], "google_user@hirecue.com")
 
 if __name__ == "__main__":
     unittest.main()

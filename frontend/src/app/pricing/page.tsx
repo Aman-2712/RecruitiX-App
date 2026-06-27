@@ -323,9 +323,9 @@ export default function PricingPage() {
       <footer className="border-t border-slate-200 bg-white py-12 px-6">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 text-sm text-slate-500">
           <div className="flex items-center gap-2 font-bold text-slate-900">
-            <Bot size={16} className="text-blue-600" /> RecruitX
+            <Bot size={16} className="text-blue-600" /> Hirecue
           </div>
-          <div>&copy; 2026 RecruitX Platform. All rights reserved.</div>
+          <div>&copy; 2026 Hirecue Platform. All rights reserved.</div>
         </div>
       </footer>
     </div>

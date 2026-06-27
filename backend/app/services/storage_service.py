@@ -5,7 +5,7 @@ from pathlib import Path
 from supabase import create_client, Client
 from fastapi import UploadFile
 
-logger = logging.getLogger("recruitix.storage")
+logger = logging.getLogger("hirecue.storage")
 
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")

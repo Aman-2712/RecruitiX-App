@@ -9,8 +9,8 @@ const exo2 = Exo_2({
 });
 
 export const metadata: Metadata = {
-  title: "RecruitX — AI-Powered Hiring Platform",
-  description: "RecruitX automates resume screening, candidate scoring, and pipeline management using AI.",
+  title: "Hirecue — AI-Powered Hiring Platform",
+  description: "Hirecue automates resume screening, candidate scoring, and pipeline management using AI.",
 };
 
 export default function RootLayout({

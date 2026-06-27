@@ -131,7 +131,7 @@ export interface Invoice {
 }
 
 async function request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
-  const token = typeof window !== "undefined" ? localStorage.getItem("recruitix_token") : null;
+  const token = typeof window !== "undefined" ? localStorage.getItem("hirecue_token") : null;
   
   const headers = new Headers(options.headers || {});
   if (token && !headers.has("Authorization")) {
@@ -150,8 +150,8 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
 
   if (response.status === 401) {
     if (typeof window !== "undefined") {
-      localStorage.removeItem("recruitix_token");
-      localStorage.removeItem("recruitix_user");
+      localStorage.removeItem("hirecue_token");
+      localStorage.removeItem("hirecue_user");
       // Redirect to login only if not already on an auth page
       if (!window.location.pathname.startsWith("/login") && !window.location.pathname.startsWith("/register")) {
         window.location.href = `/login?redirect=${encodeURIComponent(window.location.pathname)}`;
@@ -185,8 +185,8 @@ export const api = {
       method: "POST",
       body: JSON.stringify({ email, password }),
     });
-    localStorage.setItem("recruitix_token", res.access_token);
-    localStorage.setItem("recruitix_user", JSON.stringify(res.user));
+    localStorage.setItem("hirecue_token", res.access_token);
+    localStorage.setItem("hirecue_user", JSON.stringify(res.user));
     return res;
   },
 
@@ -203,8 +203,8 @@ export const api = {
       method: "POST",
       body: JSON.stringify({ token }),
     });
-    localStorage.setItem("recruitix_token", res.access_token);
-    localStorage.setItem("recruitix_user", JSON.stringify(res.user));
+    localStorage.setItem("hirecue_token", res.access_token);
+    localStorage.setItem("hirecue_user", JSON.stringify(res.user));
     return res;
   },
 
@@ -240,8 +240,8 @@ export const api = {
   },
 
   logout() {
-    localStorage.removeItem("recruitix_token");
-    localStorage.removeItem("recruitix_user");
+    localStorage.removeItem("hirecue_token");
+    localStorage.removeItem("hirecue_user");
   },
 
   // Jobs API
@@ -323,7 +323,7 @@ export const api = {
   },
 
   getResumeUrl(id: number): string {
-    const token = typeof window !== "undefined" ? localStorage.getItem("recruitix_token") : "";
+    const token = typeof window !== "undefined" ? localStorage.getItem("hirecue_token") : "";
     return `${API_BASE_URL}/api/candidates/${id}/resume?token=${token}`;
   },
 
