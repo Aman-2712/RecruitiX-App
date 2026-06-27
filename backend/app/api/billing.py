@@ -114,19 +114,6 @@ def upgrade_subscription(
         # Reset count for new cycle
         usage.resumes_processed = 0
         
-    invoice_amount = plan.monthly_price if req.billing_cycle.upper() == "MONTHLY" else plan.yearly_price
-    
-    # Create Invoice
-    new_invoice = Invoice(
-        organization_id=org.id,
-        invoice_no=f"INV-{datetime.datetime.utcnow().year}-{datetime.datetime.utcnow().strftime('%m%d%H%M%S')}",
-        date=datetime.datetime.utcnow(),
-        plan=plan.name,
-        amount=invoice_amount,
-        status="PAID"
-    )
-    db.add(new_invoice)
-        
     db.commit()
     return {
         "status": "success",
