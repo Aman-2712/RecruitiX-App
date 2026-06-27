@@ -1,64 +1,73 @@
 import os
-import stripe
+import hmac
+import hashlib
+import json
+import razorpay
 from fastapi import HTTPException, Request
 from pydantic_settings import BaseSettings
 
 class PaymentSettings(BaseSettings):
-    STRIPE_SECRET_KEY: str = os.getenv("STRIPE_SECRET_KEY", "sk_test_placeholder")
-    STRIPE_WEBHOOK_SECRET: str = os.getenv("STRIPE_WEBHOOK_SECRET", "whsec_placeholder")
+    RAZORPAY_KEY_ID: str = os.getenv("RAZORPAY_KEY_ID", "rzp_test_placeholder")
+    RAZORPAY_KEY_SECRET: str = os.getenv("RAZORPAY_KEY_SECRET", "secret_placeholder")
+    RAZORPAY_WEBHOOK_SECRET: str = os.getenv("RAZORPAY_WEBHOOK_SECRET", "whsec_placeholder")
     FRONTEND_URL: str = os.getenv("FRONTEND_URL", "http://localhost:3000")
 
 settings = PaymentSettings()
-stripe.api_key = settings.STRIPE_SECRET_KEY
+client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
 
-def create_checkout_session(organization_id: int, plan_name: str, billing_cycle: str):
+def create_razorpay_order(organization_id: int, plan_name: str, billing_cycle: str):
     plan_prices = {
-        "STARTER": 2999,
-        "GROWTH": 9999,
-        "ENTERPRISE": 49999
+        "STARTER": 2499,
+        "GROWTH": 7999,
+        "ENTERPRISE": 24999
     }
     
-    amount = plan_prices.get(plan_name.upper(), 2999)
+    amount_inr = plan_prices.get(plan_name.upper(), 2499)
     if billing_cycle.upper() == "YEARLY":
-        amount = amount * 10
+        amount_inr = amount_inr * 10
         
     try:
-        session = stripe.checkout.Session.create(
-            payment_method_types=['card'],
-            line_items=[{
-                'price_data': {
-                    'currency': 'usd',
-                    'product_data': {
-                        'name': f'RecruitX {plan_name.capitalize()} Plan ({billing_cycle.capitalize()})',
-                    },
-                    'unit_amount': amount, # Stripe uses cents
-                },
-                'quantity': 1,
-            }],
-            mode='payment',
-            success_url=f"{settings.FRONTEND_URL}/dashboard/billing/success?session_id={{CHECKOUT_SESSION_ID}}",
-            cancel_url=f"{settings.FRONTEND_URL}/dashboard/billing",
-            client_reference_id=str(organization_id),
-            metadata={
-                "organization_id": organization_id,
+        order_data = {
+            "amount": amount_inr * 100, # Razorpay uses paisa
+            "currency": "INR",
+            "receipt": f"receipt_org_{organization_id}_{plan_name.lower()}",
+            "notes": {
+                "organization_id": str(organization_id),
                 "plan_name": plan_name,
                 "billing_cycle": billing_cycle
             }
-        )
-        return session.url
+        }
+        
+        order = client.order.create(data=order_data)
+        
+        # Return order ID and other metadata required by frontend
+        return {
+            "order_id": order["id"],
+            "amount": order["amount"],
+            "currency": order["currency"],
+            "key_id": settings.RAZORPAY_KEY_ID
+        }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-async def construct_stripe_event(request: Request):
+async def verify_razorpay_signature(request: Request):
     payload = await request.body()
-    sig_header = request.headers.get("stripe-signature")
+    sig_header = request.headers.get("x-razorpay-signature")
 
+    if not sig_header:
+        raise HTTPException(status_code=400, detail="Missing signature")
+        
     try:
-        event = stripe.Webhook.construct_event(
-            payload, sig_header, settings.STRIPE_WEBHOOK_SECRET
+        # Verify the signature
+        client.utility.verify_webhook_signature(
+            payload.decode('utf-8'),
+            sig_header,
+            settings.RAZORPAY_WEBHOOK_SECRET
         )
+        # Parse the JSON payload
+        event = json.loads(payload.decode('utf-8'))
         return event
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail="Invalid payload")
-    except stripe.error.SignatureVerificationError as e:
+    except razorpay.errors.SignatureVerificationError:
         raise HTTPException(status_code=400, detail="Invalid signature")
+    except Exception as e:
+        raise HTTPException(status_code=400, detail="Invalid payload")

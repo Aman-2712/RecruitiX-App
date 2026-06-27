@@ -43,15 +43,56 @@ export default function BillingWorkspace() {
     fetchData().finally(() => setLoading(false));
   }, []);
 
+  const loadRazorpayScript = () => {
+    return new Promise((resolve) => {
+      const script = document.createElement("script");
+      script.src = "https://checkout.razorpay.com/v1/checkout.js";
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
+  };
+
   const handleUpgrade = async (planName: string) => {
     setUpdating(true);
     setError("");
     setSuccess("");
     try {
-      const res = await api.createCheckoutSession(planName, cycle);
-      window.location.href = res.url;
+      const isLoaded = await loadRazorpayScript();
+      if (!isLoaded) {
+        throw new Error("Razorpay SDK failed to load. Please check your connection.");
+      }
+
+      const orderData = await api.createRazorpayOrder(planName, cycle);
+      
+      const options = {
+        key: orderData.key_id,
+        amount: orderData.amount,
+        currency: orderData.currency,
+        name: "RecruitiX",
+        description: `Upgrade to ${planName} Plan`,
+        order_id: orderData.order_id,
+        handler: function (response: any) {
+          setSuccess("Payment successful! Upgrading your account shortly...");
+          setTimeout(() => fetchData(), 3000);
+        },
+        prefill: {
+          name: subscription?.name || "Company",
+          email: "founder@company.com",
+        },
+        theme: {
+          color: "#2563EB",
+        },
+      };
+      
+      const rzp = new (window as any).Razorpay(options);
+      rzp.on('payment.failed', function (response: any){
+        setError("Payment failed: " + response.error.description);
+      });
+      rzp.open();
     } catch (err: any) {
-      setError(err.message || "Failed to create checkout session.");
+      setError(err.message || "Failed to initiate payment.");
+    } finally {
       setUpdating(false);
     }
   };

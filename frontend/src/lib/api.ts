@@ -369,10 +369,10 @@ export const api = {
     });
   },
 
-  async createCheckoutSession(planName: string, billingCycle: string = "MONTHLY"): Promise<{url: string}> {
-    return request<{url: string}>("/api/billing/create-checkout-session", {
+  async createRazorpayOrder(planName: string, billingCycle: string = "MONTHLY"): Promise<{order_id: string, amount: number, currency: string, key_id: string}> {
+    return request<{order_id: string, amount: number, currency: string, key_id: string}>("/api/billing/create-razorpay-order", {
       method: "POST",
-      body: JSON.stringify({ plan_name: planName, billing_cycle: billingCycle })
+      body: JSON.stringify({ plan_name: planName, billing_cycle: billingCycle }),
     });
   },
 

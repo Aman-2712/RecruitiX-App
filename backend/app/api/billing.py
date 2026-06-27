@@ -7,8 +7,7 @@ from typing import List, Optional
 from app.core.database import get_db
 from app.core.security import get_current_user
 from app.models import SubscriptionPlan, Organization, UsageTracking, User
-from app.services.payment_service import create_checkout_session, construct_stripe_event
-
+from app.services.payment_service import create_razorpay_order, verify_razorpay_signature
 router = APIRouter(prefix="/api/billing", tags=["billing"])
 
 class UpgradeRequest(BaseModel):
@@ -210,8 +209,8 @@ def payment_webhook(req: WebhookRequest, db: Session = Depends(get_db)):
     db.commit()
     return {"status": "success", "message": f"Webhook processed: Organization {org.id} upgraded to {plan.name}"}
 
-@router.post("/create-checkout-session")
-def api_create_checkout_session(
+@router.post("/create-razorpay-order")
+def api_create_razorpay_order(
     req: UpgradeRequest, 
     current_user: User = Depends(get_current_user), 
     db: Session = Depends(get_db)
@@ -224,30 +223,23 @@ def api_create_checkout_session(
     if not plan:
         raise HTTPException(status_code=404, detail=f"Plan {req.plan_name} not found")
         
-    url = create_checkout_session(org.id, plan.name, req.billing_cycle)
-    return {"url": url}
+    order_data = create_razorpay_order(org.id, plan.name, req.billing_cycle)
+    return order_data
 
-@router.post("/webhook/stripe")
-async def stripe_webhook(request: Request, db: Session = Depends(get_db)):
+@router.post("/webhook/razorpay")
+async def razorpay_webhook(request: Request, db: Session = Depends(get_db)):
     try:
-        event = await construct_stripe_event(request)
+        event = await verify_razorpay_signature(request)
         
-        def safe_get(obj, key, default=None):
-            if isinstance(obj, dict):
-                return obj.get(key, default)
-            return getattr(obj, key, default)
-            
-        event_type = safe_get(event, "type")
+        event_type = event.get("event")
         
-        if event_type == 'checkout.session.completed':
-            event_data = safe_get(event, "data", {})
-            session = safe_get(event_data, "object", {})
+        if event_type == 'order.paid':
+            payload_entity = event.get("payload", {}).get("order", {}).get("entity", {})
             
-            metadata = safe_get(session, "metadata", {}) or {}
-            
-            org_id_str = safe_get(metadata, "organization_id")
-            plan_name = safe_get(metadata, "plan_name")
-            billing_cycle = safe_get(metadata, "billing_cycle", "MONTHLY")
+            notes = payload_entity.get("notes", {})
+            org_id_str = notes.get("organization_id")
+            plan_name = notes.get("plan_name")
+            billing_cycle = notes.get("billing_cycle", "MONTHLY")
             
             if org_id_str and plan_name:
                 org = db.query(Organization).filter(Organization.id == int(org_id_str)).first()
@@ -270,5 +262,5 @@ async def stripe_webhook(request: Request, db: Session = Depends(get_db)):
         
         return {"status": "success"}
     except Exception as e:
-        print(f"Stripe Webhook Error: {str(e)}")
+        print(f"Razorpay Webhook Error: {str(e)}")
         return {"status": "error", "message": str(e)}
