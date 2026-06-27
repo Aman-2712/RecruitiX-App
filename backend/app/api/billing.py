@@ -233,9 +233,12 @@ async def razorpay_webhook(request: Request, db: Session = Depends(get_db)):
         
         event_type = event.get("event")
         
-        if event_type == 'order.paid':
-            payload_entity = event.get("payload", {}).get("order", {}).get("entity", {})
-            
+        if event_type in ['order.paid', 'payment.captured']:
+            if event_type == 'order.paid':
+                payload_entity = event.get("payload", {}).get("order", {}).get("entity", {})
+            else:
+                payload_entity = event.get("payload", {}).get("payment", {}).get("entity", {})
+                
             notes = payload_entity.get("notes", {})
             org_id_str = notes.get("organization_id")
             plan_name = notes.get("plan_name")
