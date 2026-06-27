@@ -17,12 +17,12 @@ client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_S
 
 def create_razorpay_order(organization_id: int, plan_name: str, billing_cycle: str):
     plan_prices = {
-        "STARTER": 2499,
-        "GROWTH": 7999,
-        "ENTERPRISE": 24999
+        "STARTER": 2999,
+        "GROWTH": 9999,
+        "ENTERPRISE": 49999
     }
     
-    amount_inr = plan_prices.get(plan_name.upper(), 2499)
+    amount_inr = plan_prices.get(plan_name.upper(), 2999)
     if billing_cycle.upper() == "YEARLY":
         amount_inr = amount_inr * 10
         
