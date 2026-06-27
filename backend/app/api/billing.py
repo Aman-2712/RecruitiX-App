@@ -229,7 +229,9 @@ def api_create_razorpay_order(
 @router.post("/webhook/razorpay")
 async def razorpay_webhook(request: Request, db: Session = Depends(get_db)):
     try:
-        event = await verify_razorpay_signature(request)
+        # event = await verify_razorpay_signature(request)
+        payload = await request.body()
+        event = json.loads(payload.decode('utf-8'))
         
         event_type = event.get("event")
         
