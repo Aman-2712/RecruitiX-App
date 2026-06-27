@@ -370,8 +370,8 @@ export const api = {
     });
   },
 
-  async createRazorpayOrder(planName: string, billingCycle: string = "MONTHLY"): Promise<{order_id: string, amount: number, currency: string, key_id: string}> {
-    return request<{order_id: string, amount: number, currency: string, key_id: string}>("/api/billing/create-razorpay-order", {
+  async createRazorpayOrder(planName: string, billingCycle: string = "MONTHLY"): Promise<{order_id: string, amount: number, currency: string, key_id: string, notes?: any}> {
+    return request<{order_id: string, amount: number, currency: string, key_id: string, notes?: any}>("/api/billing/create-razorpay-order", {
       method: "POST",
       body: JSON.stringify({ plan_name: planName, billing_cycle: billingCycle }),
     });
