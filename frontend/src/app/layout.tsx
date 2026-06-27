@@ -13,6 +13,8 @@ export const metadata: Metadata = {
   description: "Hirecue automates resume screening, candidate scoring, and pipeline management using AI.",
 };
 
+import SplashScreen from "@/components/SplashScreen";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -23,7 +25,10 @@ export default function RootLayout({
       lang="en"
       className={`${exo2.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <SplashScreen />
+        {children}
+      </body>
     </html>
   );
 }
