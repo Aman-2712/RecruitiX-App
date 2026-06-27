@@ -71,8 +71,19 @@ def get_usage(current_user: User = Depends(get_current_user), db: Session = Depe
         db.refresh(usage)
         
     plan = db.query(SubscriptionPlan).filter(SubscriptionPlan.name == org.current_plan).first()
+    
+    # If no active plan, return zero limits
     if not plan:
-        raise HTTPException(status_code=500, detail="Organization plan not found in database")
+        return {
+            "jobs_created": usage.jobs_created,
+            "jobs_limit": 0,
+            "resumes_processed": usage.resumes_processed,
+            "resumes_limit": 0,
+            "active_users": usage.active_users,
+            "users_limit": 0,
+            "billing_period_start": usage.billing_period_start,
+            "billing_period_end": usage.billing_period_end
+        }
         
     return {
         "jobs_created": usage.jobs_created,
