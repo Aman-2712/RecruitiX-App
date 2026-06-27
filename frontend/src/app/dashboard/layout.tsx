@@ -26,11 +26,15 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     try {
       setCurrentUser(JSON.parse(userStr));
       
-      // Proactively fetch fresh user details
-      api.getCurrentUser()
-        .then((user) => {
+      // Proactively fetch fresh user details and subscription
+      Promise.all([api.getCurrentUser(), api.getSubscription()])
+        .then(([user, sub]) => {
           setCurrentUser(user);
           localStorage.setItem("hirecue_user", JSON.stringify(user));
+          
+          if (sub.plan_status !== "ACTIVE" && pathname !== "/dashboard/billing") {
+            router.push("/dashboard/billing");
+          }
         })
         .catch(() => {
           // ignore, keep cached user details

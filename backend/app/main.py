@@ -169,7 +169,7 @@ def startup_event():
         users = db.query(User).filter(User.organization_id == None).all()
         for u in users:
             org_name = f"{u.full_name or u.email.split('@')[0]}'s Team"
-            org = Organization(name=org_name, current_plan="STARTER", plan_status="ACTIVE")
+            org = Organization(name=org_name, current_plan="NONE", plan_status="INACTIVE")
             db.add(org)
             db.commit()
             db.refresh(org)

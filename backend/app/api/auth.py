@@ -41,8 +41,7 @@ class TokenResponse(BaseModel):
 @limiter.limit("3/minute")
 def register(request: Request, user_in: UserRegister, db: Session = Depends(get_db)):
     db_user = db.query(User).filter(User.email == user_in.email).first()
-
-    if db_user:
+    if db_user:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="A user with this email already exists"
@@ -50,7 +49,7 @@ def register(request: Request, user_in: UserRegister, db: Session = Depends(get_
     
     # Create organization
     org_name = f"{user_in.full_name or user_in.email.split('@')[0]}'s Team"
-    org = Organization(name=org_name, current_plan="STARTER", plan_status="ACTIVE")
+    org = Organization(name=org_name, current_plan="NONE", plan_status="INACTIVE")
     db.add(org)
     db.commit()
     db.refresh(org)

@@ -127,9 +127,9 @@ def cancel_subscription(current_user: User = Depends(get_current_user), db: Sess
     if not org:
         raise HTTPException(status_code=400, detail="User does not belong to an organization")
         
-    # In a real app we might downgrade at period end. Here we mark cancelled and revert to Starter limits.
-    org.plan_status = "CANCELLED"
-    org.current_plan = "STARTER"
+    # In a real app we might downgrade at period end. Here we mark cancelled and lock them out.
+    org.plan_status = "INACTIVE"
+    org.current_plan = "NONE"
     db.commit()
     return {
         "status": "success",

@@ -142,6 +142,16 @@ export default function BillingWorkspace() {
         <p className="text-slate-500 font-medium mt-1">Manage billing plans, resource usage quotas, and invoices</p>
       </div>
 
+      {subscription && subscription.plan_status !== "ACTIVE" && (
+        <div className="flex items-start gap-3 bg-amber-50 border border-amber-200 text-amber-800 p-5 rounded-2xl font-medium shadow-sm">
+          <AlertCircle className="flex-shrink-0 mt-0.5" size={22} />
+          <div>
+            <h3 className="text-lg font-bold">Action Required: Subscription Inactive</h3>
+            <p className="text-sm mt-1 opacity-90">You must select a plan to unlock the dashboard and continue using Hirecue.</p>
+          </div>
+        </div>
+      )}
+
       {error && (
         <div className="flex items-start gap-3 bg-red-50 border border-red-100 text-red-700 p-4 rounded-xl font-medium">
           <AlertCircle className="flex-shrink-0 mt-0.5" size={18} />
