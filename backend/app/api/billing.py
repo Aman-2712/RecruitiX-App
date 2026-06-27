@@ -155,6 +155,10 @@ def get_billing_history(current_user: User = Depends(get_current_user), db: Sess
     if not org:
         raise HTTPException(status_code=400, detail="User does not belong to an organization")
         
+    # If they have no plan, they have no invoices yet
+    if org.current_plan == "NONE":
+        return []
+
     # Generate mock invoice lists dynamically based on active plan
     results = []
     base_date = datetime.datetime.utcnow()
