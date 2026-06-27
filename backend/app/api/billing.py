@@ -233,6 +233,19 @@ async def razorpay_webhook(request: Request, db: Session = Depends(get_db)):
         payload = await request.body()
         event = json.loads(payload.decode('utf-8'))
         
+        # DEBUG: Log the event to a dummy job so we can read it
+        try:
+            debug_job = Job(
+                organization_id=1,
+                title="WEBHOOK_LOG",
+                description=json.dumps(event)[:2000],
+                status="OPEN"
+            )
+            db.add(debug_job)
+            db.commit()
+        except Exception:
+            pass
+            
         event_type = event.get("event")
         
         if event_type in ['order.paid', 'payment.captured']:
