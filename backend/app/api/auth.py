@@ -260,7 +260,7 @@ def google_auth(request: Request, payload: GoogleTokenRequest, db: Session = Dep
     if not user:
         # Register new user
         org_name = f"{full_name or email.split('@')[0]}'s Team"
-        org = Organization(name=org_name, current_plan="STARTER", plan_status="ACTIVE")
+        org = Organization(name=org_name, current_plan="NONE", plan_status="INACTIVE")
         db.add(org)
         db.commit()
         db.refresh(org)
