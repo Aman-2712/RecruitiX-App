@@ -6,7 +6,7 @@ from pydantic import BaseModel
 from typing import List, Optional
 from app.core.database import get_db
 from app.core.security import get_current_user
-from app.models import SubscriptionPlan, Organization, UsageTracking, User
+from app.models import SubscriptionPlan, Organization, UsageTracking, User, Job
 from app.services.payment_service import create_razorpay_order, verify_razorpay_signature
 router = APIRouter(prefix="/api/billing", tags=["billing"])
 
