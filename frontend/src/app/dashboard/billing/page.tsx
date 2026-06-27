@@ -77,7 +77,7 @@ export default function BillingWorkspace() {
           setTimeout(() => fetchData(), 3000);
         },
         prefill: {
-          name: subscription?.name || "Company",
+          name: subscription?.organization_name || "Company",
           email: "founder@company.com",
         },
         theme: {
