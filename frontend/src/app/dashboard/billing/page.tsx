@@ -76,10 +76,8 @@ export default function BillingWorkspace() {
         handler: async function (response: any) {
           try {
             await api.upgradePlan(planName, cycle);
-            alert("Backend upgraded successfully to " + planName);
           } catch (e: any) {
             console.error("Upgrade API failed", e);
-            alert("CRITICAL ERROR: " + e.message);
           }
           setSuccess("Payment successful! Upgrading your account...");
           fetchData();
