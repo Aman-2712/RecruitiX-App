@@ -72,6 +72,7 @@ export default function BillingWorkspace() {
         name: "Hirecue",
         description: `Upgrade to ${planName} Plan`,
         order_id: orderData.order_id,
+        notes: orderData.notes,
         handler: function (response: any) {
           setSuccess("Payment successful! Upgrading your account shortly...");
           setTimeout(() => fetchData(), 3000);

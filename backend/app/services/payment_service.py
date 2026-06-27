@@ -45,7 +45,8 @@ def create_razorpay_order(organization_id: int, plan_name: str, billing_cycle: s
             "order_id": order["id"],
             "amount": order["amount"],
             "currency": order["currency"],
-            "key_id": settings.RAZORPAY_KEY_ID
+            "key_id": settings.RAZORPAY_KEY_ID,
+            "notes": order_data["notes"]
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
