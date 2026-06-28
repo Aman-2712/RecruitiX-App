@@ -173,22 +173,22 @@ export default function PricingPage() {
               <div className="space-y-6">
                 {/* Title */}
                 <div>
-                  <h3 className="text-xl font-extrabold tracking-tight">{p.name}</h3>
-                  <p className={`text-xs mt-2 font-medium leading-relaxed ${isEnterprise ? "text-slate-400" : "text-slate-550"}`}>
+                  <h3 className={`text-xl font-extrabold tracking-tight ${isEnterprise ? "text-white" : "text-slate-900"}`}>{p.name}</h3>
+                  <p className={`text-xs mt-2 font-medium leading-relaxed ${isEnterprise ? "text-slate-400" : "text-slate-500"}`}>
                     {p.description}
                   </p>
                 </div>
 
                 {/* Price */}
                 <div className="flex items-baseline gap-1 pt-2">
-                  <span className="text-4xl font-black tracking-tight">{formattedPrice}</span>
+                  <span className={`text-4xl font-black tracking-tight ${isEnterprise ? "text-white" : "text-slate-900"}`}>{formattedPrice}</span>
                   <span className={`text-sm font-semibold ${isEnterprise ? "text-slate-400" : "text-slate-500"}`}>{cycleText}</span>
                 </div>
 
                 {/* Limits */}
-                <ul className="space-y-3.5 pt-4 border-t border-slate-100/10 border-slate-200">
+                <ul className={`space-y-3.5 pt-4 border-t ${isEnterprise ? "border-slate-800" : "border-slate-200"}`}>
                   {p.limits.map((l) => (
-                    <li key={l} className="flex items-center gap-2.5 text-sm font-bold">
+                    <li key={l} className={`flex items-center gap-2.5 text-sm font-bold ${isEnterprise ? "text-slate-200" : "text-slate-900"}`}>
                       <Zap size={14} className={isEnterprise ? "text-blue-500" : "text-blue-600"} />
                       {l}
                     </li>
