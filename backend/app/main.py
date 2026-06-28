@@ -51,7 +51,9 @@ async def add_security_headers(request: Request, call_next):
 origins = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
-    "https://recruiti-x-app.vercel.app"
+    "https://recruiti-x-app.vercel.app",
+    "https://hirecue.online",
+    "https://www.hirecue.online"
 ]
 
 app.add_middleware(
