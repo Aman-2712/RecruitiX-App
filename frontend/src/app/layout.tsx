@@ -10,7 +10,25 @@ const exo2 = Exo_2({
 
 export const metadata: Metadata = {
   title: "Hirecue — AI-Powered Hiring Platform",
-  description: "Hirecue automates resume screening, candidate scoring, and pipeline management using AI.",
+  description: "Hirecue automates resume screening, candidate scoring, and pipeline management using AI. Find your next hire in seconds, not hours.",
+  keywords: ["AI hiring", "resume screening", "applicant tracking system", "recruitment automation", "Hirecue", "talent acquisition"],
+  authors: [{ name: "Hirecue" }],
+  openGraph: {
+    title: "Hirecue — AI-Powered Hiring Platform",
+    description: "Hirecue automates resume screening, candidate scoring, and pipeline management using AI. Find your next hire in seconds, not hours.",
+    url: "https://hirecue.online",
+    siteName: "Hirecue",
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Hirecue — AI-Powered Hiring Platform",
+    description: "Hirecue automates resume screening, candidate scoring, and pipeline management using AI.",
+  },
+  alternates: {
+    canonical: "https://hirecue.online",
+  },
 };
 
 import SplashScreen from "@/components/SplashScreen";
