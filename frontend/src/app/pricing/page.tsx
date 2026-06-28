@@ -84,7 +84,7 @@ export default function PricingPage() {
       unlocked: [true, true, true, true, true, true, true, true, true, true, true],
       cta: "Contact Enterprise Sales",
       popular: false,
-      color: "border-slate-900 bg-slate-950 text-slate-900"
+      color: "border-slate-900 bg-slate-900 text-slate-900"
     }
   ];
 
