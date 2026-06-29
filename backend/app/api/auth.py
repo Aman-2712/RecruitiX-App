@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Request
+from fastapi import APIRouter, Depends, HTTPException, status, Request, BackgroundTasks
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from pydantic import BaseModel, EmailStr
@@ -39,7 +39,7 @@ class TokenResponse(BaseModel):
 
 @router.post("/register", response_model=dict)
 @limiter.limit("3/minute")
-def register(request: Request, user_in: UserRegister, db: Session = Depends(get_db)):
+def register(request: Request, user_in: UserRegister, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
     db_user = db.query(User).filter(User.email == user_in.email).first()
     if db_user:
         raise HTTPException(
@@ -76,14 +76,11 @@ def register(request: Request, user_in: UserRegister, db: Session = Depends(get_
     db.refresh(user)
     
     # Send welcome and admin notification
-    send_welcome_email(user.email, user.full_name)
-    send_admin_notification(user.email, user.full_name)
+    background_tasks.add_task(send_welcome_email, user.email, user.full_name)
+    background_tasks.add_task(send_admin_notification, user.email, user.full_name)
     
-    if not send_verification_email(user.email, verification_token):
-        raise HTTPException(
-            status_code=status.HTTP_502_BAD_GATEWAY,
-            detail="Account created, but verification email could not be sent. Please use resend verification.",
-        )
+    # Send verification email
+    background_tasks.add_task(send_verification_email, user.email, verification_token)
 
     return {
         "message": "User registered successfully. Please check your email to verify your account."
@@ -107,7 +104,7 @@ class ResendVerificationRequest(BaseModel):
 
 @router.post("/resend-verification")
 @limiter.limit("3/minute")
-def resend_verification(request: Request, payload: ResendVerificationRequest, db: Session = Depends(get_db)):
+def resend_verification(request: Request, payload: ResendVerificationRequest, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.email == payload.email).first()
     if not user:
         # Don't reveal if user exists
@@ -119,11 +116,7 @@ def resend_verification(request: Request, payload: ResendVerificationRequest, db
     user.verification_token = secrets.token_urlsafe(32)
     db.commit()
     
-    if not send_verification_email(user.email, user.verification_token):
-        raise HTTPException(
-            status_code=status.HTTP_502_BAD_GATEWAY,
-            detail="Verification email could not be sent. Please try again later.",
-        )
+    background_tasks.add_task(send_verification_email, user.email, user.verification_token)
     
     return {"message": "If that email is registered, a new verification link has been sent."}
 
@@ -132,7 +125,7 @@ class ForgotPasswordRequest(BaseModel):
 
 @router.post("/forgot-password")
 @limiter.limit("3/minute")
-def forgot_password(request: Request, payload: ForgotPasswordRequest, db: Session = Depends(get_db)):
+def forgot_password(request: Request, payload: ForgotPasswordRequest, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.email == payload.email).first()
     if not user:
         # Prevent email enumeration
@@ -143,11 +136,7 @@ def forgot_password(request: Request, payload: ForgotPasswordRequest, db: Sessio
     user.reset_password_expires = datetime.utcnow() + timedelta(hours=1)
     db.commit()
     
-    if not send_password_reset_email(user.email, reset_token):
-        raise HTTPException(
-            status_code=status.HTTP_502_BAD_GATEWAY,
-            detail="Password reset email could not be sent. Please try again later.",
-        )
+    background_tasks.add_task(send_password_reset_email, user.email, reset_token)
     
     return {"message": "If that email is registered, a password reset link has been sent."}
 
@@ -231,7 +220,7 @@ class GoogleTokenRequest(BaseModel):
 
 @router.post("/google", response_model=TokenResponse)
 @limiter.limit("5/minute")
-def google_auth(request: Request, payload: GoogleTokenRequest, db: Session = Depends(get_db)):
+def google_auth(request: Request, payload: GoogleTokenRequest, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
     from google.oauth2 import id_token
     from google.auth.transport import requests as google_requests
     import os
@@ -290,8 +279,8 @@ def google_auth(request: Request, payload: GoogleTokenRequest, db: Session = Dep
         db.refresh(user)
         
         # Send welcome and admin notification for new Google Auth users
-        send_welcome_email(user.email, user.full_name)
-        send_admin_notification(user.email, user.full_name)
+        background_tasks.add_task(send_welcome_email, user.email, user.full_name)
+        background_tasks.add_task(send_admin_notification, user.email, user.full_name)
         
     access_token = create_access_token(subject=user.email)
     return {
