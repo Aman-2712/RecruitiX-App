@@ -36,7 +36,7 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
   return (
     <div className="min-h-screen bg-slate-50 py-24">
       <div className="max-w-3xl mx-auto px-4">
-        <Link href="/blog" className="text-blue-600 hover:underline mb-8 inline-block font-medium">
+        <Link href="/blog" className="text-slate-800 hover:underline mb-8 inline-block font-medium">
           &larr; Back to Blog
         </Link>
         
@@ -45,14 +45,14 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
             <h1 className="text-3xl md:text-5xl font-extrabold text-slate-900 mb-4 leading-tight">
               {postData.title}
             </h1>
-            <div className="text-slate-500 font-medium">
+            <div className="text-slate-600 font-medium">
               {new Date(postData.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
             </div>
           </header>
           
-          {/* We use prose from @tailwindcss/typography to automatically style the raw HTML */}
+          {/* We use prose-invert to ensure the text is light on the dark background */}
           <div 
-            className="prose prose-slate prose-lg max-w-none prose-headings:font-bold prose-a:text-blue-600 hover:prose-a:text-blue-500"
+            className="prose prose-invert prose-lg max-w-none prose-headings:font-bold prose-a:text-slate-800 hover:prose-a:text-slate-700"
             dangerouslySetInnerHTML={{ __html: postData.contentHtml }} 
           />
         </article>

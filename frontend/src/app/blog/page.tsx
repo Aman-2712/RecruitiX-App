@@ -21,14 +21,14 @@ export default async function BlogIndex() {
           {allPostsData.map(({ slug, title, date, description }) => (
             <div key={slug} className="bg-white rounded-2xl p-8 shadow-sm border border-slate-200 hover:shadow-md transition-shadow">
               <Link href={`/blog/${slug}`} className="block group">
-                <h2 className="text-2xl font-bold text-slate-900 group-hover:text-blue-600 transition-colors mb-2">
+                <h2 className="text-2xl font-bold text-slate-900 group-hover:text-slate-800 transition-colors mb-2">
                   {title}
                 </h2>
-                <div className="text-sm text-slate-500 mb-4">{new Date(date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</div>
-                <p className="text-slate-600 leading-relaxed">
+                <div className="text-sm text-slate-600 mb-4">{new Date(date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</div>
+                <p className="text-slate-700 leading-relaxed">
                   {description}
                 </p>
-                <div className="mt-4 text-blue-600 font-semibold group-hover:underline">
+                <div className="mt-4 text-slate-800 font-semibold group-hover:underline">
                   Read article &rarr;
                 </div>
               </Link>
