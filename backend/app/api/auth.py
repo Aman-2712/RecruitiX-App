@@ -9,7 +9,7 @@ from app.core.limiter import limiter
 from app.models import User, Organization, UsageTracking
 from datetime import datetime, timedelta
 import secrets
-from app.services.email_service import send_verification_email, send_password_reset_email
+from app.services.email_service import send_verification_email, send_password_reset_email, send_welcome_email, send_admin_notification
 
 router = APIRouter(prefix="/api/auth", tags=["auth"])
 
@@ -74,6 +74,10 @@ def register(request: Request, user_in: UserRegister, db: Session = Depends(get_
     db.add(user)
     db.commit()
     db.refresh(user)
+    
+    # Send welcome and admin notification
+    send_welcome_email(user.email, user.full_name)
+    send_admin_notification(user.email, user.full_name)
     
     if not send_verification_email(user.email, verification_token):
         raise HTTPException(
@@ -284,6 +288,10 @@ def google_auth(request: Request, payload: GoogleTokenRequest, db: Session = Dep
         db.add(user)
         db.commit()
         db.refresh(user)
+        
+        # Send welcome and admin notification for new Google Auth users
+        send_welcome_email(user.email, user.full_name)
+        send_admin_notification(user.email, user.full_name)
         
     access_token = create_access_token(subject=user.email)
     return {

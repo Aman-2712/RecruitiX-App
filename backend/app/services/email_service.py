@@ -90,3 +90,53 @@ def send_password_reset_email(to_email: str, reset_token: str):
     </div>
     """
     return send_email(to_email, subject, html_content)
+
+def send_welcome_email(to_email: str, user_name: str):
+    name_display = user_name if user_name else "there"
+    subject = "Welcome to Hirecue!"
+    html_content = f"""
+    <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 12px;">
+        <h2 style="color: #1e3a8a; margin-bottom: 20px;">Welcome to Hirecue, {name_display}!</h2>
+        <p style="font-size: 14px; color: #475569; line-height: 1.5;">
+            We are thrilled to have you on board! Hirecue is designed to save you hours of manual resume screening by leveraging advanced AI to instantly rank your top candidates.
+        </p>
+        <p style="font-size: 14px; color: #475569; line-height: 1.5;">
+            <strong>To get started:</strong>
+            <ol>
+                <li>Create your first Job Post</li>
+                <li>Upload your candidate resumes</li>
+                <li>Let our AI rank and score them instantly!</li>
+            </ol>
+        </p>
+        <div style="margin: 30px 0; text-align: center;">
+            <a href="{FRONTEND_URL}/dashboard" style="background-color: #2563eb; color: white; padding: 12px 24px; border-radius: 8px; font-weight: bold; text-decoration: none; display: inline-block;">
+                Go to Dashboard
+            </a>
+        </div>
+        <p style="font-size: 12px; color: #94a3b8; line-height: 1.5;">
+            If you have any questions, just reply to this email!
+        </p>
+    </div>
+    """
+    return send_email(to_email, subject, html_content)
+
+def send_admin_notification(user_email: str, user_name: str):
+    admin_email = "shaiknadeem271226@gmail.com"
+    name_display = user_name if user_name else "Unknown"
+    subject = f"🎉 New User Registered: {name_display}"
+    html_content = f"""
+    <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 12px;">
+        <h2 style="color: #1e3a8a; margin-bottom: 20px;">New Sign-up Alert! 🚀</h2>
+        <p style="font-size: 14px; color: #475569; line-height: 1.5;">
+            A new user has just registered on Hirecue.online!
+        </p>
+        <ul style="font-size: 14px; color: #475569; line-height: 1.5;">
+            <li><strong>Name:</strong> {name_display}</li>
+            <li><strong>Email:</strong> {user_email}</li>
+        </ul>
+        <p style="font-size: 12px; color: #94a3b8; line-height: 1.5;">
+            Keep up the great marketing!
+        </p>
+    </div>
+    """
+    return send_email(admin_email, subject, html_content)
