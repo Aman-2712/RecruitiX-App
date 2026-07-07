@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Bot, LayoutDashboard, Briefcase, BarChart3, LogOut, User, Menu, X, CreditCard } from "lucide-react";
+import { Bot, LayoutDashboard, Briefcase, BarChart3, LogOut, User, Menu, X, CreditCard, Users } from "lucide-react";
 import { api, User as UserType } from "@/lib/api";
 import Logo from "@/components/Logo";
 
@@ -58,6 +58,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     { name: "Job Postings", href: "/dashboard/jobs", icon: Briefcase },
     { name: "Hiring Analytics", href: "/dashboard/analytics", icon: BarChart3 },
     { name: "Billing & Plans", href: "/dashboard/billing", icon: CreditCard },
+    { name: "Team Settings", href: "/dashboard/team", icon: Users },
   ];
 
   if (loading && !currentUser) {

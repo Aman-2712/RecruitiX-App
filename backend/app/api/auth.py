@@ -41,7 +41,8 @@ class TokenResponse(BaseModel):
 @limiter.limit("3/minute")
 def register(request: Request, user_in: UserRegister, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
     db_user = db.query(User).filter(User.email == user_in.email).first()
-    if db_user:
+
+    if db_user:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="A user with this email already exists"
@@ -158,6 +159,7 @@ def reset_password(request: Request, payload: ResetPasswordRequest, db: Session 
     user.hashed_password = get_password_hash(payload.new_password)
     user.reset_password_token = None
     user.reset_password_expires = None
+    user.is_email_verified = True
     db.commit()
     
     return {"message": "Password successfully reset. You can now log in."}

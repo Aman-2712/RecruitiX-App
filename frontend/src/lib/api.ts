@@ -1,5 +1,15 @@
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
 
+
+export interface TeamMember {
+  id: number;
+  email: string;
+  full_name: string | null;
+  role: "ADMIN" | "HR_MANAGER" | "RECRUITER";
+  is_email_verified: boolean;
+  created_at: string;
+}
+
 export interface User {
   id: number;
   email: string;
@@ -237,6 +247,32 @@ export const api = {
     return request<{ message: string }>("/api/auth/reset-password", {
       method: "POST",
       body: JSON.stringify({ token, new_password }),
+    });
+  },
+
+
+  // Team API
+  async getTeamMembers(): Promise<TeamMember[]> {
+    return request<TeamMember[]>("/api/team");
+  },
+
+  async inviteTeamMember(email: string, role: string): Promise<{ message: string }> {
+    return request<{ message: string }>("/api/team/invite", {
+      method: "POST",
+      body: JSON.stringify({ email, role }),
+    });
+  },
+
+  async updateTeamMemberRole(userId: number, role: string): Promise<{ message: string }> {
+    return request<{ message: string }>(`/api/team/${userId}/role`, {
+      method: "PATCH",
+      body: JSON.stringify({ role }),
+    });
+  },
+
+  async removeTeamMember(userId: number): Promise<{ message: string }> {
+    return request<{ message: string }>(`/api/team/${userId}`, {
+      method: "DELETE",
     });
   },
 

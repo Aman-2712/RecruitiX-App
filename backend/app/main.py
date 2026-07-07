@@ -14,6 +14,7 @@ from app.api.resumes import router as resumes_router
 from app.api.candidates import router as candidates_router
 from app.api.analytics import router as analytics_router
 from app.api.billing import router as billing_router
+from app.api.team import router as team_router
 
 # Create database tables
 Base.metadata.create_all(bind=engine)
@@ -72,6 +73,7 @@ app.include_router(resumes_router)
 app.include_router(candidates_router)
 app.include_router(analytics_router)
 app.include_router(billing_router)
+app.include_router(team_router)
 
 @app.on_event("startup")
 def startup_event():
