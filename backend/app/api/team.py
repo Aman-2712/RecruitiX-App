@@ -53,9 +53,7 @@ def invite_team_member(request: Request, payload: TeamInviteRequest, background_
     existing_user = db.query(User).filter(User.email == payload.email).first()
     
     if existing_user:
-        # If they belong to another org, we reject
-        if existing_user.organization_id and existing_user.organization_id != org.id:
-            raise HTTPException(status_code=400, detail="User already belongs to another organization")
+
             
         existing_user.organization_id = org.id
         existing_user.role = payload.role
