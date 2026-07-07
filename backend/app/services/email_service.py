@@ -6,7 +6,7 @@ logger = logging.getLogger("hirecue.email")
 
 RESEND_API_KEY = os.getenv("RESEND_API_KEY", "")
 FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:3000").rstrip("/")
-RESEND_FROM_EMAIL = os.getenv("RESEND_FROM_EMAIL", "Hirecue <onboarding@resend.dev>")
+RESEND_FROM_EMAIL = os.getenv("RESEND_FROM_EMAIL", "Hirecue <hello@hirecue.online>")
 
 def send_email(to_email: str, subject: str, html_content: str) -> bool:
     """
