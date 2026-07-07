@@ -1,9 +1,18 @@
+import os
 
+file_path = "backend/app/services/email_service.py"
+with open(file_path, "r", encoding="utf-8") as f:
+    content = f.read()
 
+# 1. Update send_team_invite_email wording
+content = content.replace('"Accept Invite & Set Password"', '"Join Team"')
+
+# 2. Add send_team_join_notification function
+new_function = """
 def send_team_join_notification(admin_email: str, admin_name: str, joined_user: str):
     subject = f"✅ {joined_user} has joined your team!"
     admin_name_display = admin_name if admin_name else "Admin"
-    html_content = f"""
+    html_content = f\"\"\"
     <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 12px;">
         <h2 style="color: #1e3a8a; margin-bottom: 20px;">Team Member Joined</h2>
         <p style="font-size: 14px; color: #475569; line-height: 1.5;">
@@ -21,5 +30,13 @@ def send_team_join_notification(admin_email: str, admin_name: str, joined_user: 
             </a>
         </div>
     </div>
-    """
+    \"\"\"
     return send_email(admin_email, subject, html_content)
+"""
+
+if "def send_team_join_notification" not in content:
+    content = content + "\n" + new_function
+
+with open(file_path, "w", encoding="utf-8") as f:
+    f.write(content)
+print("Successfully patched email_service.py")

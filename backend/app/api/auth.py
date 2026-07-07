@@ -147,7 +147,7 @@ class ResetPasswordRequest(BaseModel):
 
 @router.post("/reset-password")
 @limiter.limit("3/minute")
-def reset_password(request: Request, payload: ResetPasswordRequest, db: Session = Depends(get_db)):
+def reset_password(request: Request, payload: ResetPasswordRequest, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
     user = db.query(User).filter(
         User.reset_password_token == payload.token,
         User.reset_password_expires > datetime.utcnow()
@@ -156,11 +156,20 @@ def reset_password(request: Request, payload: ResetPasswordRequest, db: Session 
     if not user:
         raise HTTPException(status_code=400, detail="Invalid or expired reset token")
         
+    was_unverified = not user.is_email_verified
+    org_id = user.organization_id
+
     user.hashed_password = get_password_hash(payload.new_password)
     user.reset_password_token = None
     user.reset_password_expires = None
     user.is_email_verified = True
     db.commit()
+    
+    if was_unverified and org_id:
+        admins = db.query(User).filter(User.organization_id == org_id, User.role == "ADMIN").all()
+        for admin in admins:
+            background_tasks.add_task(send_team_join_notification, admin.email, admin.full_name, user.full_name or user.email)
+
     
     return {"message": "Password successfully reset. You can now log in."}
 
