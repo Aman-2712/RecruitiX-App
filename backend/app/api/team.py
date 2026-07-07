@@ -49,6 +49,24 @@ def invite_team_member(request: Request, payload: TeamInviteRequest, background_
     if not org:
         raise HTTPException(status_code=400, detail="Organization not found")
         
+    # Enforce team size limits based on plan
+    member_count = db.query(User).filter(User.organization_id == org.id).count()
+    
+    plan_limits = {
+        "STARTER": 2,
+        "GROWTH": 10,
+        "ENTERPRISE": float('inf')
+    }
+    
+    current_plan = (org.current_plan or "STARTER").upper()
+    limit = plan_limits.get(current_plan, 2)
+    
+    if member_count >= limit:
+        raise HTTPException(
+            status_code=403, 
+            detail=f"Team size limit reached for {current_plan} plan. Please upgrade your plan to add more members."
+        )
+        
     # Check if user already exists
     existing_user = db.query(User).filter(User.email == payload.email).first()
     
