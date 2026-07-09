@@ -28,7 +28,7 @@ export default function PricingPage() {
         "Bulk Resume Upload (up to 15 at once)"
       ],
       unlocked: [true, true, true, true, true, true, false, false, false, false, false],
-      cta: "Start Screening Free",
+      cta: "Start 7-Day Free Trial",
       popular: false,
       color: "border-slate-200 bg-white"
     },
@@ -133,6 +133,17 @@ export default function PricingPage() {
         <p className="text-base text-slate-500 max-w-xl mx-auto font-medium">
           Screen resumes automatically, rank candidates instantly, and find the perfect match without the manual work.
         </p>
+
+        {/* Early Adopter Discount Banner */}
+        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-2xl p-4 shadow-lg shadow-blue-500/20 max-w-2xl mx-auto mt-4 transform hover:scale-[1.02] transition-transform cursor-default">
+          <div className="flex items-center justify-center gap-3">
+            <Sparkles className="text-yellow-300" size={24} />
+            <div className="text-left">
+              <h3 className="font-black text-lg tracking-tight">Early Adopter Special! 🎉</h3>
+              <p className="text-sm text-blue-100 font-medium">Use code <span className="bg-white/20 px-2 py-0.5 rounded uppercase font-bold text-white tracking-widest border border-white/30">FOUNDER50</span> at checkout for 50% off your first 3 months!</p>
+            </div>
+          </div>
+        </div>
 
         {/* Toggle Billing Cycle */}
         <div className="flex items-center justify-center gap-3 pt-4">

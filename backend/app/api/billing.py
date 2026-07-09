@@ -42,6 +42,12 @@ def get_subscription(current_user: User = Depends(get_current_user), db: Session
     if not org:
         raise HTTPException(status_code=400, detail="User does not belong to an organization")
         
+    if org.plan_status == "TRIAL" and org.trial_end_date and org.trial_end_date < datetime.datetime.utcnow():
+        org.plan_status = "INACTIVE"
+        org.current_plan = "NONE"
+        db.commit()
+        db.refresh(org)
+        
     plan = db.query(SubscriptionPlan).filter(SubscriptionPlan.name == org.current_plan).first()
     plan_features = json.loads(plan.features_json or "[]") if plan else []
         
@@ -62,6 +68,12 @@ def get_usage(current_user: User = Depends(get_current_user), db: Session = Depe
     org = current_user.organization
     if not org:
         raise HTTPException(status_code=400, detail="User does not belong to an organization")
+        
+    if org.plan_status == "TRIAL" and org.trial_end_date and org.trial_end_date < datetime.datetime.utcnow():
+        org.plan_status = "INACTIVE"
+        org.current_plan = "NONE"
+        db.commit()
+        db.refresh(org)
         
     usage = db.query(UsageTracking).filter(UsageTracking.organization_id == org.id).first()
     if not usage:

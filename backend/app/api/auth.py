@@ -50,7 +50,14 @@ def register(request: Request, user_in: UserRegister, background_tasks: Backgrou
     
     # Create organization
     org_name = f"{user_in.full_name or user_in.email.split('@')[0]}'s Team"
-    org = Organization(name=org_name, current_plan="NONE", plan_status="INACTIVE")
+    org = Organization(
+        name=org_name, 
+        current_plan="STARTER", 
+        plan_status="TRIAL",
+        trial_end_date=datetime.utcnow() + timedelta(days=7),
+        subscription_start=datetime.utcnow(),
+        subscription_end=datetime.utcnow() + timedelta(days=7)
+    )
     db.add(org)
     db.commit()
     db.refresh(org)
@@ -264,7 +271,14 @@ def google_auth(request: Request, payload: GoogleTokenRequest, background_tasks:
     if not user:
         # Register new user
         org_name = f"{full_name or email.split('@')[0]}'s Team"
-        org = Organization(name=org_name, current_plan="NONE", plan_status="INACTIVE")
+        org = Organization(
+            name=org_name, 
+            current_plan="STARTER", 
+            plan_status="TRIAL",
+            trial_end_date=datetime.utcnow() + timedelta(days=7),
+            subscription_start=datetime.utcnow(),
+            subscription_end=datetime.utcnow() + timedelta(days=7)
+        )
         db.add(org)
         db.commit()
         db.refresh(org)
