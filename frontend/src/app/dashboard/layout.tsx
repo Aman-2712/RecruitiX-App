@@ -32,7 +32,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           setCurrentUser(user);
           localStorage.setItem("hirecue_user", JSON.stringify(user));
           
-          if (sub.plan_status !== "ACTIVE" && pathname !== "/dashboard/billing") {
+          if (sub.plan_status !== "ACTIVE" && sub.plan_status !== "TRIAL" && pathname !== "/dashboard/billing") {
             router.push("/dashboard/billing");
           }
         })

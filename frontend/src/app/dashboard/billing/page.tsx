@@ -142,7 +142,7 @@ export default function BillingWorkspace() {
         <p className="text-slate-500 font-medium mt-1">Manage billing plans, resource usage quotas, and invoices</p>
       </div>
 
-      {subscription && subscription.plan_status !== "ACTIVE" && (
+      {subscription && subscription.plan_status !== "ACTIVE" && subscription.plan_status !== "TRIAL" && (
         <div className="flex items-start gap-3 bg-amber-50 border border-amber-200 text-amber-800 p-5 rounded-2xl font-medium shadow-sm">
           <AlertCircle className="flex-shrink-0 mt-0.5" size={22} />
           <div>
