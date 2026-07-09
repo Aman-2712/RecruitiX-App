@@ -12,6 +12,7 @@ export default function DashboardOverview() {
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
   const [candidates, setCandidates] = useState<Candidate[]>([]);
   const [usage, setUsage] = useState<UsageTracking | null>(null);
+  const [subscription, setSubscription] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState("");
@@ -26,6 +27,9 @@ export default function DashboardOverview() {
       
       const usageInfo = await api.getUsage();
       setUsage(usageInfo);
+      
+      const subInfo = await api.getSubscription();
+      setSubscription(subInfo);
       
       setError("");
     } catch (err: any) {
@@ -126,6 +130,19 @@ export default function DashboardOverview() {
           <div className="text-sm">
             {error} <br/>
             <span className="font-normal text-xs text-amber-700">Make sure the FastAPI server is running locally on port 8000.</span>
+          </div>
+        </div>
+      )}
+
+      {/* Trial Mode Banner */}
+      {subscription?.plan_status === "TRIAL" && (
+        <div className="flex items-start gap-3 bg-emerald-50 border border-emerald-200 text-emerald-800 p-4 rounded-xl font-medium shadow-sm">
+          <CheckCircle2 className="flex-shrink-0 mt-0.5" size={18} />
+          <div className="text-sm">
+            <span className="font-bold">Test Mode Active!</span> <br/>
+            <span className="font-normal text-xs text-emerald-700">
+              You are currently using the platform on a 7-Day Free Trial. Test out the AI features and when you are ready, upgrade your account for future use.
+            </span>
           </div>
         </div>
       )}

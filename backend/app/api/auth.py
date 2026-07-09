@@ -197,6 +197,14 @@ def login(request: Request, form_data: OAuth2PasswordRequestForm = Depends(), db
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Email not verified. Please check your inbox or resend the verification link."
         )
+        
+    if user.organization and user.organization.current_plan == "NONE" and user.organization.plan_status == "INACTIVE":
+        user.organization.current_plan = "STARTER"
+        user.organization.plan_status = "TRIAL"
+        user.organization.trial_end_date = datetime.utcnow() + timedelta(days=7)
+        user.organization.subscription_start = datetime.utcnow()
+        user.organization.subscription_end = datetime.utcnow() + timedelta(days=7)
+        db.commit()
     
     token = create_access_token(subject=user.email)
     return {
@@ -221,6 +229,14 @@ def login_json(request: Request, credentials: UserLogin, db: Session = Depends(g
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Email not verified. Please check your inbox or resend the verification link."
         )
+        
+    if user.organization and user.organization.current_plan == "NONE" and user.organization.plan_status == "INACTIVE":
+        user.organization.current_plan = "STARTER"
+        user.organization.plan_status = "TRIAL"
+        user.organization.trial_end_date = datetime.utcnow() + timedelta(days=7)
+        user.organization.subscription_start = datetime.utcnow()
+        user.organization.subscription_end = datetime.utcnow() + timedelta(days=7)
+        db.commit()
     
     token = create_access_token(subject=user.email)
     return {
@@ -306,6 +322,14 @@ def google_auth(request: Request, payload: GoogleTokenRequest, background_tasks:
         # Send welcome and admin notification for new Google Auth users
         background_tasks.add_task(send_welcome_email, user.email, user.full_name)
         background_tasks.add_task(send_admin_notification, user.email, user.full_name)
+        
+    if user.organization and user.organization.current_plan == "NONE" and user.organization.plan_status == "INACTIVE":
+        user.organization.current_plan = "STARTER"
+        user.organization.plan_status = "TRIAL"
+        user.organization.trial_end_date = datetime.utcnow() + timedelta(days=7)
+        user.organization.subscription_start = datetime.utcnow()
+        user.organization.subscription_end = datetime.utcnow() + timedelta(days=7)
+        db.commit()
         
     access_token = create_access_token(subject=user.email)
     return {

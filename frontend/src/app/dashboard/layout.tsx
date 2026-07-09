@@ -46,7 +46,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       localStorage.clear();
       router.push("/login");
     }
-  }, [router]);
+  }, [router, pathname]);
 
   const handleLogout = () => {
     api.logout();
