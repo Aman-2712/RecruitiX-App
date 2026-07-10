@@ -112,8 +112,8 @@ export interface SubscriptionPlan {
 export interface Organization {
   organization_id: number;
   organization_name: string;
-  current_plan: "STARTER" | "GROWTH" | "ENTERPRISE";
-  plan_status: "ACTIVE" | "CANCELLED" | "TRIAL";
+  current_plan: "STARTER" | "GROWTH" | "ENTERPRISE" | "NONE";
+  plan_status: "ACTIVE" | "CANCELLED" | "TRIAL" | "INACTIVE" | "ONBOARDING";
   billing_cycle: "MONTHLY" | "YEARLY";
   trial_end_date: string | null;
   subscription_start: string;
