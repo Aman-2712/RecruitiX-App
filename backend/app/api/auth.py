@@ -52,11 +52,11 @@ def register(request: Request, user_in: UserRegister, background_tasks: Backgrou
     org_name = f"{user_in.full_name or user_in.email.split('@')[0]}'s Team"
     org = Organization(
         name=org_name, 
-        current_plan="STARTER", 
-        plan_status="TRIAL",
-        trial_end_date=datetime.utcnow() + timedelta(days=7),
-        subscription_start=datetime.utcnow(),
-        subscription_end=datetime.utcnow() + timedelta(days=7)
+        current_plan="NONE", 
+        plan_status="ONBOARDING",
+        trial_end_date=None,
+        subscription_start=None,
+        subscription_end=None
     )
     db.add(org)
     db.commit()
@@ -289,11 +289,11 @@ def google_auth(request: Request, payload: GoogleTokenRequest, background_tasks:
         org_name = f"{full_name or email.split('@')[0]}'s Team"
         org = Organization(
             name=org_name, 
-            current_plan="STARTER", 
-            plan_status="TRIAL",
-            trial_end_date=datetime.utcnow() + timedelta(days=7),
-            subscription_start=datetime.utcnow(),
-            subscription_end=datetime.utcnow() + timedelta(days=7)
+            current_plan="NONE", 
+            plan_status="ONBOARDING",
+            trial_end_date=None,
+            subscription_start=None,
+            subscription_end=None
         )
         db.add(org)
         db.commit()
@@ -324,11 +324,11 @@ def google_auth(request: Request, payload: GoogleTokenRequest, background_tasks:
         background_tasks.add_task(send_admin_notification, user.email, user.full_name)
         
     if user.organization and user.organization.current_plan == "NONE" and user.organization.plan_status == "INACTIVE":
-        user.organization.current_plan = "STARTER"
-        user.organization.plan_status = "TRIAL"
-        user.organization.trial_end_date = datetime.utcnow() + timedelta(days=7)
-        user.organization.subscription_start = datetime.utcnow()
-        user.organization.subscription_end = datetime.utcnow() + timedelta(days=7)
+        user.organization.current_plan = "NONE"
+        user.organization.plan_status = "ONBOARDING"
+        user.organization.trial_end_date = None
+        user.organization.subscription_start = None
+        user.organization.subscription_end = None
         db.commit()
         
     access_token = create_access_token(subject=user.email)

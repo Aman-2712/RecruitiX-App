@@ -28,7 +28,7 @@ export default function PricingPage() {
         "Bulk Resume Upload (up to 15 at once)"
       ],
       unlocked: [true, true, true, true, true, true, false, false, false, false, false],
-      cta: "Start 7-Day Free Trial",
+      cta: "Start 1-Day Free Trial",
       popular: false,
       color: "border-slate-200 bg-white"
     },

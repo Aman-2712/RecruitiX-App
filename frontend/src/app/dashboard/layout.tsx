@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Bot, LayoutDashboard, Briefcase, BarChart3, LogOut, User, Menu, X, CreditCard, Users } from "lucide-react";
+import { Bot, LayoutDashboard, Briefcase, BarChart3, LogOut, User, Menu, X, CreditCard, Users, Sparkles } from "lucide-react";
 import { api, User as UserType } from "@/lib/api";
 import Logo from "@/components/Logo";
 
@@ -11,6 +11,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const router = useRouter();
   const pathname = usePathname();
   const [currentUser, setCurrentUser] = useState<UserType | null>(null);
+  const [planStatus, setPlanStatus] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -30,9 +31,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       Promise.all([api.getCurrentUser(), api.getSubscription()])
         .then(([user, sub]) => {
           setCurrentUser(user);
+          setPlanStatus(sub.plan_status);
           localStorage.setItem("hirecue_user", JSON.stringify(user));
           
-          if (sub.plan_status !== "ACTIVE" && sub.plan_status !== "TRIAL" && pathname !== "/dashboard/billing") {
+          if (sub.plan_status !== "ACTIVE" && sub.plan_status !== "TRIAL" && sub.plan_status !== "ONBOARDING" && pathname !== "/dashboard/billing") {
             router.push("/dashboard/billing");
           }
         })
@@ -194,7 +196,48 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       </aside>
 
       {/* Main Workspace */}
-      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden relative">
+        
+        {/* Onboarding Modal Overlay */}
+        {planStatus === "ONBOARDING" && (
+          <div className="absolute inset-0 z-[100] bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-6">
+            <div className="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl flex flex-col items-center text-center space-y-6">
+              <div className="bg-blue-50 p-4 rounded-full text-blue-600">
+                <Sparkles size={32} />
+              </div>
+              <div className="space-y-2">
+                <h2 className="text-2xl font-black text-slate-900">Welcome to Hirecue!</h2>
+                <p className="text-slate-500 text-sm font-medium">To get started, please select your path.</p>
+              </div>
+              <div className="w-full space-y-3">
+                <button 
+                  onClick={async () => {
+                    try {
+                      await api.startTrial();
+                      setPlanStatus("TRIAL");
+                      window.location.reload();
+                    } catch (e) {
+                      alert("Failed to start trial.");
+                    }
+                  }}
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 px-4 rounded-xl transition-all shadow-md"
+                >
+                  Start my 1-Day Free Trial
+                </button>
+                <button 
+                  onClick={() => {
+                    setPlanStatus(null);
+                    router.push("/dashboard/billing");
+                  }}
+                  className="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3.5 px-4 rounded-xl transition-all"
+                >
+                  View Premium Plans
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Mobile Header Bar */}
         <header className="flex md:hidden items-center justify-between border-b border-slate-200 bg-white px-6 py-4 flex-shrink-0">
           <button onClick={() => setSidebarOpen(true)} className="text-slate-500 hover:text-slate-700 focus:outline-none">

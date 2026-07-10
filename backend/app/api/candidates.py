@@ -240,3 +240,47 @@ def delete_candidate(candidate_id: int, db: Session = Depends(get_db), current_u
     db.delete(cand)
     db.commit()
     return None
+
+@router.get("/job/{job_id}/export")
+def export_candidates(
+    job_id: int, 
+    token: Optional[str] = Query(None),
+    bearer_token: Optional[str] = Depends(optional_oauth2_scheme),
+    db: Session = Depends(get_db)
+):
+    current_user = resolve_user_from_token(token or bearer_token, db)
+    plan = current_user.organization.current_plan
+    if plan not in ["GROWTH", "ENTERPRISE"]:
+        raise HTTPException(status_code=403, detail="CSV Export requires GROWTH or ENTERPRISE plan.")
+        
+    candidates = db.query(Candidate).join(Job).filter(
+        Candidate.job_id == job_id,
+        Job.organization_id == current_user.organization_id
+    ).order_by(Candidate.match_score.desc()).all()
+    
+    import csv
+    from io import StringIO
+    from fastapi.responses import StreamingResponse
+    
+    output = StringIO()
+    writer = csv.writer(output)
+    writer.writerow(["Name", "Email", "Phone", "Match Score", "Status", "AI Summary", "AI Concerns"])
+    
+    for cand in candidates:
+        writer.writerow([
+            cand.name, 
+            cand.email, 
+            cand.phone or "", 
+            cand.match_score, 
+            cand.status,
+            cand.ai_summary or "",
+            cand.ai_concerns or ""
+        ])
+        
+    output.seek(0)
+    
+    return StreamingResponse(
+        iter([output.getvalue()]),
+        media_type="text/csv",
+        headers={"Content-Disposition": f"attachment; filename=job_{job_id}_candidates.csv"}
+    )

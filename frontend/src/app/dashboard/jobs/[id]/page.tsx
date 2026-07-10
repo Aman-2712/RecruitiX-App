@@ -66,6 +66,11 @@ export default function JobDetails() {
     setRefreshing(false);
   };
 
+  const handleExportCSV = () => {
+    const token = localStorage.getItem("hirecue_token");
+    window.open(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/api/candidates/job/${jobId}/export?token=${token}`, '_blank');
+  };
+
   const handleAutoClassify = async () => {
     setClassifying(true);
     setError("");
@@ -353,6 +358,15 @@ export default function JobDetails() {
             <div className="bg-slate-50 px-6 py-4 border-b border-slate-150 flex items-center justify-between">
               <h3 className="font-extrabold text-xs text-slate-500 uppercase tracking-wider">Candidate Rank Rankings</h3>
               <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={handleExportCSV}
+                  disabled={candidates.length === 0}
+                  className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 rounded-xl text-xs font-bold transition-all shadow-sm disabled:opacity-50 cursor-pointer"
+                >
+                  <FileText size={14} />
+                  Export CSV
+                </button>
                 <button
                   type="button"
                   onClick={handleAutoClassify}

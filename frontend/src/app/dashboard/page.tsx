@@ -141,7 +141,7 @@ export default function DashboardOverview() {
           <div className="text-sm">
             <span className="font-bold">Test Mode Active!</span> <br/>
             <span className="font-normal text-xs text-emerald-700">
-              You are currently using the platform on a 7-Day Free Trial. Test out the AI features and when you are ready, upgrade your account for future use.
+              You are currently using the platform on a 1-Day Free Trial. Test out the AI features and when you are ready, upgrade your account for future use.
             </span>
           </div>
         </div>

@@ -108,6 +108,27 @@ def get_usage(current_user: User = Depends(get_current_user), db: Session = Depe
         "billing_period_end": usage.billing_period_end
     }
 
+@router.post("/start-trial")
+def start_trial(current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    org = current_user.organization
+    if not org:
+        raise HTTPException(status_code=400, detail="User does not belong to an organization")
+        
+    if org.plan_status != "ONBOARDING":
+        raise HTTPException(status_code=400, detail="Cannot start trial. Organization is not in ONBOARDING status.")
+        
+    org.current_plan = "STARTER"
+    org.plan_status = "TRIAL"
+    org.subscription_start = datetime.datetime.utcnow()
+    org.subscription_end = datetime.datetime.utcnow() + datetime.timedelta(days=1)
+    org.trial_end_date = org.subscription_end
+    db.commit()
+    return {
+        "status": "success",
+        "message": "1-Day Free Trial started.",
+        "trial_end_date": org.trial_end_date
+    }
+
 @router.post("/upgrade")
 def upgrade_subscription(
     req: UpgradeRequest, 

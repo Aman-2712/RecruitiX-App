@@ -382,6 +382,12 @@ export const api = {
     return request<UsageTracking>("/api/billing/usage");
   },
 
+  async startTrial(): Promise<any> {
+    return request<any>("/api/billing/start-trial", {
+      method: "POST",
+    });
+  },
+
   async upgradePlan(planName: string, billingCycle: string = "MONTHLY"): Promise<any> {
     return request<any>("/api/billing/upgrade", {
       method: "POST",
