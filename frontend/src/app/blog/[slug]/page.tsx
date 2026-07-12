@@ -1,6 +1,7 @@
 import { getPostData, getSortedPostsData } from '@/lib/blog';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import Navbar from "@/components/Navbar";
 
 export async function generateStaticParams() {
   const posts = await getSortedPostsData();
@@ -34,11 +35,17 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 py-24">
-      <div className="max-w-3xl mx-auto px-4">
-        <Link href="/blog" className="text-slate-800 hover:underline mb-8 inline-block font-medium">
-          &larr; Back to Blog
-        </Link>
+    <div className="min-h-screen bg-slate-50">
+      <Navbar />
+      <div className="py-24 max-w-3xl mx-auto px-4">
+        <div className="flex gap-4 mb-8">
+          <Link href="/" className="text-slate-800 hover:underline font-medium">
+            &larr; Back to Home
+          </Link>
+          <Link href="/blog" className="text-slate-500 hover:text-slate-800 hover:underline font-medium">
+            Blog Index
+          </Link>
+        </div>
         
         <article className="bg-white rounded-3xl p-8 md:p-12 shadow-sm border border-slate-200">
           <header className="mb-10 text-center">

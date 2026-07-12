@@ -16,10 +16,6 @@ export default function TeamSettingsPage() {
   const [inviteError, setInviteError] = useState("");
   const [inviteSuccess, setInviteSuccess] = useState(false);
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
   const fetchData = async () => {
     try {
       const userStr = localStorage.getItem("hirecue_user");
@@ -35,6 +31,10 @@ export default function TeamSettingsPage() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   const handleInvite = async (e: React.FormEvent) => {
     e.preventDefault();

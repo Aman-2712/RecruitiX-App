@@ -3,30 +3,13 @@
 import Link from "next/link";
 import { ArrowRight, Bot, Cpu, FileText, CheckCircle, Shield, Zap, Briefcase, Sparkles } from "lucide-react";
 import Logo from "@/components/Logo";
+import Navbar from "@/components/Navbar";
 
 export default function LandingPage() {
   return (
     <div className="flex flex-col min-h-screen bg-slate-50">
       {/* Header */}
-      <header className="sticky top-0 z-55 w-full glass border-b border-slate-200/80 px-6 py-4 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2">
-          <Logo className="h-6" />
-        </Link>
-        <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-600">
-          <a href="#features" className="hover:text-blue-600 transition-colors">Features</a>
-          <a href="#workflow" className="hover:text-blue-600 transition-colors">How it Works</a>
-          <Link href="/pricing" className="hover:text-blue-600 transition-colors">Pricing</Link>
-          <Link href="/blog" className="hover:text-blue-600 transition-colors">Blog</Link>
-        </nav>
-        <div className="flex items-center gap-4">
-          <Link href="/login" className="text-sm font-semibold text-slate-700 hover:text-blue-600 transition-colors px-4 py-2">
-            Sign In
-          </Link>
-          <Link href="/register" className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-4 py-2.5 rounded-lg shadow-sm hover:shadow transition-all flex items-center gap-1.5">
-            Get Started <ArrowRight size={15} />
-          </Link>
-        </div>
-      </header>
+      <Navbar />
 
       {/* Hero Section */}
       <section className="relative px-6 pt-20 pb-24 md:pt-28 md:pb-32 max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-16">

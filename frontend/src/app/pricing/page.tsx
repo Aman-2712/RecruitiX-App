@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { Check, Bot, ArrowRight, X, HelpCircle, Shield, Zap, Sparkles } from "lucide-react";
+import Navbar from "@/components/Navbar";
 
 export default function PricingPage() {
   const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">("monthly");
@@ -105,25 +106,13 @@ export default function PricingPage() {
   return (
     <div className="flex flex-col min-h-screen bg-slate-50">
       {/* Navbar */}
-      <header className="sticky top-0 z-55 w-full glass border-b border-slate-200/80 px-6 py-4 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2">
-          <div className="bg-blue-600 text-white p-2 rounded-lg flex items-center justify-center">
-            <Bot size={20} />
-          </div>
-          <span className="text-xl font-bold text-slate-900 tracking-tight">Recruit<span className="text-blue-600">X</span></span>
-        </Link>
-        <div className="flex items-center gap-4">
-          <Link href="/login" className="text-sm font-semibold text-slate-700 hover:text-blue-600 transition-colors px-4 py-2">
-            Sign In
-          </Link>
-          <Link href="/register" className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-4 py-2.5 rounded-lg shadow-sm transition-all flex items-center gap-1.5">
-            Get Started <ArrowRight size={15} />
-          </Link>
-        </div>
-      </header>
+      <Navbar />
 
       {/* Hero */}
-      <section className="text-center py-20 px-6 space-y-6 max-w-4xl mx-auto">
+      <section className="text-center py-20 px-6 space-y-6 max-w-4xl mx-auto relative">
+        <Link href="/" className="absolute left-6 top-8 text-slate-800 hover:underline hidden md:inline-block font-medium">
+          &larr; Back to Home
+        </Link>
         <div className="inline-flex items-center gap-2 bg-blue-50 border border-blue-100 px-3 py-1 rounded-full text-blue-700 text-xs font-semibold uppercase tracking-wider">
           <Sparkles size={12} className="fill-blue-700" /> Subscription Billing Plans
         </div>

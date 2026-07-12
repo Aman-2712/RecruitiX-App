@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { getSortedPostsData } from '@/lib/blog';
+import Navbar from "@/components/Navbar";
 
 export const metadata = {
   title: 'Blog | Hirecue',
@@ -10,8 +11,12 @@ export default async function BlogIndex() {
   const allPostsData = await getSortedPostsData();
 
   return (
-    <div className="min-h-screen bg-slate-50 py-24">
-      <div className="max-w-4xl mx-auto px-4">
+    <div className="min-h-screen bg-slate-50">
+      <Navbar />
+      <div className="py-24 max-w-4xl mx-auto px-4">
+        <Link href="/" className="text-slate-800 hover:underline mb-8 inline-block font-medium">
+          &larr; Back to Home
+        </Link>
         <h1 className="text-4xl font-extrabold text-slate-900 mb-8">The Hirecue Blog</h1>
         <p className="text-xl text-slate-600 mb-12">
           Insights and guides on how AI is transforming recruitment and software engineering.
