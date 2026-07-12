@@ -16,6 +16,10 @@ export default function BillingWorkspace() {
   const [updating, setUpdating] = useState(false);
   const [cycle, setCycle] = useState<"MONTHLY" | "YEARLY">("MONTHLY");
   const [couponCode, setCouponCode] = useState("");
+  const [appliedDiscount, setAppliedDiscount] = useState<number>(0);
+  const [verifiedCouponCode, setVerifiedCouponCode] = useState<string>("");
+  const [couponStatus, setCouponStatus] = useState<"idle" | "validating" | "success" | "error">("idle");
+  const [couponMessage, setCouponMessage] = useState<string>("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
@@ -54,6 +58,26 @@ export default function BillingWorkspace() {
     });
   };
 
+  const handleApplyCoupon = async () => {
+    if (!couponCode) return;
+    setCouponStatus("validating");
+    setCouponMessage("");
+    try {
+      const res = await api.validateCoupon(couponCode);
+      if (res.valid) {
+        setAppliedDiscount(res.discount_percentage);
+        setVerifiedCouponCode(couponCode);
+        setCouponStatus("success");
+        setCouponMessage(`Code applied! ${res.discount_percentage}% off`);
+      }
+    } catch (err: any) {
+      setCouponStatus("error");
+      setCouponMessage(err.message || "Invalid coupon code");
+      setAppliedDiscount(0);
+      setVerifiedCouponCode("");
+    }
+  };
+
   const handleUpgrade = async (planName: string) => {
     setUpdating(true);
     setError("");
@@ -64,7 +88,7 @@ export default function BillingWorkspace() {
         throw new Error("Razorpay SDK failed to load. Please check your connection.");
       }
 
-      const orderData = await api.createRazorpayOrder(planName, cycle, couponCode);
+      const orderData = await api.createRazorpayOrder(planName, cycle, verifiedCouponCode || undefined);
       
       const options = {
         key: orderData.key_id,
@@ -285,15 +309,35 @@ export default function BillingWorkspace() {
                 <p className="text-xs text-slate-500 font-medium mt-0.5">Select a new plan to unlock premium AI recruitment features</p>
               </div>
 
-              <div className="flex flex-col sm:flex-row items-center gap-3">
-                <div className="w-full sm:w-auto relative">
-                  <input
-                    type="text"
-                    value={couponCode}
-                    onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
-                    placeholder="Promo Code"
-                    className="w-full sm:w-40 px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-bold text-slate-900 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100 placeholder:text-slate-400 placeholder:font-medium transition-all"
-                  />
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+                <div className="w-full sm:w-auto flex flex-col gap-1">
+                  <div className="flex relative">
+                    <input
+                      type="text"
+                      value={couponCode}
+                      onChange={(e) => {
+                        setCouponCode(e.target.value.toUpperCase());
+                        setCouponStatus("idle");
+                        setCouponMessage("");
+                        setAppliedDiscount(0);
+                        setVerifiedCouponCode("");
+                      }}
+                      placeholder="Promo Code"
+                      className="w-full sm:w-48 px-3 py-1.5 pr-16 rounded-lg border border-slate-200 text-xs font-bold text-slate-900 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100 placeholder:text-slate-400 placeholder:font-medium transition-all"
+                    />
+                    <button 
+                      onClick={handleApplyCoupon}
+                      disabled={couponStatus === "validating" || !couponCode}
+                      className="absolute right-1 top-1 bottom-1 px-3 bg-slate-900 hover:bg-slate-800 disabled:bg-slate-300 text-white text-[10px] font-bold rounded-md transition-colors"
+                    >
+                      {couponStatus === "validating" ? "..." : "Apply"}
+                    </button>
+                  </div>
+                  {couponMessage && (
+                    <span className={`text-[10px] font-bold px-1 ${couponStatus === "success" ? "text-emerald-600" : "text-red-500"}`}>
+                      {couponMessage}
+                    </span>
+                  )}
                 </div>
                 {/* Toggle Billing Cycle */}
                 <div className="flex items-center gap-1 bg-slate-100 border border-slate-200 p-1 rounded-xl w-full sm:w-auto justify-center">
@@ -340,8 +384,15 @@ export default function BillingWorkspace() {
                         )}
                       </div>
                       
-                      <div className="flex items-baseline gap-0.5">
-                        <span className="text-2xl font-black text-slate-900">₹{price.toLocaleString()}</span>
+                      <div className="flex items-baseline gap-1">
+                        {appliedDiscount > 0 ? (
+                          <>
+                            <span className="text-sm font-black text-slate-400 line-through decoration-red-400">₹{price.toLocaleString()}</span>
+                            <span className="text-2xl font-black text-emerald-600">₹{((price * (1 - appliedDiscount / 100))).toLocaleString(undefined, {maximumFractionDigits: 0})}</span>
+                          </>
+                        ) : (
+                          <span className="text-2xl font-black text-slate-900">₹{price.toLocaleString()}</span>
+                        )}
                         <span className="text-[10px] text-slate-500 font-bold">{cycle === "MONTHLY" ? "/mo" : "/yr"}</span>
                       </div>
 

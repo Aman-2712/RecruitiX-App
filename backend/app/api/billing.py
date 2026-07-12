@@ -21,6 +21,24 @@ class WebhookRequest(BaseModel):
     plan_name: str
     billing_cycle: str = "MONTHLY"
 
+class ValidateCouponRequest(BaseModel):
+    coupon_code: str
+
+@router.post("/validate-coupon")
+def validate_coupon(req: ValidateCouponRequest, db: Session = Depends(get_db)):
+    promo = db.query(PromoCode).filter(PromoCode.code == req.coupon_code.upper()).first()
+    if not promo or not promo.is_active:
+        raise HTTPException(status_code=400, detail="Invalid promo code")
+    if promo.current_uses >= promo.max_uses:
+        raise HTTPException(status_code=400, detail="This promo code has reached its usage limit")
+    if promo.expires_at and promo.expires_at < datetime.datetime.utcnow():
+        raise HTTPException(status_code=400, detail="This promo code has expired")
+        
+    return {
+        "valid": True,
+        "discount_percentage": promo.discount_percentage
+    }
+
 @router.get("/plans")
 def get_plans(db: Session = Depends(get_db)):
     plans = db.query(SubscriptionPlan).all()
