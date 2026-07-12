@@ -13,6 +13,7 @@ router = APIRouter(prefix="/api/billing", tags=["billing"])
 class UpgradeRequest(BaseModel):
     plan_name: str # STARTER, GROWTH, ENTERPRISE
     billing_cycle: str = "MONTHLY" # MONTHLY, YEARLY
+    coupon_code: Optional[str] = None
 
 class WebhookRequest(BaseModel):
     organization_id: int
@@ -271,7 +272,7 @@ def api_create_razorpay_order(
     if not plan:
         raise HTTPException(status_code=404, detail=f"Plan {req.plan_name} not found")
         
-    order_data = create_razorpay_order(org.id, plan.name, req.billing_cycle)
+    order_data = create_razorpay_order(org.id, plan.name, req.billing_cycle, req.coupon_code)
     return order_data
 
 @router.post("/webhook/razorpay")

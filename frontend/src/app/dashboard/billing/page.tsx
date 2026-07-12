@@ -15,6 +15,7 @@ export default function BillingWorkspace() {
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
   const [cycle, setCycle] = useState<"MONTHLY" | "YEARLY">("MONTHLY");
+  const [couponCode, setCouponCode] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
@@ -63,7 +64,7 @@ export default function BillingWorkspace() {
         throw new Error("Razorpay SDK failed to load. Please check your connection.");
       }
 
-      const orderData = await api.createRazorpayOrder(planName, cycle);
+      const orderData = await api.createRazorpayOrder(planName, cycle, couponCode);
       
       const options = {
         key: orderData.key_id,
@@ -278,30 +279,41 @@ export default function BillingWorkspace() {
 
           {/* Upgrade plan selection portal */}
           <div className="space-y-6">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4">
               <div>
                 <h3 className="font-bold text-slate-900 text-lg">Change Subscription Plan</h3>
                 <p className="text-xs text-slate-500 font-medium mt-0.5">Select a new plan to unlock premium AI recruitment features</p>
               </div>
 
-              {/* Toggle Billing Cycle */}
-              <div className="flex items-center gap-2 bg-slate-100 border border-slate-200 p-1 rounded-xl">
-                <button
-                  onClick={() => setCycle("MONTHLY")}
-                  className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
-                    cycle === "MONTHLY" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-900"
-                  }`}
-                >
-                  Monthly
-                </button>
-                <button
-                  onClick={() => setCycle("YEARLY")}
-                  className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
-                    cycle === "YEARLY" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-900"
-                  }`}
-                >
-                  Yearly (Save 20%)
-                </button>
+              <div className="flex flex-col sm:flex-row items-center gap-3">
+                <div className="w-full sm:w-auto relative">
+                  <input
+                    type="text"
+                    value={couponCode}
+                    onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                    placeholder="Promo Code"
+                    className="w-full sm:w-40 px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-bold text-slate-900 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100 placeholder:text-slate-400 placeholder:font-medium transition-all"
+                  />
+                </div>
+                {/* Toggle Billing Cycle */}
+                <div className="flex items-center gap-1 bg-slate-100 border border-slate-200 p-1 rounded-xl w-full sm:w-auto justify-center">
+                  <button
+                    onClick={() => setCycle("MONTHLY")}
+                    className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
+                      cycle === "MONTHLY" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-900"
+                    }`}
+                  >
+                    Monthly
+                  </button>
+                  <button
+                    onClick={() => setCycle("YEARLY")}
+                    className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
+                      cycle === "YEARLY" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-900"
+                    }`}
+                  >
+                    Yearly (Save 20%)
+                  </button>
+                </div>
               </div>
             </div>
 
