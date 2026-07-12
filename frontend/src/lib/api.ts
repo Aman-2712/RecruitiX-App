@@ -378,6 +378,13 @@ export const api = {
     return request<Organization>("/api/billing/subscription");
   },
 
+  async validateCoupon(couponCode: string): Promise<{valid: boolean, discount_percentage: number}> {
+    return request<{valid: boolean, discount_percentage: number}>("/api/billing/validate-coupon", {
+      method: "POST",
+      body: JSON.stringify({ coupon_code: couponCode }),
+    });
+  },
+
   async getUsage(): Promise<UsageTracking> {
     return request<UsageTracking>("/api/billing/usage");
   },
