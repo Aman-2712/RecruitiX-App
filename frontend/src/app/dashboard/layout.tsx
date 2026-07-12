@@ -105,25 +105,25 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </nav>
 
         {/* Footer User Info */}
-        <div className="p-4 border-t border-slate-100 bg-slate-50/50 space-y-3">
+        <div className="p-4 border-t border-slate-200 bg-[#162128] space-y-4">
           <div className="flex items-center gap-3">
-            <div className="h-9 w-9 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-sm">
+            <div className="h-10 w-10 rounded-full bg-[#1e2d36] text-teal-500 flex items-center justify-center font-bold text-lg shadow-inner border border-[#2a3f4c]">
               {currentUser?.full_name ? currentUser.full_name.charAt(0).toUpperCase() : "U"}
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-bold text-slate-800 truncate leading-none mb-1">
-                {currentUser?.full_name || "User Profile"}
+              <p className="text-sm font-bold text-amber-500 truncate leading-none mb-1.5 drop-shadow-sm">
+                {currentUser?.full_name || "User Profile"}.
               </p>
-              <span className="inline-block bg-blue-50 text-blue-700 px-2 py-0.5 rounded text-[10px] font-bold border border-blue-100 uppercase">
-                {currentUser?.role?.replace("_", " ")}
+              <span className="inline-block bg-transparent text-teal-600/90 px-2 py-0.5 rounded text-[9px] font-black tracking-widest border border-teal-900/50 uppercase">
+                {currentUser?.role?.replace("_", " ") || "USER"}
               </span>
             </div>
           </div>
           <button
             onClick={handleLogout}
-            className="w-full flex items-center justify-center gap-2 px-3 py-2 border border-slate-200 text-slate-600 hover:text-red-600 hover:bg-red-50 hover:border-red-100 rounded-xl text-xs font-bold transition-all"
+            className="w-full flex items-center justify-center gap-2 px-3 py-2.5 border border-teal-900/40 text-slate-300 hover:text-white hover:bg-teal-900/20 hover:border-teal-700/50 rounded-full text-xs font-bold transition-all shadow-sm"
           >
-            <LogOut size={14} />
+            <LogOut size={14} className="text-slate-400" />
             Log Out
           </button>
         </div>
@@ -171,25 +171,25 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           })}
         </nav>
 
-        <div className="p-4 border-t border-slate-100 bg-slate-50/50 space-y-3">
+        <div className="p-4 border-t border-slate-200 bg-[#162128] space-y-4">
           <div className="flex items-center gap-3">
-            <div className="h-9 w-9 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-sm">
+            <div className="h-10 w-10 rounded-full bg-[#1e2d36] text-teal-500 flex items-center justify-center font-bold text-lg shadow-inner border border-[#2a3f4c]">
               {currentUser?.full_name ? currentUser.full_name.charAt(0).toUpperCase() : "U"}
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-bold text-slate-800 truncate leading-none mb-1">
-                {currentUser?.full_name}
+              <p className="text-sm font-bold text-amber-500 truncate leading-none mb-1.5 drop-shadow-sm">
+                {currentUser?.full_name || "User Profile"}.
               </p>
-              <span className="inline-block bg-blue-50 text-blue-700 px-2 py-0.5 rounded text-[10px] font-bold border border-blue-100 uppercase">
-                {currentUser?.role?.replace("_", " ")}
+              <span className="inline-block bg-transparent text-teal-600/90 px-2 py-0.5 rounded text-[9px] font-black tracking-widest border border-teal-900/50 uppercase">
+                {currentUser?.role?.replace("_", " ") || "USER"}
               </span>
             </div>
           </div>
           <button
             onClick={handleLogout}
-            className="w-full flex items-center justify-center gap-2 px-3 py-2 border border-slate-200 text-slate-600 hover:text-red-600 hover:bg-red-50 hover:border-red-100 rounded-xl text-xs font-bold transition-all"
+            className="w-full flex items-center justify-center gap-2 px-3 py-2.5 border border-teal-900/40 text-slate-300 hover:text-white hover:bg-teal-900/20 hover:border-teal-700/50 rounded-full text-xs font-bold transition-all shadow-sm"
           >
-            <LogOut size={14} />
+            <LogOut size={14} className="text-slate-400" />
             Log Out
           </button>
         </div>
