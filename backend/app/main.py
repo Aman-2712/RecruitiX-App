@@ -78,8 +78,9 @@ app.include_router(team_router)
 @app.on_event("startup")
 def startup_event():
     from app.core.database import SessionLocal
-    from app.models import SubscriptionPlan, User, Organization, UsageTracking, Job
+    from app.models import SubscriptionPlan, User, Organization, UsageTracking, Job, PromoCode
     import json
+    import datetime
     
     db = SessionLocal()
     try:
@@ -189,6 +190,20 @@ def startup_event():
             jobs = db.query(Job).filter(Job.organization_id == None).all()
             for j in jobs:
                 j.organization_id = org.id
+            db.commit()
+
+        # 3. Seed PromoCode
+        founder_promo = db.query(PromoCode).filter(PromoCode.code == "FOUNDER50").first()
+        if not founder_promo:
+            founder_promo = PromoCode(
+                code="FOUNDER50",
+                discount_percentage=50,
+                max_uses=50,
+                current_uses=0,
+                expires_at=datetime.datetime.utcnow() + datetime.timedelta(days=30),
+                is_active=True
+            )
+            db.add(founder_promo)
             db.commit()
             
     finally:

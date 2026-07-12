@@ -144,3 +144,15 @@ class CandidateEducation(Base):
 
     # Relationships
     candidate = relationship("Candidate", back_populates="educations")
+
+class PromoCode(Base):
+    __tablename__ = "promo_codes"
+
+    id = Column(Integer, primary_key=True, index=True)
+    code = Column(String, unique=True, index=True, nullable=False)
+    discount_percentage = Column(Integer, default=50)
+    max_uses = Column(Integer, default=50)
+    current_uses = Column(Integer, default=0)
+    expires_at = Column(DateTime, nullable=True)
+    is_active = Column(Boolean, default=True)
+    created_at = Column(DateTime, default=datetime.datetime.utcnow)

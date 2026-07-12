@@ -196,3 +196,19 @@ def send_team_join_notification(admin_email: str, admin_name: str, joined_user: 
     </div>
     """
     return send_email(admin_email, subject, html_content)
+
+def send_promo_exhausted_notification(promo_code: str):
+    admin_email = "shaiknadeem271226@gmail.com"
+    subject = f"⚠️ Promo Code Exhausted: {promo_code}"
+    html_content = f"""
+    <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 12px;">
+        <h2 style="color: #1e3a8a; margin-bottom: 20px;">Promo Code Limit Reached! 🚨</h2>
+        <p style="font-size: 14px; color: #475569; line-height: 1.5;">
+            The promotional offer <strong>{promo_code}</strong> has just hit its maximum usage limit or expired.
+        </p>
+        <p style="font-size: 14px; color: #475569; line-height: 1.5;">
+            Users will no longer be able to claim this discount. You can set up a new offer by adding a new promo code to the database!
+        </p>
+    </div>
+    """
+    return send_email(admin_email, subject, html_content)

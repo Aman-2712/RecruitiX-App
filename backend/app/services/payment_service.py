@@ -5,6 +5,10 @@ import json
 import razorpay
 from fastapi import HTTPException, Request
 from pydantic_settings import BaseSettings
+import datetime
+from sqlalchemy.orm import Session
+from app.models import PromoCode
+from fastapi import HTTPException
 
 class PaymentSettings(BaseSettings):
     RAZORPAY_KEY_ID: str = os.getenv("RAZORPAY_KEY_ID", "rzp_test_placeholder")
@@ -15,7 +19,7 @@ class PaymentSettings(BaseSettings):
 settings = PaymentSettings()
 client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
 
-def create_razorpay_order(organization_id: int, plan_name: str, billing_cycle: str, coupon_code: str = None):
+def create_razorpay_order(organization_id: int, plan_name: str, billing_cycle: str, coupon_code: str = None, db: Session = None):
     plan_prices = {
         "STARTER": 2999,
         "GROWTH": 9999,
@@ -26,8 +30,19 @@ def create_razorpay_order(organization_id: int, plan_name: str, billing_cycle: s
     if billing_cycle.upper() == "YEARLY":
         amount_inr = amount_inr * 10
         
-    if coupon_code and coupon_code.upper() == "FOUNDER50":
-        amount_inr = amount_inr // 2
+    if coupon_code:
+        if not db:
+            raise HTTPException(status_code=500, detail="Database session not provided for coupon validation")
+        promo = db.query(PromoCode).filter(PromoCode.code == coupon_code.upper()).first()
+        if not promo or not promo.is_active:
+            raise HTTPException(status_code=400, detail="Invalid promo code")
+        if promo.current_uses >= promo.max_uses:
+            raise HTTPException(status_code=400, detail="This promo code has reached its usage limit")
+        if promo.expires_at and promo.expires_at < datetime.datetime.utcnow():
+            raise HTTPException(status_code=400, detail="This promo code has expired")
+            
+        discount = promo.discount_percentage
+        amount_inr = int(amount_inr * (1 - (discount / 100.0)))
         
     try:
         order_data = {
@@ -41,6 +56,9 @@ def create_razorpay_order(organization_id: int, plan_name: str, billing_cycle: s
             }
         }
         
+        if coupon_code:
+            order_data["notes"]["coupon_code"] = coupon_code.upper()
+            
         order = client.order.create(data=order_data)
         
         # Return order ID and other metadata required by frontend

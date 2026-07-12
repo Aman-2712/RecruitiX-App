@@ -6,8 +6,9 @@ from pydantic import BaseModel
 from typing import List, Optional
 from app.core.database import get_db
 from app.core.security import get_current_user
-from app.models import SubscriptionPlan, Organization, UsageTracking, User, Job
+from app.models import SubscriptionPlan, Organization, UsageTracking, User, Job, PromoCode
 from app.services.payment_service import create_razorpay_order, verify_razorpay_signature
+from app.services.email_service import send_promo_exhausted_notification
 router = APIRouter(prefix="/api/billing", tags=["billing"])
 
 class UpgradeRequest(BaseModel):
@@ -272,7 +273,7 @@ def api_create_razorpay_order(
     if not plan:
         raise HTTPException(status_code=404, detail=f"Plan {req.plan_name} not found")
         
-    order_data = create_razorpay_order(org.id, plan.name, req.billing_cycle, req.coupon_code)
+    order_data = create_razorpay_order(org.id, plan.name, req.billing_cycle, req.coupon_code, db)
     return order_data
 
 @router.post("/webhook/razorpay")
@@ -307,6 +308,7 @@ async def razorpay_webhook(request: Request, db: Session = Depends(get_db)):
             org_id_str = notes.get("organization_id")
             plan_name = notes.get("plan_name")
             billing_cycle = notes.get("billing_cycle", "MONTHLY")
+            coupon_code = notes.get("coupon_code")
             
             if org_id_str and plan_name:
                 org = db.query(Organization).filter(Organization.id == int(org_id_str)).first()
@@ -325,6 +327,16 @@ async def razorpay_webhook(request: Request, db: Session = Depends(get_db)):
                             usage.billing_period_end = org.subscription_end
                             usage.resumes_processed = 0
                             
+                        if coupon_code:
+                            promo = db.query(PromoCode).filter(PromoCode.code == coupon_code).first()
+                            if promo:
+                                promo.current_uses += 1
+                                if promo.current_uses == promo.max_uses:
+                                    try:
+                                        send_promo_exhausted_notification(promo.code)
+                                    except Exception as e:
+                                        print(f"Error sending promo email: {e}")
+                                        
                         db.commit()
         
         return {"status": "success"}
