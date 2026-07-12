@@ -38,9 +38,13 @@ export default function LoginPage() {
         setTimeout(() => {
           const btnEl = document.getElementById("google-button");
           if (btnEl && (window as any).google) {
+            // Dynamically calculate width based on container (max 400px per Google's API)
+            const containerWidth = btnEl.offsetWidth || 300;
+            const buttonWidth = Math.min(containerWidth, 400);
+
             (window as any).google.accounts.id.renderButton(
               btnEl,
-              { theme: "outline", size: "large", text: "signin_with", width: 382 }
+              { theme: "outline", size: "large", text: "signin_with", width: buttonWidth }
             );
           }
         }, 300);
