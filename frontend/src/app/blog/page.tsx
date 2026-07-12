@@ -13,7 +13,7 @@ export default async function BlogIndex() {
   return (
     <div className="min-h-screen bg-slate-50">
       <Navbar />
-      <div className="py-24 max-w-4xl mx-auto px-4">
+      <div className="py-16 md:py-24 max-w-4xl mx-auto px-4">
         <Link href="/" className="text-slate-800 hover:underline mb-8 inline-block font-medium">
           &larr; Back to Home
         </Link>

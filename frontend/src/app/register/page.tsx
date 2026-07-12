@@ -85,7 +85,7 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="flex min-h-screen bg-slate-50 items-center justify-center p-6">
+    <div className="flex min-h-screen bg-slate-50 items-center justify-center p-4 sm:p-6 lg:p-12">
       <div className="w-full max-w-md bg-white rounded-2xl border border-slate-200 shadow-xl p-8 space-y-6 glow">
         {/* Brand */}
         <div className="flex flex-col items-center text-center space-y-2">

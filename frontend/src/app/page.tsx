@@ -12,7 +12,7 @@ export default function LandingPage() {
       <Navbar />
 
       {/* Hero Section */}
-      <section className="relative px-6 pt-20 pb-24 md:pt-28 md:pb-32 max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-16">
+      <section className="relative px-6 pt-12 pb-16 md:pt-28 md:pb-32 max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-12 md:gap-16">
         <div className="flex-1 space-y-6 text-center lg:text-left">
           <div className="inline-flex items-center gap-2 bg-blue-50 border border-blue-100 px-3 py-1 rounded-full text-blue-700 text-xs font-semibold uppercase tracking-wider">
             <Zap size={12} className="fill-blue-700" /> Introducing Hirecue v1.0
@@ -61,18 +61,18 @@ export default function LandingPage() {
               </div>
 
               {/* Grid of Scores */}
-              <div className="grid grid-cols-3 gap-4">
-                <div className="bg-slate-50 border border-slate-100 p-4 rounded-xl text-center">
-                  <span className="text-xs font-semibold text-slate-500 block uppercase">Skill Match</span>
-                  <span className="text-xl font-bold text-slate-800">95%</span>
+              <div className="grid grid-cols-3 gap-2 md:gap-4">
+                <div className="bg-slate-50 border border-slate-100 p-2 md:p-4 rounded-xl text-center">
+                  <span className="text-[10px] md:text-xs font-semibold text-slate-500 block uppercase">Skill Match</span>
+                  <span className="text-lg md:text-xl font-bold text-slate-800">95%</span>
                 </div>
-                <div className="bg-slate-50 border border-slate-100 p-4 rounded-xl text-center">
-                  <span className="text-xs font-semibold text-slate-500 block uppercase">Experience</span>
-                  <span className="text-xl font-bold text-slate-800">88%</span>
+                <div className="bg-slate-50 border border-slate-100 p-2 md:p-4 rounded-xl text-center">
+                  <span className="text-[10px] md:text-xs font-semibold text-slate-500 block uppercase">Experience</span>
+                  <span className="text-lg md:text-xl font-bold text-slate-800">88%</span>
                 </div>
-                <div className="bg-slate-50 border border-slate-100 p-4 rounded-xl text-center">
-                  <span className="text-xs font-semibold text-slate-500 block uppercase">Relevance</span>
-                  <span className="text-xl font-bold text-slate-800">93%</span>
+                <div className="bg-slate-50 border border-slate-100 p-2 md:p-4 rounded-xl text-center">
+                  <span className="text-[10px] md:text-xs font-semibold text-slate-500 block uppercase">Relevance</span>
+                  <span className="text-lg md:text-xl font-bold text-slate-800">93%</span>
                 </div>
               </div>
 
@@ -102,7 +102,7 @@ export default function LandingPage() {
       </section>
 
       {/* Stats Section */}
-      <section className="bg-slate-900 text-white py-16 px-6">
+      <section className="bg-slate-900 text-white py-12 md:py-16 px-6">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
           <div className="space-y-2">
             <span className="text-4xl lg:text-5xl font-black text-blue-400">80%</span>
@@ -123,7 +123,7 @@ export default function LandingPage() {
       </section>
 
       {/* Features Grid */}
-      <section id="features" className="py-24 px-6 max-w-7xl mx-auto">
+      <section id="features" className="py-16 md:py-24 px-6 max-w-7xl mx-auto">
         <div className="text-center space-y-4 mb-20">
           <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900">
             Everything you need for smart recruiting.
@@ -198,7 +198,7 @@ export default function LandingPage() {
       </section>
 
       {/* How it Works Section */}
-      <section id="workflow" className="py-24 px-6 bg-slate-100 border-t border-slate-200">
+      <section id="workflow" className="py-16 md:py-24 px-6 bg-slate-100 border-t border-slate-200">
         <div className="max-w-7xl mx-auto space-y-16">
           <div className="text-center space-y-4 max-w-2xl mx-auto">
             <div className="inline-flex items-center gap-2 bg-blue-50 border border-blue-100 px-3 py-1 rounded-full text-blue-700 text-xs font-semibold uppercase tracking-wider">

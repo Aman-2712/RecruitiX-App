@@ -109,7 +109,7 @@ export default function PricingPage() {
       <Navbar />
 
       {/* Hero */}
-      <section className="text-center py-20 px-6 space-y-6 max-w-4xl mx-auto relative">
+      <section className="text-center py-12 md:py-20 px-6 space-y-6 max-w-4xl mx-auto relative">
         <Link href="/" className="absolute left-6 top-8 text-slate-800 hover:underline hidden md:inline-block font-medium">
           &larr; Back to Home
         </Link>
@@ -152,7 +152,7 @@ export default function PricingPage() {
       </section>
 
       {/* Plan Grid */}
-      <section className="px-6 pb-24 max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+      <section className="px-6 pb-16 md:pb-24 max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
         {plans.map((p) => {
           const isEnterprise = p.name.includes("Enterprise");
           const price = billingCycle === "monthly" ? p.monthlyPrice : p.yearlyPrice;
@@ -227,14 +227,15 @@ export default function PricingPage() {
       </section>
 
       {/* Feature comparison table */}
-      <section className="px-6 py-20 border-t border-slate-200 max-w-7xl mx-auto space-y-12">
+      <section className="px-6 py-16 md:py-20 border-t border-slate-200 max-w-7xl mx-auto space-y-8 md:space-y-12">
         <div className="text-center space-y-2">
           <h2 className="text-2xl font-black text-slate-900 tracking-tight">Plan comparison metrics</h2>
           <p className="text-xs text-slate-500 font-semibold">Decide which plan matches your talent acquisition volumes</p>
         </div>
 
         <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden premium-border">
-          <table className="w-full text-left border-collapse">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse min-w-[600px] md:min-w-0">
             <thead>
               <tr className="bg-slate-50 text-[10px] font-black text-slate-500 uppercase tracking-wider border-b border-slate-150">
                 <th className="p-5">Platform Features</th>
@@ -271,11 +272,12 @@ export default function PricingPage() {
               ))}
             </tbody>
           </table>
+          </div>
         </div>
       </section>
 
       {/* FAQ */}
-      <section className="px-6 py-20 bg-slate-100 border-t border-slate-200">
+      <section className="px-6 py-16 md:py-20 bg-slate-100 border-t border-slate-200">
         <div className="max-w-4xl mx-auto space-y-12">
           <div className="text-center space-y-2">
             <h2 className="text-2xl font-black text-slate-900 tracking-tight">Frequently Asked Questions</h2>

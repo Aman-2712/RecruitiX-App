@@ -15,11 +15,11 @@ export default function Navbar() {
         <Link href="/pricing" className="hover:text-blue-600 transition-colors">Pricing</Link>
         <Link href="/blog" className="hover:text-blue-600 transition-colors">Blog</Link>
       </nav>
-      <div className="flex items-center gap-4">
-        <Link href="/login" className="text-sm font-semibold text-slate-700 hover:text-blue-600 transition-colors px-4 py-2">
+      <div className="flex items-center gap-2 md:gap-4">
+        <Link href="/login" className="hidden sm:block text-sm font-semibold text-slate-700 hover:text-blue-600 transition-colors px-4 py-2">
           Sign In
         </Link>
-        <Link href="/register" className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-4 py-2.5 rounded-lg shadow-sm hover:shadow transition-all flex items-center gap-1.5">
+        <Link href="/register" className="bg-blue-600 hover:bg-blue-700 text-white text-xs md:text-sm font-semibold px-3 py-2 md:px-4 md:py-2.5 rounded-lg shadow-sm hover:shadow transition-all flex items-center gap-1.5">
           Get Started <ArrowRight size={15} />
         </Link>
       </div>
