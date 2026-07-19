@@ -28,7 +28,7 @@ export default function PricingPage() {
         "Email Support",
         "Bulk Resume Upload (up to 15 at once)"
       ],
-      unlocked: [true, true, true, true, true, true, false, false, false, false, false],
+      unlocked: [true, true, true, true, false, true, false, false, false, false, false],
       cta: "Start 1-Day Free Trial",
       popular: false,
       color: "border-slate-200 bg-white"
@@ -56,7 +56,7 @@ export default function PricingPage() {
         "API Integration Access",
         "Hiring Funnel Analytics"
       ],
-      unlocked: [true, true, true, true, true, true, true, true, true, true, true],
+      unlocked: [true, true, true, true, true, true, true, true, true, true, false],
       cta: "Choose Growth Plan",
       popular: true,
       color: "border-blue-600 bg-white shadow-xl shadow-blue-600/5 ring-1 ring-blue-100"
