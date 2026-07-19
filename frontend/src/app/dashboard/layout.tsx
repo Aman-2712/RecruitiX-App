@@ -112,11 +112,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 href={item.href}
                 className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
                   isActive
-                    ? "bg-blue-50 text-blue-600 border-l-4 border-blue-600 pl-3"
+                    ? currentPlan === "GROWTH"
+                      ? "bg-blue-600 text-white shadow-md"
+                      : "bg-blue-50 text-blue-600 border-l-4 border-blue-600 pl-3"
                     : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
                 }`}
               >
-                <Icon size={18} className={isActive ? "text-blue-600" : "text-slate-400"} />
+                <Icon size={18} className={isActive ? currentPlan === "GROWTH" ? "text-inherit" : "text-blue-600" : "text-slate-400"} />
                 {item.name}
               </Link>
             );
@@ -179,11 +181,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 onClick={() => setSidebarOpen(false)}
                 className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
                   isActive
-                    ? "bg-blue-50 text-blue-600 border-l-4 border-blue-600 pl-3"
+                    ? currentPlan === "GROWTH"
+                      ? "bg-blue-600 text-white shadow-md"
+                      : "bg-blue-50 text-blue-600 border-l-4 border-blue-600 pl-3"
                     : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
                 }`}
               >
-                <Icon size={18} className={isActive ? "text-blue-600" : "text-slate-400"} />
+                <Icon size={18} className={isActive ? currentPlan === "GROWTH" ? "text-inherit" : "text-blue-600" : "text-slate-400"} />
                 {item.name}
               </Link>
             );
