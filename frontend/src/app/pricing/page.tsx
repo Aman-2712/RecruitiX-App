@@ -188,7 +188,7 @@ export default function PricingPage() {
                 {/* Limits */}
                 <ul className={`space-y-3.5 pt-4 border-t ${p.name === "Growth Plan" ? "border-blue-100/20" : isEnterprise ? "border-slate-800" : "border-slate-200"}`}>
                   {p.limits.map((l) => (
-                    <li key={l} className={`flex items-center gap-2.5 text-sm font-bold ${p.name === "Growth Plan" ? "text-white" : isEnterprise ? "text-slate-200" : "text-slate-900"}`}>
+                    <li key={l} className={`flex items-center gap-2.5 text-sm font-bold ${p.name === "Growth Plan" ? "text-slate-900" : isEnterprise ? "text-slate-200" : "text-slate-900"}`}>
                       <Zap size={14} className={p.name === "Growth Plan" ? "text-blue-500" : isEnterprise ? "text-blue-500" : "text-blue-600"} />
                       {l}
                     </li>
@@ -200,7 +200,7 @@ export default function PricingPage() {
                   {p.features.map((f) => (
                     <li key={f} className="flex items-center gap-2.5 text-sm font-semibold">
                       <Check size={14} className={p.name === "Growth Plan" ? "text-blue-500" : "text-emerald-500 flex-shrink-0"} />
-                      <span className={p.name === "Growth Plan" ? "text-slate-200" : isEnterprise ? "text-slate-300" : "text-slate-600"}>{f}</span>
+                      <span className={p.name === "Growth Plan" ? "text-slate-400" : isEnterprise ? "text-slate-300" : "text-slate-600"}>{f}</span>
                     </li>
                   ))}
                 </ul>
