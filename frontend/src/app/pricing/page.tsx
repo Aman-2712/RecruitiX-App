@@ -162,7 +162,7 @@ export default function PricingPage() {
           return (
             <div 
               key={p.name} 
-              className={`rounded-2xl border p-8 flex flex-col justify-between relative transition-all shadow-sm hover:shadow-md ${p.color}`}
+              className={`rounded-2xl border p-8 flex flex-col justify-between relative transition-all shadow-sm hover:shadow-md ${p.color} ${p.name === "Growth Plan" ? "theme-growth" : ""}`}
             >
               {p.popular && (
                 <span className="absolute -top-3.5 right-6 bg-blue-600 text-white border-4 border-slate-50 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider">

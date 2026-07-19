@@ -26,7 +26,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     }
 
     try {
-      setCurrentUser(JSON.parse(userStr));
+      const userObj = JSON.parse(userStr);
+      setCurrentUser(userObj);
+      
+      // Try to get current plan from local storage if available
+      if (userObj && userObj.organization && userObj.organization.current_plan) {
+        setCurrentPlan(userObj.organization.current_plan);
+      }
       
       // Proactively fetch fresh user details and subscription
       Promise.all([api.getCurrentUser(), api.getSubscription()])
