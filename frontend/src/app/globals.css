@@ -2,44 +2,84 @@
 @plugin "@tailwindcss/typography";
 
 @theme {
-  /* Earthy Teal & Sand Palette */
-  --color-white: #1e2522;                  /* Main Card Background */
-  --color-slate-50: #2C3531;               /* Page Main Background */
-  --color-slate-100: #1a201d;              /* Muted secondary background */
-  --color-slate-200: #116466;              /* Deep Teal borders */
-  --color-slate-300: #167a7d;              /* Active border / hover elements */
-  --color-slate-400: #D9B08C;              /* Muted Sand text */
-  --color-slate-500: #e2c1a4;              /* Secondary description text */
-  --color-slate-600: rgba(209, 232, 226, 0.6); /* Medium bright text (dimmed Mint) */
-  --color-slate-700: #D1E8E2;              /* High emphasis body text (Mint) */
-  --color-slate-800: #FFCB9A;              /* Subheading / key info (Peach) */
-  --color-slate-900: #ffffff;              /* Title / Heading text */
-  --color-slate-950: #ffffff;              /* Title / Heading text alternative */
+  --color-white: var(--theme-white);
+  --color-slate-50: var(--theme-slate-50);
+  --color-slate-100: var(--theme-slate-100);
+  --color-slate-200: var(--theme-slate-200);
+  --color-slate-300: var(--theme-slate-300);
+  --color-slate-400: var(--theme-slate-400);
+  --color-slate-500: var(--theme-slate-500);
+  --color-slate-600: var(--theme-slate-600);
+  --color-slate-700: var(--theme-slate-700);
+  --color-slate-800: var(--theme-slate-800);
+  --color-slate-900: var(--theme-slate-900);
+  --color-slate-950: var(--theme-slate-950);
 
-  /* Override Blue colors for Primary Teal / Peach Accents */
-  --color-blue-50: rgba(17, 100, 102, 0.1);  /* Soft Teal glow */
-  --color-blue-100: rgba(17, 100, 102, 0.2); 
-  --color-blue-200: rgba(17, 100, 102, 0.35);
-  --color-blue-500: #167a7d;                 /* Lighter Teal */
-  --color-blue-600: #116466;                 /* Deep Teal buttons */
-  --color-blue-700: #0d4d4f;                 /* Hover Teal */
-  --color-blue-800: #D9B08C;                 /* Sand accents */
-  --color-blue-900: #cc9c70;
+  --color-blue-50: var(--theme-blue-50);
+  --color-blue-100: var(--theme-blue-100);
+  --color-blue-200: var(--theme-blue-200);
+  --color-blue-500: var(--theme-blue-500);
+  --color-blue-600: var(--theme-blue-600);
+  --color-blue-700: var(--theme-blue-700);
+  --color-blue-800: var(--theme-blue-800);
+  --color-blue-900: var(--theme-blue-900);
+}
 
-  /* Update root CSS variables to align */
-  --background: #2C3531;
-  --foreground: #D1E8E2;
-  --card: #1e2522;
-  --card-foreground: #D1E8E2;
-  --primary: #116466;
-  --primary-foreground: #ffffff;
-  --border: #116466;
-  --ring: #D9B08C;
-  --muted: #1a201d;
-  --muted-foreground: #D9B08C;
-  --success: #10b981;
-  --warning: #FFCB9A;
-  --destructive: #ef4444;
+@layer base {
+  :root, .theme-starter {
+    --theme-white: #1e2522;
+    --theme-slate-50: #2C3531;
+    --theme-slate-100: #1a201d;
+    --theme-slate-200: #116466;
+    --theme-slate-300: #167a7d;
+    --theme-slate-400: #D9B08C;
+    --theme-slate-500: #e2c1a4;
+    --theme-slate-600: rgba(209, 232, 226, 0.6);
+    --theme-slate-700: #D1E8E2;
+    --theme-slate-800: #FFCB9A;
+    --theme-slate-900: #ffffff;
+    --theme-slate-950: #ffffff;
+
+    --theme-blue-50: rgba(17, 100, 102, 0.1);
+    --theme-blue-100: rgba(17, 100, 102, 0.2);
+    --theme-blue-200: rgba(17, 100, 102, 0.35);
+    --theme-blue-500: #167a7d;
+    --theme-blue-600: #116466;
+    --theme-blue-700: #0d4d4f;
+    --theme-blue-800: #D9B08C;
+    --theme-blue-900: #cc9c70;
+
+    --background: #2C3531;
+    --foreground: #D1E8E2;
+  }
+
+  .theme-growth {
+    /* Onyx & Gold Premium Theme */
+    --theme-white: #111111;
+    --theme-slate-50: #080808;
+    --theme-slate-100: #0a0a0a;
+    --theme-slate-200: #332d18;
+    --theme-slate-300: #4a4020;
+    --theme-slate-400: #a0a0a0;
+    --theme-slate-500: #c0c0c0;
+    --theme-slate-600: rgba(212, 175, 55, 0.5); 
+    --theme-slate-700: #e0e0e0;
+    --theme-slate-800: #FFDF00;
+    --theme-slate-900: #ffffff;
+    --theme-slate-950: #ffffff;
+
+    --theme-blue-50: rgba(212, 175, 55, 0.05);
+    --theme-blue-100: rgba(212, 175, 55, 0.15);
+    --theme-blue-200: rgba(212, 175, 55, 0.25);
+    --theme-blue-500: #FFDF00;
+    --theme-blue-600: #D4AF37;
+    --theme-blue-700: #996515;
+    --theme-blue-800: #e6c551;
+    --theme-blue-900: #ffd700;
+
+    --background: #050505;
+    --foreground: #d0d0d0;
+  }
 }
 
 body {

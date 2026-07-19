@@ -122,7 +122,9 @@ def startup_event():
                     "Advanced Candidate Search",
                     "API Access",
                     "Priority Support",
-                    "Hiring Funnel Analytics"
+                    "Hiring Funnel Analytics",
+                    "ATS Integrations",
+                    "Custom Workflows"
                 ])
             },
             {

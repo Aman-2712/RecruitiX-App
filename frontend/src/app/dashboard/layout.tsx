@@ -12,6 +12,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const pathname = usePathname();
   const [currentUser, setCurrentUser] = useState<UserType | null>(null);
   const [planStatus, setPlanStatus] = useState<string | null>(null);
+  const [currentPlan, setCurrentPlan] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -32,6 +33,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         .then(([user, sub]) => {
           setCurrentUser(user);
           setPlanStatus(sub.plan_status);
+          setCurrentPlan(sub.current_plan);
           localStorage.setItem("hirecue_user", JSON.stringify(user));
           
           if (sub.plan_status !== "ACTIVE" && sub.plan_status !== "TRIAL" && sub.plan_status !== "ONBOARDING" && pathname !== "/dashboard/billing") {
@@ -65,7 +67,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   if (loading && !currentUser) {
     return (
-      <div className="flex h-screen w-screen items-center justify-center bg-slate-50">
+      <div className={`flex h-screen w-screen items-center justify-center bg-slate-50 theme-starter`}>
         <div className="flex flex-col items-center gap-3">
           <Logo className="h-10" />
           <span className="text-sm font-semibold text-slate-500">Loading Hirecue Dashboard...</span>
@@ -75,7 +77,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   }
 
   return (
-    <div className="flex h-screen w-screen overflow-hidden bg-slate-50">
+    <div className={`flex h-screen w-screen overflow-hidden bg-slate-50 ${currentPlan === "GROWTH" ? "theme-growth" : "theme-starter"}`}>
       {/* Sidebar for Desktop */}
       <aside className="hidden md:flex flex-col w-64 border-r border-slate-200 bg-white h-full flex-shrink-0">
         <div className="px-6 py-5 border-b border-slate-100 flex items-center">
