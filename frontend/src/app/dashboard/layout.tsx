@@ -30,9 +30,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       setCurrentUser(userObj);
       
       // Try to get current plan from local storage if available
-      const anyUser = userObj as any;
-      if (anyUser && anyUser.organization && anyUser.organization.current_plan) {
-        setCurrentPlan(anyUser.organization.current_plan);
+      const cachedPlan = localStorage.getItem("hirecue_plan");
+      if (cachedPlan) {
+        setCurrentPlan(cachedPlan);
+        document.documentElement.className = cachedPlan === "GROWTH" ? "theme-growth" : "theme-starter";
       }
       
       // Proactively fetch fresh user details and subscription
@@ -41,6 +42,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           setCurrentUser(user);
           setPlanStatus(sub.plan_status);
           setCurrentPlan(sub.current_plan);
+          localStorage.setItem("hirecue_plan", sub.current_plan);
           localStorage.setItem("hirecue_user", JSON.stringify(user));
           
           if (sub.plan_status !== "ACTIVE" && sub.plan_status !== "TRIAL" && sub.plan_status !== "ONBOARDING" && pathname !== "/dashboard/billing") {
@@ -59,8 +61,16 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     }
   }, [router, pathname]);
 
+  useEffect(() => {
+    if (currentPlan) {
+      document.documentElement.className = currentPlan === "GROWTH" ? "theme-growth" : "theme-starter";
+    }
+  }, [currentPlan]);
+
   const handleLogout = () => {
     api.logout();
+    localStorage.removeItem("hirecue_plan");
+    document.documentElement.className = "theme-starter";
     router.push("/login");
   };
 

@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from sqlalchemy import func
+from sqlalchemy import func, case, and_
 from typing import Dict, Any, List
 from collections import Counter
 from app.core.database import get_db
@@ -31,25 +31,36 @@ def get_analytics(db: Session = Depends(get_db), current_user: User = Depends(ge
     # Calculate time saved
     time_saved_hours = round((total_candidates * 20) / 60, 1)
     
-    # Top Skills
+    # Top Skills (limit scan to latest 100 candidates to keep performance instant)
     all_skills = []
-    candidates = db.query(Candidate.raw_text).join(Job).filter(Job.organization_id == current_user.organization_id).all()
+    candidates = db.query(Candidate.raw_text).join(Job)\
+        .filter(Job.organization_id == current_user.organization_id)\
+        .order_by(Candidate.created_at.desc())\
+        .limit(100).all()
     from app.services.ai_service import COMMON_SKILLS
     for (text,) in candidates:
         if text:
+            text_lower = text.lower()
             for skill in COMMON_SKILLS:
-                if skill.lower() in text.lower():
+                if skill.lower() in text_lower:
                     all_skills.append(skill)
                     
     skill_counts = Counter(all_skills).most_common(6)
     top_skills = [{"skill": skill, "count": count} for skill, count in skill_counts]
     
-    # Match Score Distribution
+    # Match Score Distribution (single pass query instead of 4 separate count queries)
+    distribution = db.query(
+        func.sum(case((Candidate.match_score >= 90, 1), else_=0)).label("range_90_100"),
+        func.sum(case((and_(Candidate.match_score >= 80, Candidate.match_score < 90), 1), else_=0)).label("range_80_89"),
+        func.sum(case((and_(Candidate.match_score >= 70, Candidate.match_score < 80), 1), else_=0)).label("range_70_79"),
+        func.sum(case((Candidate.match_score < 70, 1), else_=0)).label("range_below_70")
+    ).join(Job).filter(Job.organization_id == current_user.organization_id).first()
+    
     score_ranges = {
-        "90-100": db.query(Candidate).join(Job).filter(Job.organization_id == current_user.organization_id, Candidate.match_score >= 90).count(),
-        "80-89": db.query(Candidate).join(Job).filter(Job.organization_id == current_user.organization_id, Candidate.match_score >= 80, Candidate.match_score < 90).count(),
-        "70-79": db.query(Candidate).join(Job).filter(Job.organization_id == current_user.organization_id, Candidate.match_score >= 70, Candidate.match_score < 80).count(),
-        "Below 70": db.query(Candidate).join(Job).filter(Job.organization_id == current_user.organization_id, Candidate.match_score < 70).count()
+        "90-100": int(distribution.range_90_100 or 0) if distribution else 0,
+        "80-89": int(distribution.range_80_89 or 0) if distribution else 0,
+        "70-79": int(distribution.range_70_79 or 0) if distribution else 0,
+        "Below 70": int(distribution.range_below_70 or 0) if distribution else 0
     }
     score_distribution = [{"range": k, "count": v} for k, v in score_ranges.items()]
     
@@ -61,7 +72,6 @@ def get_analytics(db: Session = Depends(get_db), current_user: User = Depends(ge
         cancelled_subscriptions = db.query(Organization).filter(Organization.plan_status == "CANCELLED").count()
         
         # Calculate MRR
-        # Starter = 2999, Growth = 9999, Enterprise = 49999
         mrr = 0
         orgs = db.query(Organization).filter(Organization.plan_status == "ACTIVE").all()
         for org in orgs:
@@ -85,21 +95,32 @@ def get_analytics(db: Session = Depends(get_db), current_user: User = Depends(ge
             "ENTERPRISE": db.query(Organization).filter(Organization.current_plan == "ENTERPRISE", Organization.plan_status == "ACTIVE").count()
         }
         
-        # Customer profiles analytics
+        # Customer profiles analytics (using joined query + subquery to avoid N+1 queries)
         customers = []
-        customer_orgs = db.query(Organization).all()
-        for c_org in customer_orgs:
-            users_count = db.query(User).filter(User.organization_id == c_org.id).count()
-            usage_rec = db.query(UsageTracking).filter(UsageTracking.organization_id == c_org.id).first()
-            resumes_count = usage_rec.resumes_processed if usage_rec else 0
-            
+        user_counts = db.query(
+            User.organization_id, 
+            func.count(User.id).label("users_count")
+        ).group_by(User.organization_id).subquery()
+        
+        results = db.query(
+            Organization.id,
+            Organization.name,
+            Organization.current_plan,
+            Organization.plan_status,
+            func.coalesce(user_counts.c.users_count, 0).label("users_count"),
+            func.coalesce(UsageTracking.resumes_processed, 0).label("resumes_processed")
+        ).outerjoin(user_counts, user_counts.c.organization_id == Organization.id)\
+         .outerjoin(UsageTracking, UsageTracking.organization_id == Organization.id)\
+         .all()
+         
+        for row in results:
             customers.append({
-                "id": c_org.id,
-                "name": c_org.name,
-                "plan": c_org.current_plan,
-                "status": c_org.plan_status,
-                "users_count": users_count,
-                "resumes_processed": resumes_count
+                "id": row.id,
+                "name": row.name,
+                "plan": row.current_plan,
+                "status": row.plan_status,
+                "users_count": row.users_count,
+                "resumes_processed": row.resumes_processed
             })
             
         admin_metrics = {

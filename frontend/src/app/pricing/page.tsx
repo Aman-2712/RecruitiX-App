@@ -173,23 +173,23 @@ export default function PricingPage() {
               <div className="space-y-6">
                 {/* Title */}
                 <div>
-                  <h3 className={`text-xl font-extrabold tracking-tight ${isEnterprise ? "text-white" : "text-slate-900"}`}>{p.name}</h3>
-                  <p className={`text-xs mt-2 font-medium leading-relaxed ${isEnterprise ? "text-slate-400" : "text-slate-500"}`}>
+                  <h3 className={`text-xl font-extrabold tracking-tight ${p.name === "Growth Plan" ? "text-blue-500" : isEnterprise ? "text-white" : "text-slate-900"}`}>{p.name}</h3>
+                  <p className={`text-xs mt-2 font-medium leading-relaxed ${p.name === "Growth Plan" ? "text-slate-400" : isEnterprise ? "text-slate-400" : "text-slate-500"}`}>
                     {p.description}
                   </p>
                 </div>
 
                 {/* Price */}
                 <div className="flex items-baseline gap-1 pt-2">
-                  <span className={`text-4xl font-black tracking-tight ${isEnterprise ? "text-white" : "text-slate-900"}`}>{formattedPrice}</span>
-                  <span className={`text-sm font-semibold ${isEnterprise ? "text-slate-400" : "text-slate-500"}`}>{cycleText}</span>
+                  <span className={`text-4xl font-black tracking-tight ${p.name === "Growth Plan" ? "text-blue-500" : isEnterprise ? "text-white" : "text-slate-900"}`}>{formattedPrice}</span>
+                  <span className={`text-sm font-semibold ${p.name === "Growth Plan" ? "text-slate-400" : isEnterprise ? "text-slate-400" : "text-slate-500"}`}>{cycleText}</span>
                 </div>
 
                 {/* Limits */}
-                <ul className={`space-y-3.5 pt-4 border-t ${isEnterprise ? "border-slate-800" : "border-slate-200"}`}>
+                <ul className={`space-y-3.5 pt-4 border-t ${p.name === "Growth Plan" ? "border-blue-100/20" : isEnterprise ? "border-slate-800" : "border-slate-200"}`}>
                   {p.limits.map((l) => (
-                    <li key={l} className={`flex items-center gap-2.5 text-sm font-bold ${isEnterprise ? "text-slate-200" : "text-slate-900"}`}>
-                      <Zap size={14} className={isEnterprise ? "text-blue-500" : "text-blue-600"} />
+                    <li key={l} className={`flex items-center gap-2.5 text-sm font-bold ${p.name === "Growth Plan" ? "text-white" : isEnterprise ? "text-slate-200" : "text-slate-900"}`}>
+                      <Zap size={14} className={p.name === "Growth Plan" ? "text-blue-500" : isEnterprise ? "text-blue-500" : "text-blue-600"} />
                       {l}
                     </li>
                   ))}
@@ -199,8 +199,8 @@ export default function PricingPage() {
                 <ul className="space-y-3 pt-2">
                   {p.features.map((f) => (
                     <li key={f} className="flex items-center gap-2.5 text-sm font-semibold">
-                      <Check size={14} className="text-emerald-500 flex-shrink-0" />
-                      <span className={isEnterprise ? "text-slate-300" : "text-slate-600"}>{f}</span>
+                      <Check size={14} className={p.name === "Growth Plan" ? "text-blue-500" : "text-emerald-500 flex-shrink-0"} />
+                      <span className={p.name === "Growth Plan" ? "text-slate-200" : isEnterprise ? "text-slate-300" : "text-slate-600"}>{f}</span>
                     </li>
                   ))}
                 </ul>
