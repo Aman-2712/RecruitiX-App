@@ -64,9 +64,9 @@ def get_analytics(db: Session = Depends(get_db), current_user: User = Depends(ge
     }
     score_distribution = [{"range": k, "count": v} for k, v in score_ranges.items()]
     
-    # --- ADMIN SaaS METRICS (Gated for ADMIN and HR_MANAGER role checks) ---
+    # --- ADMIN SaaS METRICS (Gated for platform superadmins only to prevent data leaks) ---
     admin_metrics = {}
-    if current_user.role in ["ADMIN", "HR_MANAGER"]:
+    if current_user.email in ["superadmin@hirecue.online", "host@hirecue.online"]:
         # Subscriptions counts
         active_subscriptions = db.query(Organization).filter(Organization.plan_status == "ACTIVE").count()
         cancelled_subscriptions = db.query(Organization).filter(Organization.plan_status == "CANCELLED").count()

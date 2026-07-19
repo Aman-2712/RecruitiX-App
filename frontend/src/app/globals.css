@@ -80,6 +80,27 @@
     --background: #050505;
     --foreground: #d0d0d0;
   }
+
+  /* Premium Gold Gradient for Growth Plan Buttons (matches user reference image) */
+  .theme-growth .bg-blue-600,
+  .theme-growth .bg-blue-650,
+  .theme-growth button.bg-blue-600,
+  .theme-growth a.bg-blue-600 {
+    background: linear-gradient(90deg, #F0E6C5 0%, #CBB067 100%) !important;
+    color: #02162E !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.05em !important;
+    border: none !important;
+    box-shadow: 0 4px 12px rgba(212, 175, 55, 0.2) !important;
+  }
+  .theme-growth .hover\:bg-blue-700:hover,
+  .theme-growth .hover\:bg-blue-750:hover,
+  .theme-growth button.bg-blue-600:hover,
+  .theme-growth a.bg-blue-600:hover {
+    background: linear-gradient(90deg, #E6D5A6 0%, #BFA152 100%) !important;
+    color: #02162E !important;
+    box-shadow: 0 6px 18px rgba(212, 175, 55, 0.3) !important;
+  }
 }
 
 body {
