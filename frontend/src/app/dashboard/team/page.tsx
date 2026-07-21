@@ -39,6 +39,16 @@ export default function TeamSettingsPage() {
   const [apiKey, setApiKey] = useState("");
   const [webhookUrl, setWebhookUrl] = useState("");
 
+  // ATS Modal State
+  const [isAtsModalOpen, setIsAtsModalOpen] = useState(false);
+  const [selectedAts, setSelectedAts] = useState<string | null>(null);
+  const [subdomain, setSubdomain] = useState("");
+  const [apiKeyInput, setApiKeyInput] = useState("");
+  const [webhookSecret, setWebhookSecret] = useState("");
+  const [syncJobs, setSyncJobs] = useState(true);
+  const [syncScores, setSyncScores] = useState(true);
+  const [stageThreshold, setStageThreshold] = useState(75);
+
   const fetchData = async () => {
     try {
       const userStr = localStorage.getItem("hirecue_user");
@@ -162,6 +172,44 @@ export default function TeamSettingsPage() {
     e.preventDefault();
     localStorage.setItem("mock_webhook", webhookUrl);
     alert("Webhook URL configured successfully!");
+  };
+
+  const handleConfigureAts = (atsId: string) => {
+    setSelectedAts(atsId);
+    const saved = localStorage.getItem(`mock_ats_config_${atsId}`);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      setSubdomain(parsed.subdomain || "");
+      setApiKeyInput(parsed.apiKeyInput || "");
+      setWebhookSecret(parsed.webhookSecret || "");
+      setSyncJobs(parsed.syncJobs !== false);
+      setSyncScores(parsed.syncScores !== false);
+      setStageThreshold(parsed.stageThreshold || 75);
+    } else {
+      setSubdomain("");
+      setApiKeyInput("");
+      setWebhookSecret("");
+      setSyncJobs(true);
+      setSyncScores(true);
+      setStageThreshold(75);
+    }
+    setIsAtsModalOpen(true);
+  };
+
+  const handleSaveAtsConfig = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedAts) return;
+    const config = {
+      subdomain,
+      apiKeyInput,
+      webhookSecret,
+      syncJobs,
+      syncScores,
+      stageThreshold
+    };
+    localStorage.setItem(`mock_ats_config_${selectedAts}`, JSON.stringify(config));
+    setIsAtsModalOpen(false);
+    alert(`${selectedAts.charAt(0).toUpperCase() + selectedAts.slice(1)} integration settings updated successfully!`);
   };
 
   const isAdmin = currentUser?.role === "ADMIN";
@@ -397,7 +445,12 @@ export default function TeamSettingsPage() {
                       {atsConnections[p.id] ? "Disconnect" : "Connect ATS"}
                     </button>
                     {atsConnections[p.id] && (
-                      <button className="text-slate-400 hover:text-slate-700 transition font-bold text-xs">Configure Rules</button>
+                      <button 
+                        onClick={() => handleConfigureAts(p.id)}
+                        className="text-slate-400 hover:text-slate-700 transition font-bold text-xs"
+                      >
+                        Configure Rules
+                      </button>
                     )}
                   </div>
                 </div>
@@ -655,6 +708,121 @@ export default function TeamSettingsPage() {
                   </button>
                 </div>
               )}
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ATS Configuration Modal */}
+      {isAtsModalOpen && selectedAts && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4 animate-in fade-in duration-200 text-slate-950">
+          <div className="bg-white rounded-3xl shadow-xl w-full max-w-lg overflow-hidden animate-in zoom-in-95 duration-200">
+            <div className="px-6 py-5 border-b border-slate-100 flex items-center justify-between">
+              <div>
+                <h3 className="text-xl font-bold text-slate-900">Configure {selectedAts.toUpperCase()}</h3>
+                <p className="text-xs text-slate-500 font-semibold mt-1">Map automation rules and sync credentials</p>
+              </div>
+              <button 
+                onClick={() => setIsAtsModalOpen(false)}
+                className="text-slate-400 hover:text-slate-600 hover:bg-slate-100 p-2 rounded-full transition"
+              >
+                <X size={20} />
+              </button>
+            </div>
+            
+            <form onSubmit={handleSaveAtsConfig} className="p-6 space-y-4">
+              <div className="grid grid-cols-2 gap-4 col-span-2">
+                <div>
+                  <label className="block text-xs font-extrabold text-slate-500 uppercase tracking-wider mb-2">Company Subdomain</label>
+                  <input
+                    type="text"
+                    required
+                    value={subdomain}
+                    onChange={(e) => setSubdomain(e.target.value)}
+                    placeholder="company-name"
+                    className="block w-full px-3 py-2.5 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-600 transition font-medium bg-white text-sm text-slate-900"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-xs font-extrabold text-slate-500 uppercase tracking-wider mb-2">Webhook Secret</label>
+                  <input
+                    type="password"
+                    required
+                    value={webhookSecret}
+                    onChange={(e) => setWebhookSecret(e.target.value)}
+                    placeholder="••••••••••••••••"
+                    className="block w-full px-3 py-2.5 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-600 transition font-medium bg-white text-sm text-slate-900"
+                  />
+                </div>
+              </div>
+              
+              <div>
+                <label className="block text-xs font-extrabold text-slate-500 uppercase tracking-wider mb-2">Harvest API Key</label>
+                <input
+                  type="password"
+                  required
+                  value={apiKeyInput}
+                  onChange={(e) => setApiKeyInput(e.target.value)}
+                  placeholder="gh_harv_key_••••••••••••••••"
+                  className="block w-full px-3 py-2.5 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-600 transition font-medium bg-white text-sm text-slate-900"
+                />
+              </div>
+
+              <div className="border-t border-slate-100 pt-4 space-y-3">
+                <h4 className="text-xs font-extrabold text-slate-500 uppercase tracking-wider">Sync Settings & Automation</h4>
+                
+                <label className="flex items-center gap-3 cursor-pointer">
+                  <input 
+                    type="checkbox"
+                    checked={syncJobs}
+                    onChange={(e) => setSyncJobs(e.target.checked)}
+                    className="h-4 w-4 rounded text-blue-600 focus:ring-blue-500 border-slate-300"
+                  />
+                  <span className="text-sm font-semibold text-slate-700">Auto-import jobs from {selectedAts.toUpperCase()}</span>
+                </label>
+
+                <label className="flex items-center gap-3 cursor-pointer">
+                  <input 
+                    type="checkbox"
+                    checked={syncScores}
+                    onChange={(e) => setSyncScores(e.target.checked)}
+                    className="h-4 w-4 rounded text-blue-600 focus:ring-blue-500 border-slate-300"
+                  />
+                  <span className="text-sm font-semibold text-slate-700">Push AI screening score reports back to candidate notes</span>
+                </label>
+
+                {syncScores && (
+                  <div className="pl-7 pt-1 flex items-center gap-3">
+                    <span className="text-xs font-bold text-slate-500">Auto-advance to Screen stage if Match Score &ge;</span>
+                    <input 
+                      type="number"
+                      min="50"
+                      max="100"
+                      value={stageThreshold}
+                      onChange={(e) => setStageThreshold(parseInt(e.target.value))}
+                      className="w-16 border border-slate-200 rounded-lg px-2 py-1 text-xs font-bold bg-white text-center text-slate-900"
+                    />
+                    <span className="text-xs font-bold text-slate-500">%</span>
+                  </div>
+                )}
+              </div>
+              
+              <div className="border-t border-slate-100 pt-4 flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => setIsAtsModalOpen(false)}
+                  className="w-1/2 border border-slate-200 text-slate-700 font-bold py-3 rounded-xl hover:bg-slate-50 transition active:scale-95 text-sm"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="w-1/2 bg-blue-600 text-white font-bold py-3 rounded-xl hover:bg-blue-700 transition active:scale-95 text-sm"
+                >
+                  Save Integration Rules
+                </button>
+              </div>
             </form>
           </div>
         </div>
