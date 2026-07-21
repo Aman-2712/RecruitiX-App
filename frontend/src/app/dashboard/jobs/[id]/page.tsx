@@ -108,6 +108,48 @@ export default function JobDetails() {
       
       setUploadProgress(`Successfully parsed and matched ${succeeded.length} candidate(s).`);
       
+      // Execute Custom Workflow Automation Rules
+      const savedWorkflows = localStorage.getItem("mock_workflows");
+      if (savedWorkflows && succeeded.length > 0) {
+        const activeRules = JSON.parse(savedWorkflows).filter((w: any) => w.active);
+        const executedActions: string[] = [];
+        
+        for (const candidate of succeeded) {
+          for (const rule of activeRules) {
+            let candidateVal = 0;
+            if (rule.trigger === "match_score") candidateVal = candidate.match_score;
+            else if (rule.trigger === "skill_match_score") candidateVal = candidate.skill_match_score || 0;
+            else if (rule.trigger === "experience_match_score") candidateVal = candidate.experience_match_score || 0;
+            
+            if (candidateVal >= rule.value) {
+              if (rule.action === "shortlist") {
+                try {
+                  await api.updateCandidateStatus(candidate.id, "SHORTLISTED");
+                  executedActions.push(`⚡ [Workflow Rule] Auto-Shortlisted ${candidate.name} (AI score: ${candidateVal}%)`);
+                } catch (e) {
+                  console.error("Workflow failed to update candidate status", candidate.id, e);
+                }
+              } else if (rule.action === "email") {
+                try {
+                  await api.updateCandidateStatus(candidate.id, "INTERVIEW_SCHEDULED");
+                  executedActions.push(`✉️ [Workflow Rule] Sent automated interview invite to ${candidate.name} (AI score: ${candidateVal}%)`);
+                } catch (e) {
+                  console.error("Workflow failed to update candidate status", candidate.id, e);
+                }
+              } else if (rule.action === "slack") {
+                executedActions.push(`💬 [Workflow Rule] Sent Slack Notification for Star Candidate ${candidate.name} (AI score: ${candidateVal}%)`);
+              }
+            }
+          }
+        }
+        
+        if (executedActions.length > 0) {
+          setTimeout(() => {
+            alert(`⚙️ Automation Workflows Triggered:\n\n${executedActions.join("\n")}`);
+          }, 500);
+        }
+      }
+
       // Refresh candidates list
       await fetchData();
     } catch (err: any) {
