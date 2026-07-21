@@ -149,6 +149,43 @@ export default function JobDetails() {
           }, 500);
         }
       }
+      
+      // Trigger Webhook Event Dispatch
+      const savedWebhook = localStorage.getItem("mock_webhook");
+      if (savedWebhook && succeeded.length > 0) {
+        for (const candidate of succeeded) {
+          try {
+            fetch(savedWebhook, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json"
+              },
+              body: JSON.stringify({
+                event: "candidate.screened",
+                timestamp: new Date().toISOString(),
+                candidate: {
+                  id: candidate.id,
+                  name: candidate.name,
+                  email: candidate.email,
+                  match_score: candidate.match_score,
+                  skill_match_score: candidate.skill_match_score,
+                  experience_match_score: candidate.experience_match_score,
+                  relevance_score: candidate.relevance_score,
+                  status: candidate.status || "APPLIED",
+                  ai_summary: candidate.ai_summary,
+                  ai_concerns: candidate.ai_concerns
+                }
+              })
+            }).then(response => {
+              console.log(`Webhook successfully dispatched to ${savedWebhook}: Status ${response.status}`);
+            }).catch(err => {
+              console.error(`Failed to dispatch webhook to ${savedWebhook}:`, err);
+            });
+          } catch (e) {
+            console.error("Webhook dispatch error:", e);
+          }
+        }
+      }
 
       // Refresh candidates list
       await fetchData();
