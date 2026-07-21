@@ -6,7 +6,7 @@ import { useParams, useRouter } from "next/navigation";
 import { 
   ArrowLeft, Bot, Mail, Phone, Calendar, Briefcase, Award, 
   BookOpen, FileText, Check, AlertTriangle, ChevronRight, Loader, 
-  Trash2, Download, Settings 
+  Trash2, Download, Settings, X 
 } from "lucide-react";
 import { api, CandidateDetail } from "@/lib/api";
 
