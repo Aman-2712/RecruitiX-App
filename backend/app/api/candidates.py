@@ -13,6 +13,7 @@ from app.core.database import get_db
 from app.core.security import get_current_user
 from app.services.storage_service import storage_manager
 from app.models import Candidate, Job, CandidateExperience, CandidateEducation, User
+from app.services.email_service import send_candidate_interview_email, send_candidate_rejection_email
 
 router = APIRouter(prefix="/api/candidates", tags=["candidates"])
 optional_oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login", auto_error=False)
@@ -176,8 +177,38 @@ def update_candidate_status(
     if not cand:
         raise HTTPException(status_code=403, detail="Candidate not found or access denied")
         
-    cand.status = status_in.status.upper()
+    old_status = cand.status
+    new_status = status_in.status.upper()
+    
+    cand.status = new_status
     db.commit()
+    
+    # Trigger actual emails if the status changed and candidate has an email address
+    if old_status != new_status and cand.email:
+        org_name = current_user.organization.name if current_user.organization else "Hirecue Workspace"
+        job_title = cand.job.title if cand.job else "Position"
+        
+        if new_status == "INTERVIEW_SCHEDULED":
+            try:
+                send_candidate_interview_email(
+                    to_email=cand.email,
+                    candidate_name=cand.name,
+                    job_title=job_title,
+                    org_name=org_name
+                )
+            except Exception as e:
+                print(f"Error dispatching interview email: {e}")
+        elif new_status == "REJECTED":
+            try:
+                send_candidate_rejection_email(
+                    to_email=cand.email,
+                    candidate_name=cand.name,
+                    job_title=job_title,
+                    org_name=org_name
+                )
+            except Exception as e:
+                print(f"Error dispatching rejection email: {e}")
+                
     return {"id": cand.id, "status": cand.status}
 
 @router.get("/{candidate_id}/resume")

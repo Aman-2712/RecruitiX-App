@@ -212,3 +212,66 @@ def send_promo_exhausted_notification(promo_code: str):
     </div>
     """
     return send_email(admin_email, subject, html_content)
+
+def send_candidate_interview_email(to_email: str, candidate_name: str, job_title: str, org_name: str):
+    subject = f"Next Steps: Interview with {org_name} for {job_title}"
+    html_content = f"""
+    <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 12px;">
+        <h2 style="color: #1e3a8a; margin-bottom: 20px;">Interview Invitation! 📅</h2>
+        <p style="font-size: 14px; color: #475569; line-height: 1.5;">
+            Hi {candidate_name or "there"},
+        </p>
+        <p style="font-size: 14px; color: #475569; line-height: 1.5;">
+            Thank you for applying to the <strong>{job_title}</strong> position at <strong>{org_name}</strong>.
+        </p>
+        <p style="font-size: 14px; color: #475569; line-height: 1.5;">
+            Our recruiting team has completed the initial review of your application, and we are excited to invite you for a virtual interview to learn more about your background and experience.
+        </p>
+        <p style="font-size: 14px; color: #475569; line-height: 1.5;">
+            Please select a convenient time slot for a 30-minute meeting using the scheduling calendar link below:
+        </p>
+        <div style="margin: 30px 0; text-align: center;">
+            <a href="https://cal.com/hirecue-interviews" style="background-color: #2563eb; color: white; padding: 12px 24px; border-radius: 8px; font-weight: bold; text-decoration: none; display: inline-block;">
+                Schedule Interview Slot
+            </a>
+        </div>
+        <p style="font-size: 14px; color: #475569; line-height: 1.5;">
+            We look forward to speaking with you soon!
+        </p>
+        <p style="font-size: 12px; color: #94a3b8; line-height: 1.5; border-top: 1px solid #f1f5f9; padding-top: 15px; margin-top: 25px;">
+            Best regards,<br/>
+            The Hiring Team at {org_name}<br/>
+            Processed securely via <a href="https://hirecue.online" style="color: #2563eb; text-decoration: none;">Hirecue.online</a>
+        </p>
+    </div>
+    """
+    return send_email(to_email, subject, html_content)
+
+def send_candidate_rejection_email(to_email: str, candidate_name: str, job_title: str, org_name: str):
+    subject = f"Application Update: {job_title} at {org_name}"
+    html_content = f"""
+    <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 12px;">
+        <h2 style="color: #475569; margin-bottom: 20px;">Thank you for your application</h2>
+        <p style="font-size: 14px; color: #475569; line-height: 1.5;">
+            Hi {candidate_name or "there"},
+        </p>
+        <p style="font-size: 14px; color: #475569; line-height: 1.5;">
+            Thank you for your interest in the <strong>{job_title}</strong> role at <strong>{org_name}</strong> and for taking the time to submit your application.
+        </p>
+        <p style="font-size: 14px; color: #475569; line-height: 1.5;">
+            We received a large volume of competitive applications for this position. While we were impressed with your credentials, we have decided to move forward with other candidates whose profiles more closely match our immediate requirements.
+        </p>
+        <p style="font-size: 14px; color: #475569; line-height: 1.5;">
+            We appreciate the effort you put into your application, and we will keep your profile in our talent network for future openings that match your skills.
+        </p>
+        <p style="font-size: 14px; color: #475569; line-height: 1.5;">
+            We wish you the very best in your professional job search.
+        </p>
+        <p style="font-size: 12px; color: #94a3b8; line-height: 1.5; border-top: 1px solid #f1f5f9; padding-top: 15px; margin-top: 25px;">
+            Best regards,<br/>
+            The Hiring Team at {org_name}<br/>
+            Processed securely via <a href="https://hirecue.online" style="color: #2563eb; text-decoration: none;">Hirecue.online</a>
+        </p>
+    </div>
+    """
+    return send_email(to_email, subject, html_content)
