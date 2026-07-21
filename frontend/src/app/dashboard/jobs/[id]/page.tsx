@@ -158,7 +158,7 @@ export default function JobDetails() {
             fetch(savedWebhook, {
               method: "POST",
               headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "text/plain"
               },
               body: JSON.stringify({
                 event: "candidate.screened",
