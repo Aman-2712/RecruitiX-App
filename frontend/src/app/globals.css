@@ -103,109 +103,112 @@
   }
 
   .theme-enterprise {
-    /* Rose Gold & Platinum Premium Theme */
-    --theme-white: #0c0d0f;
-    --theme-slate-50: #07080a;
-    --theme-slate-100: #0a0b0d;
-    --theme-slate-200: #22242b;
-    --theme-slate-300: #30333d;
-    --theme-slate-400: #a0a5b5;
-    --theme-slate-500: #c0c5d5;
-    --theme-slate-600: rgba(226, 232, 240, 0.4); 
+    /* Royal Amethyst & Platinum Silk Premium Theme */
+    --theme-white: #12101e;
+    --theme-slate-50: #0a0910;
+    --theme-slate-100: #0e0c18;
+    --theme-slate-200: #29243f;
+    --theme-slate-300: #3f3760;
+    --theme-slate-400: #a78bfa;
+    --theme-slate-500: #ddd6fe;
+    --theme-slate-600: rgba(167, 139, 250, 0.4); 
     --theme-slate-700: #e2e8f0;
-    --theme-slate-800: #E0A899;
+    --theme-slate-800: #c084fc;
     --theme-slate-900: #ffffff;
     --theme-slate-950: #ffffff;
 
-    --theme-blue-50: rgba(224, 168, 153, 0.05);
-    --theme-blue-100: rgba(224, 168, 153, 0.15);
-    --theme-blue-200: rgba(224, 168, 153, 0.25);
-    --theme-blue-500: #E0A899;
-    --theme-blue-600: #E2E8F0;
-    --theme-blue-700: #a0a5b5;
-    --theme-blue-800: #E0A899;
-    --theme-blue-900: #E2E8F0;
+    --theme-blue-50: rgba(139, 92, 246, 0.05);
+    --theme-blue-100: rgba(139, 92, 246, 0.15);
+    --theme-blue-200: rgba(139, 92, 246, 0.25);
+    --theme-blue-500: #a78bfa;
+    --theme-blue-600: #8b5cf6;
+    --theme-blue-700: #7c3aed;
+    --theme-blue-800: #ddd6fe;
+    --theme-blue-900: #e2e8f0;
 
-    --background: #08090c;
-    --foreground: #d2d6df;
+    --background: #0a0910;
+    --foreground: #e2e8f0;
   }
 
-  /* Premium Carbon Grid Mesh Texture for Enterprise Plan Background */
+  /* Premium Velvet Sheen Pattern for Enterprise Plan Background */
   html.theme-enterprise,
   .theme-enterprise,
   .theme-enterprise.bg-slate-50 {
-    background-color: #08090c !important;
+    background-color: #0a0910 !important;
     background-image: 
-      radial-gradient(circle at 50% 30%, rgba(224, 168, 153, 0.08), transparent 70%),
-      linear-gradient(45deg, #111318 25%, transparent 25%, transparent 75%, #111318 75%, #111318), 
-      linear-gradient(45deg, #111318 25%, transparent 25%, transparent 75%, #111318 75%, #111318) !important;
-    background-size: 100% 100%, 8px 8px, 8px 8px !important;
-    background-position: 0 0, 0 0, 4px 4px !important;
+      radial-gradient(circle at 50% 20%, rgba(139, 92, 246, 0.15), transparent 60%),
+      radial-gradient(circle at 10% 80%, rgba(226, 232, 240, 0.05), transparent 40%),
+      linear-gradient(135deg, rgba(139, 92, 246, 0.02) 25%, transparent 25%), 
+      linear-gradient(225deg, rgba(139, 92, 246, 0.02) 25%, transparent 25%), 
+      linear-gradient(45deg, rgba(139, 92, 246, 0.02) 25%, transparent 25%), 
+      linear-gradient(315deg, rgba(139, 92, 246, 0.02) 25%, transparent 25%) !important;
+    background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px, 40px 40px, 40px 40px !important;
+    background-position: 0 0, 0 0, 0 0, 0 20px, 20px -20px, -20px 0px !important;
   }
 
-  /* Premium Glassmorphic Cards with Rose Gold/Platinum borders */
+  /* Premium Velvet Glassmorphic Cards with Royal Amethyst borders & deep shadows */
   .theme-enterprise .bg-white,
   .theme-enterprise .premium-border,
   .theme-enterprise .bg-slate-50:not(.theme-enterprise) {
-    background: rgba(18, 20, 26, 0.75) !important;
-    backdrop-filter: blur(12px) !important;
-    -webkit-backdrop-filter: blur(12px) !important;
-    border: 1px solid rgba(224, 168, 153, 0.25) !important;
+    background: rgba(18, 16, 28, 0.75) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    border: 1px solid rgba(139, 92, 246, 0.25) !important;
     box-shadow: 
-      inset 0 1px 1px rgba(255, 255, 255, 0.05),
-      0 8px 32px rgba(0, 0, 0, 0.5),
-      0 0 1px rgba(224, 168, 153, 0.2) !important;
+      inset 0 1px 1px rgba(255, 255, 255, 0.03),
+      0 8px 32px rgba(0, 0, 0, 0.6),
+      0 0 15px rgba(139, 92, 246, 0.1) !important;
   }
 
   /* Sidebar sidebar-footer info panel overrides to replace hardcoded teal/amber colors */
   .theme-enterprise .bg-\[\#162128\] {
-    background-color: #0c0d12 !important;
-    border-top-color: rgba(224, 168, 153, 0.2) !important;
+    background-color: #0e0c18 !important;
+    border-top-color: rgba(139, 92, 246, 0.2) !important;
   }
   .theme-enterprise .bg-\[\#1e2d36\] {
-    background-color: rgba(224, 168, 153, 0.1) !important;
-    border-color: rgba(224, 168, 153, 0.3) !important;
+    background-color: rgba(139, 92, 246, 0.1) !important;
+    border-color: rgba(139, 92, 246, 0.3) !important;
   }
   .theme-enterprise .text-teal-500 {
-    color: #E2E8F0 !important;
+    color: #e2e8f0 !important;
   }
   .theme-enterprise .text-teal-650,
   .theme-enterprise .text-teal-600\/90 {
-    color: #E0A899 !important;
-    border-color: rgba(224, 168, 153, 0.3) !important;
+    color: #a78bfa !important;
+    border-color: rgba(139, 92, 246, 0.3) !important;
   }
   .theme-enterprise .text-amber-500 {
-    color: #E2E8F0 !important;
+    color: #e2e8f0 !important;
   }
 
   /* Active navigation sidebar item highlight styling */
   .theme-enterprise .bg-blue-50 {
-    background: rgba(224, 168, 153, 0.12) !important;
-    border-left: 4px solid #E0A899 !important;
+    background: rgba(139, 92, 246, 0.15) !important;
+    border-left: 4px solid #a78bfa !important;
   }
   .theme-enterprise .text-blue-600 {
-    color: #E2E8F0 !important;
+    color: #e2e8f0 !important;
   }
 
-  /* Premium Rose Gold & Platinum Gradient for Enterprise Plan Buttons */
+  /* Premium Amethyst & Platinum Gradient for Enterprise Plan Buttons & glows */
   .theme-enterprise .bg-blue-600,
   .theme-enterprise .bg-blue-650,
   .theme-enterprise button.bg-blue-600,
   .theme-enterprise a.bg-blue-600 {
-    background: linear-gradient(90deg, #E0A899 0%, #E2E8F0 100%) !important;
-    color: #121820 !important;
+    background: linear-gradient(90deg, #8b5cf6 0%, #e2e8f0 100%) !important;
+    color: #0f0b1b !important;
     font-weight: 700 !important;
     letter-spacing: 0.05em !important;
     border: none !important;
-    box-shadow: 0 4px 12px rgba(224, 168, 153, 0.25) !important;
+    box-shadow: 0 4px 14px rgba(139, 92, 246, 0.3) !important;
   }
   .theme-enterprise .hover\:bg-blue-700:hover,
   .theme-enterprise .hover\:bg-blue-750:hover,
   .theme-enterprise button.bg-blue-600:hover,
   .theme-enterprise a.bg-blue-600:hover {
-    background: linear-gradient(90deg, #D5998A 0%, #C2CCD8 100%) !important;
-    color: #121820 !important;
-    box-shadow: 0 6px 18px rgba(224, 168, 153, 0.35) !important;
+    background: linear-gradient(90deg, #7c3aed 0%, #cbd5e1 100%) !important;
+    color: #0f0b1b !important;
+    box-shadow: 0 6px 20px rgba(139, 92, 246, 0.45) !important;
   }
 }
 
