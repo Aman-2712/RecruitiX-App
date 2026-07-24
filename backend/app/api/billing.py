@@ -181,7 +181,7 @@ def upgrade_subscription(
     if org.current_plan == "ENTERPRISE":
         try:
             from app.services.email_service import send_enterprise_welcome_email
-            send_enterprise_welcome_email(current_user.email, current_user.name, org.name)
+            send_enterprise_welcome_email(current_user.email, current_user.full_name or "Enterprise Admin", org.name)
         except Exception as e:
             logger.error(f"Error sending enterprise welcome email: {e}")
             
