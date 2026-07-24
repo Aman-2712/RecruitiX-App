@@ -160,6 +160,7 @@ def get_candidate(candidate_id: int, db: Session = Depends(get_db), current_user
         "status": cand.status,
         "created_at": cand.created_at,
         "raw_text": cand.raw_text,
+        "resume_filename": storage_manager.get_filename(cand.resume_path) if cand.resume_path else "resume.pdf",
         "experiences": exps,
         "educations": edus
     }
@@ -574,14 +575,27 @@ def submit_skills_test(
         raise HTTPException(status_code=404, detail="Skills test not generated for this candidate")
         
     from app.services.ai_service import client, OPENAI_MODEL
-    
-    # Pre-validate if the candidate wrote any actual code or just submitted default placeholder code / pass statement.
+    import ast
+
+    # 1. Parse code syntax using ast
+    syntax_errors = []
+    for ans in req.answers:
+        code_str = ans.get("code", "")
+        q_id = ans.get("id")
+        if code_str:
+            try:
+                ast.parse(code_str)
+            except SyntaxError as se:
+                syntax_errors.append(f"Question {q_id} SyntaxError: {se.msg} at line {se.lineno}")
+            except Exception as e:
+                syntax_errors.append(f"Question {q_id} Error: {str(e)}")
+
+    # 2. Check for empty or pass statement placeholder
     any_code_written = False
     if req.answers:
         for ans in req.answers:
             code_str = ans.get("code", "").strip()
             if code_str:
-                # Strip comments and empty lines
                 lines = code_str.split("\n")
                 clean_lines = []
                 for line in lines:
@@ -589,30 +603,102 @@ def submit_skills_test(
                     if stripped:
                         clean_lines.append(stripped)
                 
-                # Check non-structural declarations (skip function signatures and block definitions)
                 non_structural = [l for l in clean_lines if not l.startswith("def ") and not l.startswith("class ") and not l == ")"]
                 joined = "".join(non_structural).replace(" ", "").replace("\t", "").replace(":", "")
-                
-                # If code contains actual logic statements beyond simple defaults/pass
                 if joined and joined not in ["pass", "return", "returnNone", "return\"\"", "return0", "raiseNotImplementedError"]:
                     any_code_written = True
                     break
 
     if not any_code_written:
-        score = 0
-        feedback = "Assessment failed. The candidate did not write or submit any code implementation. The code box contains only default placeholder statements or pass code."
-    else:
-        # Default fallback values for complete submissions if AI service call fails
-        code_length = sum(len(ans.get("code", "")) for ans in req.answers)
-        if code_length > 100:
-            score = 75
-            feedback = "Code submission analyzed. The candidate provided a complete syntax structure with standard parameters. Correct logic implementation was identified."
-        else:
-            score = 45
-            feedback = "Code submission analyzed. The candidate provided a very brief or incomplete implementation. Standard programming structures and functions were missing."
+        syntax_errors.append("PlaceholderError: Empty implementation or default 'pass' statement found. Please write the solution logic.")
 
+    # 3. If there are syntax or logical errors, generate another question automatically!
+    if syntax_errors:
+        error_msg = "; ".join(syntax_errors)
+        
+        # Load existing questions
+        existing_questions = []
+        try:
+            existing_questions = json.loads(test.test_questions or "[]")
+        except Exception:
+            existing_questions = []
+            
+        next_id = len(existing_questions) + 1
+        
+        # Default fallback next question
+        new_q = {
+            "id": next_id,
+            "title": f"Coding Exercise {next_id}",
+            "description": "Implement a function that finds the maximum value inside a list of numeric values.",
+            "starter_code": f"def find_max_value(numbers: list) -> float:\n    # Write your code here\n    pass",
+            "sample_cases": "Input: [1, 5, 3, 9, 2], Output: 9.0"
+        }
+        
+        # Attempt to generate via OpenAI
         if client:
-            prompt = f"""You are an expert software developer and technical evaluator. Evaluate the candidate's code submissions for the generated test questions.
+            try:
+                prompt = f"""You are an expert technical interviewer. Generate ONE single coding assessment question in Python.
+Job Title: {cand.job.title if cand.job else "Software Developer"}
+Candidate Profile: {cand.name}
+
+The question must be unique and different from these existing questions:
+{json.dumps(existing_questions)}
+
+Provide:
+1. Question Title
+2. Clear description
+3. Starter python code block
+4. Sample input/output cases
+
+Return ONLY a valid JSON object matching this structure:
+{{
+  "title": "Question Title",
+  "description": "Question description",
+  "starter_code": "def function_name()...",
+  "sample_cases": "Input: ..., Output: ..."
+}}
+"""
+                response = client.chat.completions.create(
+                    model=OPENAI_MODEL,
+                    messages=[
+                        {"role": "system", "content": "You are a professional technical assessment writer. Return ONLY valid JSON."},
+                        {"role": "user", "content": prompt}
+                    ],
+                    response_format={"type": "json_object"},
+                    temperature=0.7
+                )
+                parsed = json.loads(response.choices[0].message.content)
+                new_q = {
+                    "id": next_id,
+                    "title": parsed.get("title", f"Coding Exercise {next_id}"),
+                    "description": parsed.get("description", "Solve the target parameters."),
+                    "starter_code": parsed.get("starter_code", "def solve():\n    pass"),
+                    "sample_cases": parsed.get("sample_cases", "Input: n/a")
+                }
+            except Exception:
+                pass
+                
+        existing_questions.append(new_q)
+        test.test_questions = json.dumps(existing_questions)
+        db.commit()
+        
+        return {
+            "status": "ERROR",
+            "error": error_msg,
+            "test_questions": existing_questions
+        }
+
+    # Default fallback values for complete submissions if AI service call fails
+    code_length = sum(len(ans.get("code", "")) for ans in req.answers)
+    if code_length > 100:
+        score = 75
+        feedback = "Code submission analyzed. The candidate provided a complete syntax structure with standard parameters. Correct logic implementation was identified."
+    else:
+        score = 45
+        feedback = "Code submission analyzed. The candidate provided a very brief or incomplete implementation. Standard programming structures and functions were missing."
+
+    if client:
+        prompt = f"""You are an expert software developer and technical evaluator. Evaluate the candidate's code submissions for the generated test questions.
 Questions:
 {test.test_questions}
 
@@ -629,23 +715,23 @@ Return ONLY a valid JSON object matching this structure:
   "feedback": "Detailed review text here..."
 }}
 """
-            try:
-                response = client.chat.completions.create(
-                    model=OPENAI_MODEL,
-                    messages=[
-                        {"role": "system", "content": "You are a professional technical code evaluator. Return ONLY valid JSON."},
-                        {"role": "user", "content": prompt}
-                    ],
-                    response_format={"type": "json_object"},
-                    temperature=0.2
-                )
-                res_content = response.choices[0].message.content
-                parsed = json.loads(res_content)
-                score = int(parsed.get("score", 80))
-                feedback = str(parsed.get("feedback", feedback))
-            except Exception as e:
-                pass
-                
+        try:
+            response = client.chat.completions.create(
+                model=OPENAI_MODEL,
+                messages=[
+                    {"role": "system", "content": "You are a professional technical code evaluator. Return ONLY valid JSON."},
+                    {"role": "user", "content": prompt}
+                ],
+                response_format={"type": "json_object"},
+                temperature=0.2
+            )
+            res_content = response.choices[0].message.content
+            parsed = json.loads(res_content)
+            score = int(parsed.get("score", 80))
+            feedback = str(parsed.get("feedback", feedback))
+        except Exception as e:
+            pass
+            
     test.candidate_answers = json.dumps(req.answers)
     test.score = score
     test.feedback = feedback

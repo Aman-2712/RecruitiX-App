@@ -70,6 +70,7 @@ export interface CandidateDetail extends Candidate {
   ai_summary: string;
   ai_concerns: string;
   raw_text: string;
+  resume_filename?: string;
   experiences: CandidateExperience[];
   educations: CandidateEducation[];
 }

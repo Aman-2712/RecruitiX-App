@@ -37,6 +37,7 @@ export default function CandidateWorkspace() {
   const [submittingTest, setSubmittingTest] = useState(false);
   const [candidateCodes, setCandidateCodes] = useState<Record<number, string>>({});
   const [activeQuestionId, setActiveQuestionId] = useState<number>(1);
+  const [sandboxError, setSandboxError] = useState("");
 
   const fetchCandidate = async () => {
     try {
@@ -145,6 +146,7 @@ export default function CandidateWorkspace() {
   const handleSubmitTest = async () => {
     if (submittingTest) return;
     setSubmittingTest(true);
+    setSandboxError("");
     try {
       const answersList = Object.entries(candidateCodes).map(([id, code]) => ({
         id: parseInt(id),
@@ -163,14 +165,30 @@ export default function CandidateWorkspace() {
       });
       if (!res.ok) throw new Error("Failed to submit and grade answers.");
       const data = await res.json();
-      setSkillsTest((prev: any) => ({
-        ...prev,
-        status: "COMPLETED",
-        score: data.score,
-        feedback: data.feedback,
-        candidate_answers: answersList
-      }));
-      alert(`🎉 Coding test submitted and graded! AI Scorecard generated: ${data.score}%`);
+      
+      if (data.status === "ERROR") {
+        setSandboxError(data.error);
+        setSkillsTest((prev: any) => ({
+          ...prev,
+          test_questions: data.test_questions
+        }));
+        // Select the new question automatically!
+        if (data.test_questions.length > 0) {
+          const newQ = data.test_questions[data.test_questions.length - 1];
+          setActiveQuestionId(newQ.id);
+        }
+        alert(`⚠️ Code submission contains errors!\n\nError: ${data.error}\n\nWe have automatically generated and added a new coding question for you to solve.`);
+      } else {
+        setSkillsTest((prev: any) => ({
+          ...prev,
+          status: "COMPLETED",
+          score: data.score,
+          feedback: data.feedback,
+          candidate_answers: answersList
+        }));
+        setSandboxError("");
+        alert(`🎉 Coding test submitted and graded! AI Scorecard generated: ${data.score}%`);
+      }
     } catch (err: any) {
       alert(err.message || "Failed to grade coding test.");
     } finally {
@@ -681,7 +699,7 @@ export default function CandidateWorkspace() {
         </div>
       )}
 
-      {activeTab === "resume" && (
+      {activeTab === "resume" && candidate && (
         /* Original Resume Viewer Tab using iframe and download backup button */
         <div className="bg-white border border-slate-200 rounded-2xl shadow-sm premium-border overflow-hidden h-[75vh] flex flex-col">
           <div className="bg-slate-50 px-6 py-4 border-b border-slate-150 flex items-center justify-between flex-shrink-0">
@@ -690,18 +708,40 @@ export default function CandidateWorkspace() {
               href={api.getResumeUrl(candidateId)}
               target="_blank"
               rel="noreferrer"
-              className="bg-white border border-slate-200 text-slate-700 font-semibold py-1.5 px-3 rounded-lg text-xs hover:bg-slate-50 shadow-sm transition-all flex items-center gap-1.5"
+              className="bg-white border border-slate-200 text-slate-700 font-semibold py-1.5 px-3 rounded-lg text-xs hover:bg-slate-50 shadow-sm transition-all flex items-center gap-1.5 animate-pulse"
             >
               <Download size={13} /> Download Resume File
             </a>
           </div>
           
           <div className="flex-1 bg-slate-100 flex items-center justify-center p-4">
-            <iframe
-              src={api.getResumeUrl(candidateId)}
-              className="w-full h-full rounded-lg border border-slate-200 shadow-sm bg-white"
-              title="Resume PDF Document"
-            />
+            {candidate.resume_filename?.toLowerCase().endsWith(".docx") || 
+             candidate.resume_filename?.toLowerCase().endsWith(".doc") ? (
+              <div className="flex flex-col items-center justify-center text-center p-8 space-y-4 max-w-md">
+                <div className="p-4 rounded-full bg-blue-50/10 text-blue-400 border border-blue-500/20">
+                  <FileText size={40} />
+                </div>
+                <div className="space-y-1.5">
+                  <h4 className="text-sm font-bold text-slate-800">Microsoft Word Document (.docx)</h4>
+                  <p className="text-xs text-slate-400 font-semibold leading-relaxed">
+                    Web browsers cannot preview Microsoft Word files directly in-page. Use the button below to download and view the resume locally.
+                  </p>
+                </div>
+                <a
+                  href={api.getResumeUrl(candidateId)}
+                  download={candidate.resume_filename}
+                  className="bg-blue-600 hover:bg-blue-700 text-white font-extrabold py-2.5 px-5 rounded-xl text-xs shadow-md transition-all flex items-center gap-2"
+                >
+                  <Download size={14} /> Download Resume File
+                </a>
+              </div>
+            ) : (
+              <iframe
+                src={api.getResumeUrl(candidateId)}
+                className="w-full h-full rounded-lg border border-slate-200 shadow-sm bg-white"
+                title="Resume PDF Document"
+              />
+            )}
           </div>
         </div>
       )}
@@ -767,6 +807,13 @@ export default function CandidateWorkspace() {
                         <span className="text-[9px] font-extrabold text-slate-450 uppercase block">Sample Test Cases</span>
                         <code className="text-[10px] font-mono text-slate-700 font-extrabold break-all whitespace-pre-wrap">{activeQ.sample_cases}</code>
                       </div>
+
+                      {sandboxError && (
+                        <div className="bg-red-50 border border-red-100 p-4 rounded-xl space-y-2 mt-2">
+                          <span className="text-[10px] font-black text-red-700 uppercase tracking-wider block">Error Detected</span>
+                          <p className="text-[10.5px] font-mono text-red-700 font-extrabold whitespace-pre-wrap leading-relaxed">{sandboxError}</p>
+                        </div>
+                      )}
                     </div>
                   );
                 })()}

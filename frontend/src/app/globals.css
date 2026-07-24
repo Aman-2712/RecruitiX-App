@@ -274,14 +274,20 @@
 
   /* Enhance readability and colors of standard badges/text inside the Enterprise theme */
   .theme-enterprise .bg-emerald-50 {
-    background-color: rgba(52, 211, 153, 0.12) !important;
+    background-color: rgba(52, 211, 153, 0.15) !important;
+    border-color: rgba(52, 211, 153, 0.3) !important;
   }
+  .theme-enterprise .text-emerald-850,
+  .theme-enterprise .text-emerald-800,
   .theme-enterprise .text-emerald-700,
   .theme-enterprise .text-emerald-600 {
-    color: #a7f3d0 !important;
+    color: #34d399 !important; /* High contrast light mint */
   }
   .theme-enterprise .border-emerald-100 {
-    border-color: rgba(52, 211, 153, 0.25) !important;
+    border-color: rgba(52, 211, 153, 0.3) !important;
+  }
+  .theme-enterprise .hover\:text-emerald-950:hover {
+    color: #a7f3d0 !important;
   }
 
   .theme-enterprise .bg-blue-50 {
@@ -326,6 +332,20 @@
   }
   .theme-enterprise .border-slate-200 {
     border-color: rgba(167, 139, 250, 0.2) !important;
+  }
+
+  /* Skill badges - overrides any button styles so they remain standard rounded tags with custom glows */
+  .theme-enterprise span.bg-blue-50,
+  .theme-enterprise span.bg-slate-50,
+  .theme-enterprise span.bg-indigo-50,
+  .theme-enterprise span.bg-emerald-50,
+  .theme-enterprise span.bg-red-50 {
+    background: rgba(139, 92, 246, 0.12) !important;
+    color: #ddd6fe !important;
+    border: 1px solid rgba(139, 92, 246, 0.25) !important;
+    box-shadow: 0 0 10px rgba(139, 92, 246, 0.15) !important;
+    text-shadow: none !important;
+    transform: none !important;
   }
 
   /* Premium dropdown overrides for Enterprise Theme */
