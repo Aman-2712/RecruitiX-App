@@ -85,6 +85,7 @@ class Job(Base):
     status = Column(String, default="ACTIVE")  # ACTIVE, ARCHIVED
     organization_id = Column(Integer, ForeignKey("organizations.id", ondelete="CASCADE"), nullable=True)
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
+    ai_model = Column(String, default="GEMINI")  # GEMINI, CLAUDE, GPT
 
     # Relationships
     organization = relationship("Organization", back_populates="jobs")
@@ -117,6 +118,7 @@ class Candidate(Base):
     job = relationship("Job", back_populates="candidates")
     experiences = relationship("CandidateExperience", back_populates="candidate", cascade="all, delete-orphan")
     educations = relationship("CandidateEducation", back_populates="candidate", cascade="all, delete-orphan")
+    skills_tests = relationship("SkillsTest", back_populates="candidate", cascade="all, delete-orphan")
 
 class CandidateExperience(Base):
     __tablename__ = "candidate_experiences"
@@ -156,3 +158,18 @@ class PromoCode(Base):
     expires_at = Column(DateTime, nullable=True)
     is_active = Column(Boolean, default=True)
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
+
+class SkillsTest(Base):
+    __tablename__ = "skills_tests"
+
+    id = Column(Integer, primary_key=True, index=True)
+    candidate_id = Column(Integer, ForeignKey("candidates.id", ondelete="CASCADE"), nullable=False)
+    test_questions = Column(Text, nullable=True)     # JSON string of questions
+    candidate_answers = Column(Text, nullable=True)   # JSON string of candidate responses
+    score = Column(Integer, nullable=True)
+    feedback = Column(Text, nullable=True)
+    status = Column(String, default="PENDING")        # PENDING, COMPLETED
+    created_at = Column(DateTime, default=datetime.datetime.utcnow)
+
+    # Relationships
+    candidate = relationship("Candidate", back_populates="skills_tests")

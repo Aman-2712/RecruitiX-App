@@ -178,6 +178,13 @@ def upgrade_subscription(
         # Reset count for new cycle
         usage.resumes_processed = 0
         
+    if org.current_plan == "ENTERPRISE":
+        try:
+            from app.services.email_service import send_enterprise_welcome_email
+            send_enterprise_welcome_email(current_user.email, current_user.name, org.name)
+        except Exception as e:
+            logger.error(f"Error sending enterprise welcome email: {e}")
+            
     db.commit()
     return {
         "status": "success",

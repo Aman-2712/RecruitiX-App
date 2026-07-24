@@ -86,7 +86,8 @@ def upload_resumes(
         "min_experience": job.min_experience,
         "max_experience": job.max_experience,
         "education_required": job.education_required,
-        "location": job.location
+        "location": job.location,
+        "ai_model": job.ai_model or "GEMINI"
     }
     
     results = []

@@ -275,3 +275,98 @@ def send_candidate_rejection_email(to_email: str, candidate_name: str, job_title
     </div>
     """
     return send_email(to_email, subject, html_content)
+
+def send_candidate_reengagement_email(to_email: str, candidate_name: str, job_title: str, org_name: str):
+    subject = f"New Opportunity: {job_title} role at {org_name}"
+    html_content = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="utf-8">
+        <title>New Job Opportunity</title>
+    </head>
+    <body style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8fafc; color: #0f172a; margin: 0; padding: 40px 20px;">
+        <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 24px; padding: 40px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05); border: 1px solid #f1f5f9;">
+            <div style="text-align: center; margin-bottom: 30px;">
+                <div style="font-size: 28px; font-weight: 800; color: #1e3a8a; letter-spacing: -0.025em;">hire<span style="color: #2563eb;">cue</span></div>
+                <div style="font-size: 11px; font-weight: 700; color: #b5c2d9; text-transform: uppercase; letter-spacing: 0.1em; margin-top: 4px;">Talent Pool Match</div>
+            </div>
+            
+            <p style="font-size: 15px; font-weight: 600; line-height: 1.6; color: #334155;">Hello {candidate_name or "there"},</p>
+            
+            <p style="font-size: 14px; line-height: 1.6; color: #475569;">
+                Our AI Talent Agent matching engine recently scanned our active applicant pool and flagged your profile as a fantastic fit for a new role we just opened: <strong>{job_title}</strong> at <strong>{org_name}</strong>.
+            </p>
+            
+            <p style="font-size: 14px; line-height: 1.6; color: #475569;">
+                Having reviewed your past applications, we believe your skills align perfectly with our current engineering requirements. We would love to fast-track your profile for this new position.
+            </p>
+            
+            <div style="margin: 35px 0; text-align: center;">
+                <a href="https://hirecue.online" style="background-color: #2563eb; color: #ffffff; text-decoration: none; padding: 14px 30px; font-size: 13px; font-weight: 700; border-radius: 12px; display: inline-block; box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.2); transition: all 0.2s;">View Role & Express Interest</a>
+            </div>
+            
+            <p style="font-size: 12px; line-height: 1.6; color: #64748b; border-top: 1px solid #f1f5f9; padding-top: 20px; margin-top: 40px;">
+                Best regards,<br>
+                The Talent Acquisition Team<br>
+                <strong>{org_name}</strong>
+            </p>
+        </div>
+    </body>
+    </html>
+    """
+    return send_email(to_email, subject, html_content)
+
+def send_enterprise_welcome_email(to_email: str, user_name: str, org_name: str):
+    subject = "Welcome to HireCue Enterprise Plan!"
+    html_content = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="utf-8">
+        <title>Welcome to HireCue Enterprise</title>
+    </head>
+    <body style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #fafafa; color: #1a1a1a; margin: 0; padding: 40px 20px;">
+        <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 24px; padding: 40px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05); border: 1px solid #e2e8f0;">
+            <div style="text-align: center; margin-bottom: 30px;">
+                <div style="font-size: 28px; font-weight: 800; color: #0f172a;">hire<span style="color: #6366f1;">cue</span></div>
+                <div style="font-size: 11px; font-weight: 700; color: #d97706; text-transform: uppercase; letter-spacing: 0.1em; margin-top: 4px;">Enterprise Subscription Upgrade</div>
+            </div>
+            
+            <p style="font-size: 15px; font-weight: 600; color: #1e293b;">Dear {user_name or "Partner"},</p>
+            
+            <p style="font-size: 14px; line-height: 1.6; color: #475569;">
+                Congratulations! Your organization <strong>{org_name}</strong> has successfully upgraded to the **HireCue Enterprise Plan**.
+            </p>
+            
+            <p style="font-size: 14px; line-height: 1.6; color: #475569;">
+                Your workspace is now upgraded with premium visual custom branding, unlimited candidate parsing, and enterprise security features. Here is what has been unlocked in your dashboard:
+            </p>
+            
+            <ul style="font-size: 13px; color: #475569; line-height: 1.6; padding-left: 20px;">
+                <li>🎨 <strong>Rose Gold & Platinum Theme Reskin:</strong> Elite recruiter layout design.</li>
+                <li>⚙️ <strong>SSO Config & Compliance Audit Logs:</strong> SAML integration support (Okta, Azure AD) and exportable activity trails.</li>
+                <li>🤖 <strong>Multi-AI Model Selection:</strong> Gated matching engine supporting Gemini, Claude, and GPT-4o.</li>
+                <li>💬 <strong>Candidate AI Interview Simulator:</strong> Text-based candidate interaction sandbox.</li>
+                <li>📈 <strong>Talent Pool Re-Engagement:</strong> Past candidates matching scanner agent.</li>
+                <li>📝 <strong>AI Skills Test Generator & Sandbox Editor:</strong> Technical coding exercises with live grading scorecards.</li>
+            </ul>
+            
+            <p style="font-size: 14px; line-height: 1.6; color: #475569;">
+                We are thrilled to help you build and scale your engineering teams. If you need any assistance setting up your SSO or configuring models, please contact your account manager directly.
+            </p>
+            
+            <div style="margin: 35px 0; text-align: center;">
+                <a href="{FRONTEND_URL}/dashboard" style="background-color: #0f172a; color: #ffffff; text-decoration: none; padding: 14px 30px; font-size: 13px; font-weight: 700; border-radius: 12px; display: inline-block;">Go to Enterprise Dashboard</a>
+            </div>
+            
+            <p style="font-size: 12px; line-height: 1.6; color: #64748b; border-top: 1px solid #f1f5f9; padding-top: 20px; margin-top: 40px;">
+                Best regards,<br>
+                The HireCue Customer Success Team<br>
+                <strong>HireCue.online</strong>
+            </p>
+        </div>
+    </body>
+    </html>
+    """
+    return send_email(to_email, subject, html_content)

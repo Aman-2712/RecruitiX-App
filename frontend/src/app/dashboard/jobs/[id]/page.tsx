@@ -5,7 +5,8 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { 
   ArrowLeft, Briefcase, MapPin, Calendar, Upload, Bot, Search, 
-  Trash2, FileText, Loader, Filter, CheckCircle, RefreshCw, X, Sparkles 
+  Trash2, FileText, Loader, Filter, CheckCircle, RefreshCw, X, Sparkles,
+  MessageSquare, Send, User, Users
 } from "lucide-react";
 import { api, Job, Candidate } from "@/lib/api";
 
@@ -32,6 +33,21 @@ export default function JobDetails() {
   const [uploadProgress, setUploadProgress] = useState("");
   const [uploadErrors, setUploadErrors] = useState<string[]>([]);
 
+  // AI Candidate Simulator States
+  const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(null);
+  const [isSimulatorOpen, setIsSimulatorOpen] = useState(false);
+  const [simMessage, setSimMessage] = useState("");
+  const [simMessages, setSimMessages] = useState<{ role: "user" | "assistant"; content: string }[]>([]);
+  const [sendingSim, setSendingSim] = useState(false);
+  const [currentPlan, setCurrentPlan] = useState("STARTER");
+
+  // Talent Pool Re-Engagement states
+  const [isTalentPoolOpen, setIsTalentPoolOpen] = useState(false);
+  const [talentPoolCandidates, setTalentPoolCandidates] = useState<any[]>([]);
+  const [selectedTalentIds, setSelectedTalentIds] = useState<number[]>([]);
+  const [loadingTalent, setLoadingTalent] = useState(false);
+  const [invitingTalent, setInvitingTalent] = useState(false);
+
   const fetchData = async () => {
     try {
       const jobData = await api.getJob(jobId);
@@ -51,8 +67,10 @@ export default function JobDetails() {
   };
 
   useEffect(() => {
+    const plan = localStorage.getItem("hirecue_plan") || "STARTER";
+    setCurrentPlan(plan);
     fetchData().finally(() => setLoading(false));
-  }, [jobId, statusFilter, minScore]); // trigger fetch on dropdown/slider filter changes
+  }, [jobId, statusFilter, minScore]);
 
   // Trigger search on enter or when user finishes typing
   const handleSearchSubmit = (e: React.FormEvent) => {
@@ -84,6 +102,108 @@ export default function JobDetails() {
     } finally {
       setClassifying(false);
     }
+  };
+
+  const handleOpenSimulator = (cand: Candidate) => {
+    if (currentPlan !== "ENTERPRISE") {
+      alert("⚠️ Candidate AI Simulator (Interview Sandbox) is an Enterprise Plan feature. Please upgrade your workspace!");
+      return;
+    }
+    setSelectedCandidate(cand);
+    setSimMessages([
+      { role: "assistant", content: `Hello! I am ${cand.name}. I've applied for the ${job?.title || 'position'} role. Ask me anything about my experience, skills, or background!` }
+    ]);
+    setSimMessage("");
+    setIsSimulatorOpen(true);
+  };
+
+  const handleSendSimMessage = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!simMessage.trim() || !selectedCandidate || sendingSim) return;
+
+    const userText = simMessage.trim();
+    setSimMessages((prev) => [...prev, { role: "user", content: userText }]);
+    setSimMessage("");
+    setSendingSim(true);
+
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/api/candidates/${selectedCandidate.id}/simulate`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem("hirecue_token") || ""}`
+        },
+        body: JSON.stringify({
+          message: userText,
+          chat_history: simMessages.slice(1)
+        })
+      });
+      if (!res.ok) {
+        throw new Error("Failed to get response from AI clone.");
+      }
+      const data = await res.json();
+      setSimMessages((prev) => [...prev, { role: "assistant", content: data.response }]);
+    } catch (err: any) {
+      setSimMessages((prev) => [...prev, { role: "assistant", content: "I'm sorry, I'm having trouble matching your connection, but I'd be happy to chat about my qualifications later." }]);
+    } finally {
+      setSendingSim(false);
+    }
+  };
+
+  const handleOpenTalentPool = async () => {
+    if (currentPlan !== "ENTERPRISE") {
+      alert("⚠️ Talent Pool Re-Engagement Agent is an Enterprise Plan feature. Please upgrade your workspace!");
+      return;
+    }
+    setIsTalentPoolOpen(true);
+    setLoadingTalent(true);
+    setSelectedTalentIds([]);
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/api/jobs/${jobId}/talent-pool`, {
+        headers: {
+          "Authorization": `Bearer ${localStorage.getItem("hirecue_token") || ""}`
+        }
+      });
+      if (!res.ok) throw new Error("Failed to load talent pool matches.");
+      const data = await res.json();
+      setTalentPoolCandidates(data);
+    } catch (err: any) {
+      alert(err.message || "Failed to load talent pool.");
+    } finally {
+      setLoadingTalent(false);
+    }
+  };
+
+  const handleInviteTalent = async () => {
+    if (selectedTalentIds.length === 0 || invitingTalent) return;
+    setInvitingTalent(true);
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/api/jobs/${jobId}/talent-pool/invite`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem("hirecue_token") || ""}`
+        },
+        body: JSON.stringify({
+          candidate_ids: selectedTalentIds
+        })
+      });
+      if (!res.ok) throw new Error("Failed to send invitations.");
+      const data = await res.json();
+      alert(`🎉 Successfully re-engaged and invited ${data.invited_count} candidate(s) to this job opening!`);
+      setIsTalentPoolOpen(false);
+      await fetchData(); // refresh candidates list
+    } catch (err: any) {
+      alert(err.message || "Failed to invite talent.");
+    } finally {
+      setInvitingTalent(false);
+    }
+  };
+
+  const toggleSelectTalent = (id: number) => {
+    setSelectedTalentIds((prev) =>
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+    );
   };
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -448,6 +568,14 @@ export default function JobDetails() {
                 </button>
                 <button
                   type="button"
+                  onClick={handleOpenTalentPool}
+                  className="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 rounded-xl text-xs font-bold transition-all shadow-sm cursor-pointer"
+                >
+                  <Users size={14} />
+                  Re-Engage Talent
+                </button>
+                <button
+                  type="button"
                   onClick={handleAutoClassify}
                   disabled={classifying || candidates.length === 0}
                   className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 rounded-xl text-xs font-bold transition-all shadow-sm disabled:opacity-50 cursor-pointer"
@@ -537,6 +665,12 @@ export default function JobDetails() {
                             Details
                           </Link>
                           <button
+                            onClick={() => handleOpenSimulator(cand)}
+                            className="bg-white border border-slate-200 text-slate-700 font-semibold py-2 px-3 rounded-xl text-xs hover:bg-slate-50 transition-all shadow-sm flex items-center gap-1.5"
+                          >
+                            <MessageSquare size={13} /> Sandbox
+                          </button>
+                          <button
                             onClick={(e) => handleDeleteCandidate(cand.id, e)}
                             className="text-slate-400 hover:text-red-500 hover:bg-red-50 p-2 rounded-xl transition-all"
                           >
@@ -554,6 +688,223 @@ export default function JobDetails() {
 
         </div>
       </div>
+
+      {/* Candidate AI Simulator Modal */}
+      {isSimulatorOpen && selectedCandidate && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+          <div className="bg-white rounded-3xl shadow-xl w-full max-w-2xl overflow-hidden flex flex-col h-[600px] border border-slate-100 animate-in zoom-in-95 duration-200 text-slate-900">
+            {/* Modal Header */}
+            <div className="bg-slate-900 text-white p-6 flex justify-between items-center bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900">
+              <div className="flex items-center gap-3">
+                <div className="bg-blue-600/20 text-blue-400 p-2 rounded-xl">
+                  <Bot size={22} />
+                </div>
+                <div>
+                  <h3 className="font-extrabold text-sm tracking-wide uppercase text-slate-300">AI Interview Simulator</h3>
+                  <p className="text-xs font-semibold text-slate-400 mt-0.5">Conversing with the clone of <span className="text-white font-extrabold">{selectedCandidate.name}</span></p>
+                </div>
+              </div>
+              <button 
+                onClick={() => setIsSimulatorOpen(false)}
+                className="text-slate-400 hover:text-white hover:bg-white/10 p-2 rounded-xl transition-all"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            {/* Chat Body */}
+            <div className="flex-1 p-6 overflow-y-auto bg-slate-50 space-y-4">
+              {simMessages.map((msg, idx) => (
+                <div 
+                  key={idx} 
+                  className={`flex gap-3 max-w-[85%] ${msg.role === "user" ? "ml-auto flex-row-reverse" : "mr-auto"}`}
+                >
+                  <div className={`p-2 rounded-xl flex-shrink-0 h-8 w-8 flex items-center justify-center ${msg.role === "user" ? "bg-blue-600 text-white" : "bg-slate-200 text-slate-700"}`}>
+                    {msg.role === "user" ? <User size={14} /> : <Bot size={14} />}
+                  </div>
+                  <div className={`p-4 rounded-3xl text-xs font-semibold leading-relaxed shadow-sm ${msg.role === "user" ? "bg-blue-600 text-white rounded-tr-none" : "bg-white border border-slate-150 text-slate-800 rounded-tl-none"}`}>
+                    {msg.content}
+                  </div>
+                </div>
+              ))}
+              {sendingSim && (
+                <div className="flex gap-3 mr-auto items-center">
+                  <div className="p-2 rounded-xl h-8 w-8 flex items-center justify-center bg-slate-200 text-slate-700">
+                    <Bot size={14} className="animate-pulse" />
+                  </div>
+                  <div className="bg-white border border-slate-150 p-4 rounded-3xl rounded-tl-none text-xs font-semibold text-slate-400 italic">
+                    Candidate is typing...
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Quick Suggestion Chips */}
+            <div className="px-6 py-3 bg-white border-t border-slate-100 flex gap-2 overflow-x-auto whitespace-nowrap scrollbar-none">
+              <button 
+                onClick={() => {
+                  setSimMessage("Tell me about your background and experience.");
+                }}
+                className="bg-slate-50 hover:bg-slate-100 border border-slate-150 text-slate-700 px-3 py-1.5 rounded-full text-[10px] font-bold transition cursor-pointer"
+              >
+                📝 Tell me about yourself
+              </button>
+              <button 
+                onClick={() => {
+                  setSimMessage(`Why are you interested in this ${job?.title || 'role'} position?`);
+                }}
+                className="bg-slate-50 hover:bg-slate-100 border border-slate-150 text-slate-700 px-3 py-1.5 rounded-full text-[10px] font-bold transition cursor-pointer"
+              >
+                ❓ Why this role?
+              </button>
+              <button 
+                onClick={() => {
+                  setSimMessage("What is your salary expectation for this job?");
+                }}
+                className="bg-slate-50 hover:bg-slate-100 border border-slate-150 text-slate-700 px-3 py-1.5 rounded-full text-[10px] font-bold transition cursor-pointer"
+              >
+                💰 Salary expectations?
+              </button>
+              <button 
+                onClick={() => {
+                  setSimMessage("What are your primary technical skills?");
+                }}
+                className="bg-slate-50 hover:bg-slate-100 border border-slate-150 text-slate-700 px-3 py-1.5 rounded-full text-[10px] font-bold transition cursor-pointer"
+              >
+                ⚙️ Technical stack?
+              </button>
+            </div>
+
+            {/* Form Input */}
+            <form onSubmit={handleSendSimMessage} className="p-4 bg-white border-t border-slate-150 flex gap-3">
+              <input
+                type="text"
+                value={simMessage}
+                onChange={(e) => setSimMessage(e.target.value)}
+                placeholder={`Ask ${selectedCandidate.name} a question...`}
+                className="flex-1 border border-slate-200 rounded-2xl px-4 py-3 text-xs text-slate-900 font-semibold focus:outline-none focus:border-blue-600 transition"
+              />
+              <button
+                type="submit"
+                disabled={sendingSim || !simMessage.trim()}
+                className="bg-blue-600 hover:bg-blue-700 disabled:bg-slate-200 text-white disabled:text-slate-400 p-3 rounded-2xl transition active:scale-95 flex items-center justify-center shadow-sm cursor-pointer"
+              >
+                <Send size={15} />
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+      {/* Talent Pool Re-Engagement Modal */}
+      {isTalentPoolOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+          <div className="bg-white rounded-3xl shadow-xl w-full max-w-3xl overflow-hidden flex flex-col h-[550px] border border-slate-100 animate-in zoom-in-95 duration-200 text-slate-900">
+            {/* Header */}
+            <div className="bg-slate-900 text-white p-6 flex justify-between items-center bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900">
+              <div className="flex items-center gap-3">
+                <div className="bg-indigo-600/20 text-indigo-400 p-2 rounded-xl">
+                  <Users size={22} />
+                </div>
+                <div>
+                  <h3 className="font-extrabold text-sm tracking-wide uppercase text-slate-300">Talent Pool Re-Engagement Agent</h3>
+                  <p className="text-xs font-semibold text-slate-400 mt-0.5">Recycle and invite past candidates who match this role's requirements</p>
+                </div>
+              </div>
+              <button 
+                onClick={() => setIsTalentPoolOpen(false)}
+                className="text-slate-400 hover:text-white hover:bg-white/10 p-2 rounded-xl transition-all"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            {/* Content List */}
+            <div className="flex-1 p-6 overflow-y-auto bg-slate-50 space-y-4">
+              {loadingTalent ? (
+                <div className="flex flex-col items-center justify-center h-full space-y-2">
+                  <Loader className="animate-spin text-indigo-600" size={24} />
+                  <span className="text-xs text-slate-400 font-semibold">Scanning past applications for matching skills...</span>
+                </div>
+              ) : talentPoolCandidates.length === 0 ? (
+                <div className="text-center py-12 space-y-2">
+                  <span className="text-3xl">📭</span>
+                  <p className="text-sm font-extrabold text-slate-700">No matching past candidates found</p>
+                  <p className="text-xs text-slate-500 font-medium max-w-sm mx-auto">Upload resumes to other job vacancies to build a recycleable talent network pool.</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  <div className="text-[10px] font-black uppercase text-slate-400 tracking-wider mb-1">Matching Candidates ({talentPoolCandidates.length})</div>
+                  {talentPoolCandidates.map((cand) => {
+                    const isSelected = selectedTalentIds.includes(cand.id);
+                    return (
+                      <div 
+                        key={cand.id} 
+                        onClick={() => toggleSelectTalent(cand.id)}
+                        className={`p-4 rounded-2xl border transition-all cursor-pointer flex items-center justify-between gap-4 ${
+                          isSelected 
+                            ? "bg-indigo-50/70 border-indigo-300 shadow-sm" 
+                            : "bg-white border-slate-150 hover:border-indigo-200"
+                        }`}
+                      >
+                        <div className="flex items-center gap-3">
+                          <input 
+                            type="checkbox" 
+                            checked={isSelected}
+                            onChange={() => {}} // handled by click container
+                            className="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                          />
+                          <div>
+                            <h4 className="text-xs font-black text-slate-900">{cand.name}</h4>
+                            <p className="text-[10px] font-semibold text-slate-500 mt-0.5">Applied previously to: <span className="text-slate-800 font-extrabold">{cand.previous_job}</span></p>
+                            {cand.skills && cand.skills.length > 0 && (
+                              <div className="flex flex-wrap gap-1 mt-1.5">
+                                {cand.skills.map((skill: string) => (
+                                  <span key={skill} className="bg-indigo-50 text-indigo-700 border border-indigo-100 text-[8px] font-black px-1.5 py-0.5 rounded uppercase">
+                                    {skill}
+                                  </span>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="text-right">
+                          <span className="bg-emerald-50 text-emerald-700 border border-emerald-100 text-[10px] font-black px-2.5 py-1 rounded-xl block w-fit ml-auto">
+                            {cand.match_score}% Match
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+
+            {/* Footer */}
+            <div className="bg-white border-t border-slate-150 p-4 flex justify-between items-center">
+              <span className="text-xs font-bold text-slate-500">
+                {selectedTalentIds.length} candidate(s) selected
+              </span>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setIsTalentPoolOpen(false)}
+                  className="bg-white border border-slate-200 text-slate-700 font-semibold px-4 py-2.5 rounded-xl text-xs hover:bg-slate-50 transition active:scale-95"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleInviteTalent}
+                  disabled={selectedTalentIds.length === 0 || invitingTalent}
+                  className="bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-300 text-white font-extrabold px-5 py-2.5 rounded-xl text-xs shadow-md shadow-indigo-600/10 transition active:scale-95 flex items-center gap-1.5"
+                >
+                  {invitingTalent ? <Loader className="animate-spin" size={14} /> : null}
+                  Send Invite & Import Candidate
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

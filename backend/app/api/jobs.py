@@ -21,6 +21,7 @@ class JobBase(BaseModel):
     max_experience: Optional[int] = None
     education_required: Optional[str] = None
     location: Optional[str] = None
+    ai_model: Optional[str] = "GEMINI"
 
 class JobCreate(JobBase):
     pass
@@ -51,7 +52,8 @@ def get_jobs(db: Session = Depends(get_db), current_user: User = Depends(get_cur
             "location": job.location,
             "status": job.status,
             "created_at": job.created_at,
-            "candidate_count": len(job.candidates)
+            "candidate_count": len(job.candidates),
+            "ai_model": job.ai_model or "GEMINI"
         })
     return results
 
@@ -72,7 +74,8 @@ def get_job(job_id: int, db: Session = Depends(get_db), current_user: User = Dep
         "education_required": job.education_required,
         "location": job.location,
         "status": job.status,
-        "created_at": job.created_at
+        "created_at": job.created_at,
+        "ai_model": job.ai_model or "GEMINI"
     }
 
 @router.post("", response_model=dict)
@@ -82,6 +85,20 @@ def create_job(
     current_user: User = Depends(RoleChecker(["ADMIN", "HR_MANAGER", "RECRUITER"])),
     usage: UsageTracking = Depends(check_plan_limit("job"))
 ):
+    # Verify model constraints: only ENTERPRISE plan is allowed to choose CLAUDE or GPT
+    ai_model_setting = "GEMINI"
+    if job_in.ai_model:
+        selected_model = job_in.ai_model.upper()
+        if selected_model in ["CLAUDE", "GPT"]:
+            if current_user.organization.current_plan != "ENTERPRISE":
+                raise HTTPException(
+                    status_code=403,
+                    detail="Multi-AI model selection is an Enterprise Plan feature. Please upgrade your workspace."
+                )
+            ai_model_setting = selected_model
+        else:
+            ai_model_setting = "GEMINI"
+            
     job = Job(
         title=job_in.title,
         description=job_in.description,
@@ -91,6 +108,7 @@ def create_job(
         max_experience=job_in.max_experience,
         education_required=job_in.education_required,
         location=job_in.location,
+        ai_model=ai_model_setting,
         status="ACTIVE",
         organization_id=current_user.organization_id
     )
@@ -105,7 +123,8 @@ def create_job(
         "title": job.title,
         "skills_required": job_in.skills_required,
         "skills_preferred": job_in.skills_preferred,
-        "status": job.status
+        "status": job.status,
+        "ai_model": job.ai_model
     }
 
 @router.delete("/{job_id}", status_code=status.HTTP_204_NO_CONTENT)
@@ -313,4 +332,141 @@ def auto_classify_candidates(
         "unchanged": unchanged_count,
         "total_processed": shortlisted_count + rejected_count
     }
+
+class InviteRequest(BaseModel):
+    candidate_ids: List[int]
+
+@router.get("/{job_id}/talent-pool")
+def get_talent_pool_matches(
+    job_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    # Only ENTERPRISE plan users can use the Talent Pool Re-Engagement Agent
+    if current_user.organization.current_plan != "ENTERPRISE":
+        raise HTTPException(
+            status_code=403,
+            detail="Talent Pool Re-Engagement is an Enterprise Plan feature. Please upgrade your workspace."
+        )
+        
+    job = db.query(Job).filter(Job.id == job_id, Job.organization_id == current_user.organization_id).first()
+    if not job:
+        raise HTTPException(status_code=404, detail="Job not found or access denied")
+        
+    from app.models import Candidate
+    # Get all candidates in other jobs of this organization
+    other_candidates = db.query(Candidate).join(Job).filter(
+        Job.organization_id == current_user.organization_id,
+        Job.id != job_id
+    ).all()
+    
+    # We want to filter or score candidates based on skills overlap
+    job_skills = set(json.loads(job.skills_required or "[]") + json.loads(job.skills_preferred or "[]"))
+    job_skills = {s.lower() for s in job_skills}
+    
+    matches = []
+    for cand in other_candidates:
+        cand_skills = set()
+        if cand.raw_text:
+            for skill in job_skills:
+                if skill in cand.raw_text.lower():
+                    cand_skills.add(skill)
+                    
+        overlap_pct = int((len(cand_skills) / len(job_skills) * 100)) if job_skills else 0
+        
+        matches.append({
+            "id": cand.id,
+            "name": cand.name,
+            "email": cand.email,
+            "previous_job": cand.job.title,
+            "skills": list(cand_skills),
+            "match_score": overlap_pct if overlap_pct > 0 else cand.match_score
+        })
+        
+    matches.sort(key=lambda x: x["match_score"], reverse=True)
+    return matches
+
+@router.post("/{job_id}/talent-pool/invite")
+def invite_talent_pool_candidates(
+    job_id: int,
+    req: InviteRequest,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    if current_user.organization.current_plan != "ENTERPRISE":
+        raise HTTPException(
+            status_code=403,
+            detail="Talent Pool Re-Engagement is an Enterprise Plan feature. Please upgrade your workspace."
+        )
+        
+    job = db.query(Job).filter(Job.id == job_id, Job.organization_id == current_user.organization_id).first()
+    if not job:
+        raise HTTPException(status_code=404, detail="Job not found or access denied")
+        
+    from app.models import Candidate, CandidateExperience, CandidateEducation
+    from app.services.email_service import send_candidate_reengagement_email
+    
+    invited_count = 0
+    for cand_id in req.candidate_ids:
+        cand = db.query(Candidate).join(Job).filter(
+            Candidate.id == cand_id,
+            Job.organization_id == current_user.organization_id
+        ).first()
+        if not cand:
+            continue
+            
+        # Create a copy of the candidate record for the new job
+        new_cand = Candidate(
+            job_id=job_id,
+            name=cand.name,
+            email=cand.email,
+            phone=cand.phone,
+            match_score=cand.match_score,
+            skill_match_score=cand.skill_match_score,
+            experience_match_score=cand.experience_match_score,
+            relevance_score=cand.relevance_score,
+            ai_summary=cand.ai_summary,
+            ai_concerns=cand.ai_concerns,
+            resume_path=cand.resume_path,
+            raw_text=cand.raw_text,
+            status="APPLIED"
+        )
+        db.add(new_cand)
+        db.flush() # get new_cand.id
+        
+        # Copy experiences
+        for exp in cand.experiences:
+            new_exp = CandidateExperience(
+                candidate_id=new_cand.id,
+                company=exp.company,
+                role=exp.role,
+                start_date=exp.start_date,
+                end_date=exp.end_date,
+                description=exp.description
+            )
+            db.add(new_exp)
+            
+        # Copy educations
+        for edu in cand.educations:
+            new_edu = CandidateEducation(
+                candidate_id=new_cand.id,
+                institution=edu.institution,
+                degree=edu.degree,
+                major=edu.major,
+                graduation_year=edu.graduation_year
+            )
+            db.add(new_edu)
+            
+        # Send invite email via Resend
+        if new_cand.email:
+            send_candidate_reengagement_email(
+                to_email=new_cand.email,
+                candidate_name=new_cand.name,
+                job_title=job.title,
+                org_name=current_user.organization.name
+            )
+            invited_count += 1
+            
+    db.commit()
+    return {"status": "success", "invited_count": invited_count}
 

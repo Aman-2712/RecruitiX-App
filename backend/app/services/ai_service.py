@@ -668,12 +668,22 @@ Your output must be a valid JSON object matching this schema:
 }
 """
 
-def parse_resume_with_openai(text: str) -> Dict[str, Any]:
+def parse_resume_with_openai(text: str, ai_model: str = "GEMINI") -> Dict[str, Any]:
     if not client:
         return {}
+    
+    # Map selection to actual model names
+    model_name = OPENAI_MODEL
+    if ai_model == "CLAUDE":
+        model_name = "claude-3-5-sonnet-20241022"
+    elif ai_model == "GPT":
+        model_name = "gpt-4o"
+    elif ai_model == "GEMINI":
+        model_name = "gemini-1.5-pro"
+
     try:
         response = client.chat.completions.create(
-            model=OPENAI_MODEL,
+            model=model_name,
             messages=[
                 {"role": "system", "content": "You are a helpful ATS resume extractor. Return ONLY valid JSON."},
                 {"role": "user", "content": PARSE_PROMPT.format(text=text)}
@@ -684,12 +694,35 @@ def parse_resume_with_openai(text: str) -> Dict[str, Any]:
         result_content = response.choices[0].message.content
         return json.loads(result_content)
     except Exception as e:
-        logger.error(f"OpenAI parsing failed: {e}")
-        return {}
+        logger.warning(f"AI parsing with model {model_name} failed: {e}. Falling back to default model.")
+        try:
+            response = client.chat.completions.create(
+                model=OPENAI_MODEL,
+                messages=[
+                    {"role": "system", "content": "You are a helpful ATS resume extractor. Return ONLY valid JSON."},
+                    {"role": "user", "content": PARSE_PROMPT.format(text=text)}
+                ],
+                response_format={"type": "json_object"},
+                temperature=0.1
+            )
+            result_content = response.choices[0].message.content
+            return json.loads(result_content)
+        except Exception as fallback_err:
+            logger.error(f"Fallback OpenAI parsing failed: {fallback_err}")
+            return {}
 
-def match_resume_with_openai(candidate_json: Dict[str, Any], job_data: Dict[str, Any]) -> Dict[str, Any]:
+def match_resume_with_openai(candidate_json: Dict[str, Any], job_data: Dict[str, Any], ai_model: str = "GEMINI") -> Dict[str, Any]:
     if not client:
         return {}
+        
+    model_name = OPENAI_MODEL
+    if ai_model == "CLAUDE":
+        model_name = "claude-3-5-sonnet-20241022"
+    elif ai_model == "GPT":
+        model_name = "gpt-4o"
+    elif ai_model == "GEMINI":
+        model_name = "gemini-1.5-pro"
+        
     try:
         req_skills_str = ", ".join(job_data.get("skills_required", []))
         pref_skills_str = ", ".join(job_data.get("skills_preferred", []))
@@ -703,7 +736,7 @@ def match_resume_with_openai(candidate_json: Dict[str, Any], job_data: Dict[str,
             candidate_json=json.dumps(candidate_json)
         )
         response = client.chat.completions.create(
-            model=OPENAI_MODEL,
+            model=model_name,
             messages=[
                 {"role": "system", "content": "You are a helpful hiring manager matching agent. Return ONLY valid JSON."},
                 {"role": "user", "content": prompt}
@@ -714,8 +747,33 @@ def match_resume_with_openai(candidate_json: Dict[str, Any], job_data: Dict[str,
         result_content = response.choices[0].message.content
         return json.loads(result_content)
     except Exception as e:
-        logger.error(f"OpenAI matching failed: {e}")
-        return {}
+        logger.warning(f"AI matching with model {model_name} failed: {e}. Falling back to default model.")
+        try:
+            req_skills_str = ", ".join(job_data.get("skills_required", []))
+            pref_skills_str = ", ".join(job_data.get("skills_preferred", []))
+            prompt = MATCH_PROMPT.format(
+                job_title=job_data.get("title", ""),
+                job_location=job_data.get("location", ""),
+                job_min_exp=job_data.get("min_experience", 0),
+                job_req_skills=req_skills_str,
+                job_pref_skills=pref_skills_str,
+                job_description=job_data.get("description", ""),
+                candidate_json=json.dumps(candidate_json)
+            )
+            response = client.chat.completions.create(
+                model=OPENAI_MODEL,
+                messages=[
+                    {"role": "system", "content": "You are a helpful hiring manager matching agent. Return ONLY valid JSON."},
+                    {"role": "user", "content": prompt}
+                ],
+                response_format={"type": "json_object"},
+                temperature=0.1
+            )
+            result_content = response.choices[0].message.content
+            return json.loads(result_content)
+        except Exception as fallback_err:
+            logger.error(f"Fallback OpenAI matching failed: {fallback_err}")
+            return {}
 
 def ensure_list(value: Any) -> List[Any]:
     if isinstance(value, list):
@@ -771,6 +829,8 @@ def process_resume_and_match(file_path: str, filename: str, job_data: Dict[str, 
     Extracts text from a resume, parses its details, and runs the matching comparison.
     Returns: (parsed_candidate_data, matched_scores_data)
     """
+    ai_model = job_data.get("ai_model", "GEMINI")
+
     # 1. Extract Text
     raw_text = extract_resume_text(file_path)
     if not raw_text:
@@ -780,14 +840,14 @@ def process_resume_and_match(file_path: str, filename: str, job_data: Dict[str, 
     # 2. Parse Profile
     candidate_profile = {}
     if client:
-        candidate_profile = parse_resume_with_openai(raw_text)
+        candidate_profile = parse_resume_with_openai(raw_text, ai_model)
         
     candidate_profile = normalize_candidate_profile(candidate_profile, raw_text, filename)
         
     # 3. Match against Job
     match_result = {}
     if client:
-        match_result = match_resume_with_openai(candidate_profile, job_data)
+        match_result = match_resume_with_openai(candidate_profile, job_data, ai_model)
         
     fallback_match = mock_match_resume(candidate_profile, job_data)
     match_result = normalize_match_result(match_result, fallback_match)

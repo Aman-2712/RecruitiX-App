@@ -7,6 +7,12 @@ import { Bot, LayoutDashboard, Briefcase, BarChart3, LogOut, User, Menu, X, Cred
 import { api, User as UserType } from "@/lib/api";
 import Logo from "@/components/Logo";
 
+const getThemeClass = (plan: string | null) => {
+  if (plan === "GROWTH") return "theme-growth";
+  if (plan === "ENTERPRISE") return "theme-enterprise";
+  return "theme-starter";
+};
+
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
@@ -33,7 +39,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       const cachedPlan = localStorage.getItem("hirecue_plan");
       if (cachedPlan) {
         setCurrentPlan(cachedPlan);
-        document.documentElement.className = cachedPlan === "GROWTH" ? "theme-growth" : "theme-starter";
+        document.documentElement.className = getThemeClass(cachedPlan);
       }
       
       // Proactively fetch fresh user details and subscription
@@ -63,7 +69,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   useEffect(() => {
     if (currentPlan) {
-      document.documentElement.className = currentPlan === "GROWTH" ? "theme-growth" : "theme-starter";
+      document.documentElement.className = getThemeClass(currentPlan);
     }
   }, [currentPlan]);
 
@@ -94,7 +100,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   }
 
   return (
-    <div className={`flex h-screen w-screen overflow-hidden bg-slate-50 ${currentPlan === "GROWTH" ? "theme-growth" : "theme-starter"}`}>
+    <div className={`flex h-screen w-screen overflow-hidden bg-slate-50 ${getThemeClass(currentPlan)}`}>
       {/* Sidebar for Desktop */}
       <aside className="hidden md:flex flex-col w-64 border-r border-slate-200 bg-white h-full flex-shrink-0">
         <div className="px-6 py-5 border-b border-slate-100 flex items-center">

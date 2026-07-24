@@ -18,8 +18,14 @@ export default function TeamSettingsPage() {
 
 
 
-  const [activeTab, setActiveTab] = useState<"members" | "ats" | "workflows" | "api">("members");
+  const [activeTab, setActiveTab] = useState<"members" | "ats" | "workflows" | "api" | "sso" | "logs">("members");
   const [currentPlan, setCurrentPlan] = useState<string>("STARTER");
+
+  // SAML / SSO States
+  const [samlIssuer, setSamlIssuer] = useState("");
+  const [samlSsoUrl, setSamlSsoUrl] = useState("");
+  const [samlCertificate, setSamlCertificate] = useState("");
+  const [forceSso, setForceSso] = useState(false);
   
   // ATS State
   const [atsConnections, setAtsConnections] = useState<Record<string, boolean>>({
@@ -79,6 +85,15 @@ export default function TeamSettingsPage() {
       
       const savedWebhook = localStorage.getItem("mock_webhook");
       if (savedWebhook) setWebhookUrl(savedWebhook);
+      
+      const savedSso = localStorage.getItem("mock_sso_config");
+      if (savedSso) {
+        const ssoObj = JSON.parse(savedSso);
+        setSamlIssuer(ssoObj.samlIssuer || "");
+        setSamlSsoUrl(ssoObj.samlSsoUrl || "");
+        setSamlCertificate(ssoObj.samlCertificate || "");
+        setForceSso(ssoObj.forceSso || false);
+      }
     } catch (err) {
       console.error("Failed to load team settings page data", err);
     } finally {
@@ -214,6 +229,7 @@ export default function TeamSettingsPage() {
 
   const isAdmin = currentUser?.role === "ADMIN";
   const isUnlocked = currentPlan === "GROWTH" || currentPlan === "ENTERPRISE";
+  const isEnterprise = currentPlan === "ENTERPRISE";
 
   if (loading) {
     return (
@@ -242,6 +258,29 @@ export default function TeamSettingsPage() {
         className="inline-flex items-center gap-2 bg-blue-600 text-white px-8 py-3 rounded-xl font-extrabold hover:bg-blue-700 transition shadow-md active:scale-95"
       >
         Upgrade to Growth
+      </a>
+    </div>
+  );
+
+  // Common lock screen for locked tabs on Enterprise Plan
+  const renderEnterpriseLockScreen = (title: string, desc: string) => (
+    <div className="bg-white rounded-3xl border border-slate-200 p-12 text-center max-w-xl mx-auto space-y-6 premium-border shadow-sm flex flex-col items-center">
+      <div className="bg-purple-50 p-4 rounded-full text-purple-600 border border-purple-100 animate-pulse">
+        <ShieldAlert size={32} />
+      </div>
+      <div className="space-y-2">
+        <h3 className="text-2xl font-black text-slate-900 tracking-tight">{title}</h3>
+        <p className="text-sm text-slate-500 font-semibold max-w-md mx-auto leading-relaxed">{desc}</p>
+      </div>
+      <div className="bg-gradient-to-r from-purple-600 to-indigo-650 text-white rounded-2xl p-4 shadow-md max-w-sm">
+        <span className="text-xs font-black uppercase tracking-wider block text-rose-300 mb-1">💼 Enterprise Exclusive</span>
+        <span className="text-xs font-semibold">Unlock Single Sign-On (SAML), Corporate Audit Logs, Multi-AI Models, Team Gap Analytics, and the Rose Gold & Platinum Theme!</span>
+      </div>
+      <a
+        href="/dashboard/billing"
+        className="inline-flex items-center gap-2 bg-blue-600 text-white px-8 py-3 rounded-xl font-extrabold hover:bg-blue-700 transition shadow-md active:scale-95"
+      >
+        Upgrade to Enterprise
       </a>
     </div>
   );
@@ -302,6 +341,30 @@ export default function TeamSettingsPage() {
           <Key size={16} />
           API & Webhooks
           {!isUnlocked && <Lock size={12} className="text-slate-400" />}
+        </button>
+        <button
+          onClick={() => setActiveTab("sso")}
+          className={`flex items-center gap-2 px-5 py-3 border-b-2 font-bold text-sm transition-all whitespace-nowrap ${
+            activeTab === "sso" 
+              ? "border-blue-600 text-blue-600" 
+              : "border-transparent text-slate-500 hover:text-slate-950 hover:border-slate-300"
+          }`}
+        >
+          <Shield size={16} />
+          SAML / SSO
+          {!isEnterprise && <Lock size={12} className="text-slate-400" />}
+        </button>
+        <button
+          onClick={() => setActiveTab("logs")}
+          className={`flex items-center gap-2 px-5 py-3 border-b-2 font-bold text-sm transition-all whitespace-nowrap ${
+            activeTab === "logs" 
+              ? "border-blue-600 text-blue-600" 
+              : "border-transparent text-slate-500 hover:text-slate-950 hover:border-slate-300"
+          }`}
+        >
+          <Settings size={16} />
+          Audit Logs
+          {!isEnterprise && <Lock size={12} className="text-slate-400" />}
         </button>
       </div>
 
@@ -636,6 +699,208 @@ export default function TeamSettingsPage() {
                   </button>
                 </div>
               </form>
+            </div>
+          </div>
+        )
+      )}
+
+      {activeTab === "sso" && (
+        !isEnterprise ? renderEnterpriseLockScreen("Enterprise SAML / SSO", "Configure secure corporate single sign-on to unify user authentication through your organization's identity providers (Okta, Azure AD).") : (
+          <div className="space-y-8">
+            <div>
+              <h2 className="text-xl font-bold text-slate-900">SAML Single Sign-On (SSO)</h2>
+              <p className="text-sm text-slate-500 mt-1">Bind your workspace credentials to your corporate Identity Provider (IdP).</p>
+            </div>
+
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                localStorage.setItem("mock_sso_config", JSON.stringify({ samlIssuer, samlSsoUrl, samlCertificate, forceSso }));
+                alert("SSO Configuration saved successfully!");
+              }}
+              className="bg-white border border-slate-200 p-8 rounded-3xl premium-border shadow-sm space-y-6"
+            >
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2 text-slate-950">
+                  <label className="block text-xs font-extrabold text-slate-400 uppercase tracking-wider">Identity Provider Issuer (Entity ID)</label>
+                  <input
+                    type="text"
+                    required
+                    value={samlIssuer}
+                    onChange={(e) => setSamlIssuer(e.target.value)}
+                    placeholder="https://idp.okta.com/issuer/hc_live_issuer_id"
+                    className="w-full border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-950 font-semibold bg-white outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition"
+                  />
+                </div>
+                <div className="space-y-2 text-slate-950">
+                  <label className="block text-xs font-extrabold text-slate-400 uppercase tracking-wider">Single Sign-On URL (SSO URL)</label>
+                  <input
+                    type="url"
+                    required
+                    value={samlSsoUrl}
+                    onChange={(e) => setSamlSsoUrl(e.target.value)}
+                    placeholder="https://idp.okta.com/app/sso/hc_redirect"
+                    className="w-full border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-950 font-semibold bg-white outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2 text-slate-950">
+                <label className="block text-xs font-extrabold text-slate-400 uppercase tracking-wider">X.509 Certificate</label>
+                <textarea
+                  required
+                  rows={4}
+                  value={samlCertificate}
+                  onChange={(e) => setSamlCertificate(e.target.value)}
+                  placeholder="-----BEGIN CERTIFICATE-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA0...\n-----END CERTIFICATE-----"
+                  className="w-full border border-slate-200 rounded-xl px-4 py-3 text-xs font-mono text-slate-950 font-semibold bg-white outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition resize-none"
+                />
+              </div>
+
+              <div className="border-t border-slate-100 pt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2 bg-slate-50 p-4 rounded-2xl border border-slate-150">
+                  <span className="block text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">Assertion Consumer Service (ACS) URL</span>
+                  <div className="flex items-center justify-between text-xs font-bold text-slate-700 font-mono mt-1">
+                    <span>https://hirecue.online/api/auth/sso/acs</span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        navigator.clipboard.writeText("https://hirecue.online/api/auth/sso/acs");
+                        alert("ACS URL copied!");
+                      }}
+                      className="text-blue-600 hover:underline"
+                    >
+                      Copy
+                    </button>
+                  </div>
+                </div>
+
+                <div className="space-y-2 bg-slate-50 p-4 rounded-2xl border border-slate-150">
+                  <span className="block text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">Workspace Entity ID</span>
+                  <div className="flex items-center justify-between text-xs font-bold text-slate-700 font-mono mt-1">
+                    <span>https://hirecue.online/api/auth/sso/metadata</span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        navigator.clipboard.writeText("https://hirecue.online/api/auth/sso/metadata");
+                        alert("Entity ID copied!");
+                      }}
+                      className="text-blue-600 hover:underline"
+                    >
+                      Copy
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div className="border-t border-slate-100 pt-6 flex items-center justify-between">
+                <div className="space-y-1">
+                  <h4 className="text-sm font-extrabold text-slate-900">Enforce SAML SSO Authentication</h4>
+                  <p className="text-xs text-slate-500 font-semibold">Force all team members to authenticate exclusively via your Identity Provider.</p>
+                </div>
+                <label className="relative inline-flex items-center cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={forceSso}
+                    onChange={(e) => setForceSso(e.target.checked)}
+                    className="sr-only peer"
+                  />
+                  <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                </label>
+              </div>
+
+              <button
+                type="submit"
+                className="bg-blue-600 text-white font-extrabold px-6 py-3 rounded-xl hover:bg-blue-700 transition active:scale-95 text-xs inline-flex items-center justify-center gap-2"
+              >
+                Save SSO Configurations
+              </button>
+            </form>
+          </div>
+        )
+      )}
+
+      {activeTab === "logs" && (
+        !isEnterprise ? renderEnterpriseLockScreen("Compliance Audit Logs", "Display granular operation logs, security logs, and role modifications across the workspace to satisfy corporate audit controls.") : (
+          <div className="space-y-8">
+            <div className="flex justify-between items-center">
+              <div>
+                <h2 className="text-xl font-bold text-slate-900">Corporate Audit Logs</h2>
+                <p className="text-sm text-slate-500 mt-1">Granular historical logs showing recruiter operations and authentication events.</p>
+              </div>
+              <button
+                onClick={() => {
+                  const csvContent = "data:text/csv;charset=utf-8,Timestamp,User,Action,IP Address,Status\n" +
+                    "2026-07-24 17:58:32,Nadeem Shaik (ADMIN),Generated Outbound Webhook Endpoint,103.45.18.232,SUCCESS\n" +
+                    "2026-07-24 17:41:10,Nadeem Shaik (ADMIN),Updated Candidate Nitesh Kumar status to Hired,103.45.18.232,SUCCESS\n" +
+                    "2026-07-24 17:21:40,Nadeem Shaik (ADMIN),Uploaded resume 'Nitesh_Kumar_CV.pdf',103.45.18.232,SUCCESS\n" +
+                    "2026-07-24 16:04:12,Aman Kumar (RECRUITER),Created Job Posting: Senior DevOps Engineer,49.32.148.91,SUCCESS\n" +
+                    "2026-07-24 15:44:00,SYSTEM,Synchronized work profiles to connected Workday ATS,localhost,SUCCESS";
+                  const encodedUri = encodeURI(csvContent);
+                  const link = document.createElement("a");
+                  link.setAttribute("href", encodedUri);
+                  link.setAttribute("download", "hirecue_audit_logs.csv");
+                  document.body.appendChild(link);
+                  link.click();
+                  document.body.removeChild(link);
+                }}
+                className="bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 transition px-4 py-2.5 rounded-xl font-extrabold text-xs inline-flex items-center gap-2 active:scale-95 shadow-sm"
+              >
+                Export CSV Report
+              </button>
+            </div>
+
+            <div className="bg-white border border-slate-200 rounded-3xl premium-border shadow-sm overflow-hidden text-slate-900">
+              <div className="overflow-x-auto">
+                <table className="w-full border-collapse text-left">
+                  <thead>
+                    <tr className="bg-slate-50 border-b border-slate-200">
+                      <th className="px-6 py-4 text-xs font-black uppercase tracking-wider text-slate-400">Timestamp</th>
+                      <th className="px-6 py-4 text-xs font-black uppercase tracking-wider text-slate-400">User</th>
+                      <th className="px-6 py-4 text-xs font-black uppercase tracking-wider text-slate-400">Action</th>
+                      <th className="px-6 py-4 text-xs font-black uppercase tracking-wider text-slate-400">IP Address</th>
+                      <th className="px-6 py-4 text-xs font-black uppercase tracking-wider text-slate-400">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 text-xs font-bold text-slate-600">
+                    <tr className="hover:bg-slate-50/50 transition animate-in slide-in-from-bottom-1 duration-200">
+                      <td className="px-6 py-4.5 whitespace-nowrap text-slate-450 font-mono">2026-07-24 17:58:32</td>
+                      <td className="px-6 py-4.5 whitespace-nowrap font-extrabold text-slate-900">Nadeem Shaik (ADMIN)</td>
+                      <td className="px-6 py-4.5 whitespace-nowrap text-slate-700">Generated Outbound Webhook Endpoint</td>
+                      <td className="px-6 py-4.5 whitespace-nowrap text-slate-500 font-mono">103.45.18.232</td>
+                      <td className="px-6 py-4.5 whitespace-nowrap"><span className="bg-green-50 text-green-700 px-2 py-1 rounded-md text-[10px] font-extrabold">SUCCESS</span></td>
+                    </tr>
+                    <tr className="hover:bg-slate-50/50 transition">
+                      <td className="px-6 py-4.5 whitespace-nowrap text-slate-450 font-mono">2026-07-24 17:41:10</td>
+                      <td className="px-6 py-4.5 whitespace-nowrap font-extrabold text-slate-900">Nadeem Shaik (ADMIN)</td>
+                      <td className="px-6 py-4.5 whitespace-nowrap text-slate-700">Updated Candidate Nitesh Kumar status to Hired</td>
+                      <td className="px-6 py-4.5 whitespace-nowrap text-slate-500 font-mono">103.45.18.232</td>
+                      <td className="px-6 py-4.5 whitespace-nowrap"><span className="bg-green-50 text-green-700 px-2 py-1 rounded-md text-[10px] font-extrabold">SUCCESS</span></td>
+                    </tr>
+                    <tr className="hover:bg-slate-50/50 transition">
+                      <td className="px-6 py-4.5 whitespace-nowrap text-slate-450 font-mono">2026-07-24 17:21:40</td>
+                      <td className="px-6 py-4.5 whitespace-nowrap font-extrabold text-slate-900">Nadeem Shaik (ADMIN)</td>
+                      <td className="px-6 py-4.5 whitespace-nowrap text-slate-700">Uploaded resume 'Nitesh_Kumar_CV.pdf' (Job: Cloud Platform Architect)</td>
+                      <td className="px-6 py-4.5 whitespace-nowrap text-slate-500 font-mono">103.45.18.232</td>
+                      <td className="px-6 py-4.5 whitespace-nowrap"><span className="bg-green-50 text-green-700 px-2 py-1 rounded-md text-[10px] font-extrabold">SUCCESS</span></td>
+                    </tr>
+                    <tr className="hover:bg-slate-50/50 transition">
+                      <td className="px-6 py-4.5 whitespace-nowrap text-slate-450 font-mono">2026-07-24 16:04:12</td>
+                      <td className="px-6 py-4.5 whitespace-nowrap font-extrabold text-slate-900">Aman Kumar (RECRUITER)</td>
+                      <td className="px-6 py-4.5 whitespace-nowrap text-slate-700">Created Job Posting: Senior DevOps Engineer</td>
+                      <td className="px-6 py-4.5 whitespace-nowrap text-slate-500 font-mono">49.32.148.91</td>
+                      <td className="px-6 py-4.5 whitespace-nowrap"><span className="bg-green-50 text-green-700 px-2 py-1 rounded-md text-[10px] font-extrabold">SUCCESS</span></td>
+                    </tr>
+                    <tr className="hover:bg-slate-50/50 transition">
+                      <td className="px-6 py-4.5 whitespace-nowrap text-slate-450 font-mono">2026-07-24 15:44:00</td>
+                      <td className="px-6 py-4.5 whitespace-nowrap font-extrabold text-slate-900">SYSTEM</td>
+                      <td className="px-6 py-4.5 whitespace-nowrap text-slate-700">Synchronized work profiles to connected Workday ATS</td>
+                      <td className="px-6 py-4.5 whitespace-nowrap text-slate-500 font-mono">localhost</td>
+                      <td className="px-6 py-4.5 whitespace-nowrap"><span className="bg-green-50 text-green-700 px-2 py-1 rounded-md text-[10px] font-extrabold">SUCCESS</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         )

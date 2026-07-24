@@ -101,6 +101,55 @@
     color: #02162E !important;
     box-shadow: 0 6px 18px rgba(212, 175, 55, 0.3) !important;
   }
+
+  .theme-enterprise {
+    /* Rose Gold & Platinum Premium Theme */
+    --theme-white: #0c0d0f;
+    --theme-slate-50: #07080a;
+    --theme-slate-100: #0a0b0d;
+    --theme-slate-200: #22242b;
+    --theme-slate-300: #30333d;
+    --theme-slate-400: #a0a5b5;
+    --theme-slate-500: #c0c5d5;
+    --theme-slate-600: rgba(226, 232, 240, 0.4); 
+    --theme-slate-700: #e2e8f0;
+    --theme-slate-800: #E0A899;
+    --theme-slate-900: #ffffff;
+    --theme-slate-950: #ffffff;
+
+    --theme-blue-50: rgba(224, 168, 153, 0.05);
+    --theme-blue-100: rgba(224, 168, 153, 0.15);
+    --theme-blue-200: rgba(224, 168, 153, 0.25);
+    --theme-blue-500: #E0A899;
+    --theme-blue-600: #E2E8F0;
+    --theme-blue-700: #a0a5b5;
+    --theme-blue-800: #E0A899;
+    --theme-blue-900: #E2E8F0;
+
+    --background: #07080a;
+    --foreground: #d2d6df;
+  }
+
+  /* Premium Rose Gold & Platinum Gradient for Enterprise Plan Buttons */
+  .theme-enterprise .bg-blue-600,
+  .theme-enterprise .bg-blue-650,
+  .theme-enterprise button.bg-blue-600,
+  .theme-enterprise a.bg-blue-600 {
+    background: linear-gradient(90deg, #E0A899 0%, #E2E8F0 100%) !important;
+    color: #121820 !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.05em !important;
+    border: none !important;
+    box-shadow: 0 4px 12px rgba(224, 168, 153, 0.25) !important;
+  }
+  .theme-enterprise .hover\:bg-blue-700:hover,
+  .theme-enterprise .hover\:bg-blue-750:hover,
+  .theme-enterprise button.bg-blue-600:hover,
+  .theme-enterprise a.bg-blue-600:hover {
+    background: linear-gradient(90deg, #D5998A 0%, #C2CCD8 100%) !important;
+    color: #121820 !important;
+    box-shadow: 0 6px 18px rgba(224, 168, 153, 0.35) !important;
+  }
 }
 
 body {
