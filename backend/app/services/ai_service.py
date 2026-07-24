@@ -98,139 +98,6 @@ COMMON_SKILLS = [
     "Nursing", "CPR", "ACLS", "BLS", "Patient Care", "Clinical", "Acute Care", "ICU"
 ]
 
-def extract_dates_and_calculate_experience(text: str) -> int:
-    """
-    Extracts date ranges from resume text and calculates total years of experience.
-    """
-    # Regex to find patterns like Jan 2020 - Dec 2022, 06/2019 to Present, 2018 - 2021, etc.
-    months_pat = r"(?:jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)"
-    month = r"(?:" + months_pat + r"|\d{1,2})"
-    sep = r"[\s/-]+"
-    year = r"\b(19\d{2}|20\d{2})\b"
-    
-    date_pat = r"(?:" + month + sep + r")?" + year
-    range_pat = r"(" + date_pat + r")\s*(?:-|to|–|—|until)\s*CustomDatePat".replace("CustomDatePat", "(" + date_pat + r"|present|current|now|active)")
-    
-    matches = re.findall(range_pat, text, re.IGNORECASE)
-    
-    if not matches:
-        years = [int(y) for y in re.findall(r"\b(19\d{2}|20\d{2})\b", text)]
-        if len(years) >= 2:
-            return max(1, max(years) - min(years))
-        return 2  # default fallback
-        
-    total_months = 0
-    from datetime import datetime
-    current_year = datetime.now().year
-    current_month = datetime.now().month
-    
-    def parse_single_date(date_str: str) -> tuple[int, int]:
-        date_str = date_str.lower().strip()
-        if date_str in ["present", "current", "now", "active", ""]:
-            return current_year, current_month
-            
-        yr_match = re.search(r"\b(19\d{2}|20\d{2})\b", date_str)
-        if not yr_match:
-            return current_year, current_month
-        yr = int(yr_match.group(1))
-        
-        m_word_match = re.search(months_pat, date_str)
-        if m_word_match:
-            m_word = m_word_match.group(0)
-            month_mapping = {
-                "jan": 1, "feb": 2, "mar": 3, "apr": 4, "may": 5, "jun": 6,
-                "jul": 7, "aug": 8, "sep": 9, "oct": 10, "nov": 11, "dec": 12
-            }
-            return yr, month_mapping.get(m_word[:3], 1)
-            
-        m_num_match = re.search(r"\b(\d{1,2})\b", date_str.replace(str(yr), ""))
-        if m_num_match:
-            m = int(m_num_match.group(1))
-            if 1 <= m <= 12:
-                return yr, m
-                
-        return yr, 1
-
-    for start_str, end_str in matches:
-        try:
-            start_yr, start_m = parse_single_date(start_str)
-            end_yr, end_m = parse_single_date(end_str)
-            
-            diff_months = (end_yr - start_yr) * 12 + (end_m - start_m)
-            if diff_months > 0:
-                total_months += diff_months
-        except Exception:
-            pass
-            
-    years_exp = total_months / 12.0
-    return max(0, min(50, int(round(years_exp))))
-
-def extract_dates_and_calculate_experience(text: str) -> int:
-    """
-    Extracts date ranges from resume text and calculates total years of experience.
-    """
-    # Regex to find patterns like Jan 2020 - Dec 2022, 06/2019 to Present, 2018 - 2021, etc.
-    months_pat = r"(?:jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)"
-    month = r"(?:" + months_pat + r"|\d{1,2})"
-    sep = r"[\s/-]+"
-    year = r"\b(19\d{2}|20\d{2})\b"
-    
-    date_pat = r"(?:" + month + sep + r")?" + year
-    range_pat = r"(" + date_pat + r")\s*(?:-|to|–|—|until)\s*CustomDatePat".replace("CustomDatePat", "(" + date_pat + r"|present|current|now|active)")
-    
-    matches = re.findall(range_pat, text, re.IGNORECASE)
-    
-    if not matches:
-        years = [int(y) for y in re.findall(r"\b(19\d{2}|20\d{2})\b", text)]
-        if len(years) >= 2:
-            return max(1, max(years) - min(years))
-        return 2  # default fallback
-        
-    total_months = 0
-    from datetime import datetime
-    current_year = datetime.now().year
-    current_month = datetime.now().month
-    
-    def parse_single_date(date_str: str) -> tuple[int, int]:
-        date_str = date_str.lower().strip()
-        if date_str in ["present", "current", "now", "active", ""]:
-            return current_year, current_month
-            
-        yr_match = re.search(r"\b(19\d{2}|20\d{2})\b", date_str)
-        if not yr_match:
-            return current_year, current_month
-        yr = int(yr_match.group(1))
-        
-        m_word_match = re.search(months_pat, date_str)
-        if m_word_match:
-            m_word = m_word_match.group(0)
-            month_mapping = {
-                "jan": 1, "feb": 2, "mar": 3, "apr": 4, "may": 5, "jun": 6,
-                "jul": 7, "aug": 8, "sep": 9, "oct": 10, "nov": 11, "dec": 12
-            }
-            return yr, month_mapping.get(m_word[:3], 1)
-            
-        m_num_match = re.search(r"\b(\d{1,2})\b", date_str.replace(str(yr), ""))
-        if m_num_match:
-            m = int(m_num_match.group(1))
-            if 1 <= m <= 12:
-                return yr, m
-                
-        return yr, 1
-
-    for start_str, end_str in matches:
-        try:
-            start_yr, start_m = parse_single_date(start_str)
-            end_yr, end_m = parse_single_date(end_str)
-            
-            diff_months = (end_yr - start_yr) * 12 + (end_m - start_m)
-            if diff_months > 0:
-                total_months += diff_months
-        except Exception:
-            pass
-            
-    years_exp = total_months / 12.0
-    return max(0, min(50, int(round(years_exp))))
 
 def extract_dates_and_calculate_experience(text: str) -> int:
     """
@@ -672,14 +539,16 @@ def parse_resume_with_openai(text: str, ai_model: str = "GEMINI") -> Dict[str, A
     if not client:
         return {}
     
-    # Map selection to actual model names
-    model_name = OPENAI_MODEL
+    # Map branded agent names to actual valid OpenAI model identifiers
+    # NEX (GEMINI) -> gpt-4o-mini (fast, cost-effective)
+    # Aura-Sonnet (CLAUDE) -> gpt-4o (most capable)
+    # Vortex (GPT) -> gpt-4o (full power)
     if ai_model == "CLAUDE":
-        model_name = "claude-3-5-sonnet-20241022"
+        model_name = "gpt-4o"          # Aura-Sonnet 5.0 - premium accuracy
     elif ai_model == "GPT":
-        model_name = "gpt-4o"
-    elif ai_model == "GEMINI":
-        model_name = "gemini-1.5-pro"
+        model_name = "gpt-4o"          # Vortex-4o - full power GPT-4o
+    else:  # GEMINI / NEX (default)
+        model_name = "gpt-4o-mini"     # NEX - fast and efficient
 
     try:
         response = client.chat.completions.create(
@@ -694,10 +563,10 @@ def parse_resume_with_openai(text: str, ai_model: str = "GEMINI") -> Dict[str, A
         result_content = response.choices[0].message.content
         return json.loads(result_content)
     except Exception as e:
-        logger.warning(f"AI parsing with model {model_name} failed: {e}. Falling back to default model.")
+        logger.warning(f"AI parsing with model {model_name} failed: {e}. Falling back to gpt-4o-mini.")
         try:
             response = client.chat.completions.create(
-                model=OPENAI_MODEL,
+                model="gpt-4o-mini",
                 messages=[
                     {"role": "system", "content": "You are a helpful ATS resume extractor. Return ONLY valid JSON."},
                     {"role": "user", "content": PARSE_PROMPT.format(text=text)}
@@ -715,13 +584,13 @@ def match_resume_with_openai(candidate_json: Dict[str, Any], job_data: Dict[str,
     if not client:
         return {}
         
-    model_name = OPENAI_MODEL
+    # Same model mapping as above for consistency
     if ai_model == "CLAUDE":
-        model_name = "claude-3-5-sonnet-20241022"
+        model_name = "gpt-4o"
     elif ai_model == "GPT":
         model_name = "gpt-4o"
-    elif ai_model == "GEMINI":
-        model_name = "gemini-1.5-pro"
+    else:  # GEMINI / NEX
+        model_name = "gpt-4o-mini"
         
     try:
         req_skills_str = ", ".join(job_data.get("skills_required", []))
@@ -747,7 +616,7 @@ def match_resume_with_openai(candidate_json: Dict[str, Any], job_data: Dict[str,
         result_content = response.choices[0].message.content
         return json.loads(result_content)
     except Exception as e:
-        logger.warning(f"AI matching with model {model_name} failed: {e}. Falling back to default model.")
+        logger.warning(f"AI matching with model {model_name} failed: {e}. Falling back to gpt-4o-mini.")
         try:
             req_skills_str = ", ".join(job_data.get("skills_required", []))
             pref_skills_str = ", ".join(job_data.get("skills_preferred", []))
@@ -761,7 +630,7 @@ def match_resume_with_openai(candidate_json: Dict[str, Any], job_data: Dict[str,
                 candidate_json=json.dumps(candidate_json)
             )
             response = client.chat.completions.create(
-                model=OPENAI_MODEL,
+                model="gpt-4o-mini",
                 messages=[
                     {"role": "system", "content": "You are a helpful hiring manager matching agent. Return ONLY valid JSON."},
                     {"role": "user", "content": prompt}

@@ -457,24 +457,34 @@ def generate_skills_test(
     from app.models import SkillsTest
     from app.services.ai_service import client, OPENAI_MODEL
     
+    # Get candidate's actual skills from their profile
+    cand_skills_list = []
+    if cand.raw_text:
+        from app.services.ai_service import COMMON_SKILLS
+        import re as re_module
+        for skill in COMMON_SKILLS:
+            if re_module.search(r'\b' + re_module.escape(skill) + r'\b', cand.raw_text, re_module.IGNORECASE):
+                cand_skills_list.append(skill)
+    skills_display = ", ".join(cand_skills_list[:15]) if cand_skills_list else "General programming skills"
+    
     prompt = f"""You are a professional technical interviewer. Generate a custom 3-question coding and technical skills assessment for candidate '{cand.name}' applying for the role '{cand.job.title}' at '{current_user.organization.name}'.
-Job Description: {cand.job.description}
-Candidate Skills: {cand.ai_summary}
+Job Description: {cand.job.description[:500]}
+Candidate's Technical Skills: {skills_display}
 
-Each question must contain:
-1. Question title
-2. Problem description
-3. Sample input/output
-4. Starter code template (e.g. in Python or JavaScript)
+Generate questions that specifically test the candidate's listed skills and the job requirements. Each question must:
+1. Have a clear, descriptive title (NOT generic like "Coding Exercise")
+2. Have a specific, practical problem description related to the job/skills
+3. Include realistic sample input/output examples
+4. Include a Python starter code template with proper function signature
 
 Return ONLY a valid JSON object matching this structure:
 {{
   "questions": [
     {{
       "id": 1,
-      "title": "Title here",
-      "description": "Describe problem",
-      "starter_code": "def solution():\\n    pass",
+      "title": "Descriptive Question Title Here",
+      "description": "Specific problem description here",
+      "starter_code": "def function_name(params):\\n    # Write your solution here\\n    pass",
       "sample_cases": "Input: X, Output: Y"
     }}
   ]
