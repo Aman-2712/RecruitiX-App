@@ -183,18 +183,16 @@
 
   /* Active navigation sidebar item highlight styling */
   .theme-enterprise .bg-blue-50 {
-    background: linear-gradient(90deg, #8b5cf6 0%, #a78bfa 40%, #e2e8f0 80%, #ffffff 100%) !important;
-    border-left: none !important;
-    border: 1px solid rgba(255, 255, 255, 0.4) !important;
-    box-shadow: 
-      0 4px 12px rgba(139, 92, 246, 0.35),
-      inset 0 1px 1px rgba(255, 255, 255, 0.6) !important;
-    padding-left: 1rem !important;
+    background: rgba(139, 92, 246, 0.15) !important;
+    border-left: 4px solid #a78bfa !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding-left: 0.75rem !important;
   }
   .theme-enterprise .bg-blue-50,
   .theme-enterprise .bg-blue-50 *,
   .theme-enterprise .bg-blue-50 .text-blue-600 {
-    color: #0f0b1b !important;
+    color: #e2e8f0 !important;
   }
   .theme-enterprise .hover\:bg-slate-50:hover {
     background-color: rgba(139, 92, 246, 0.1) !important;
@@ -202,13 +200,13 @@
   }
 
   /* Premium Amethyst & Platinum Gradient for Enterprise Plan Buttons & glows */
-  .theme-enterprise button,
   .theme-enterprise .bg-blue-600,
   .theme-enterprise .bg-blue-650,
   .theme-enterprise button.bg-blue-600,
   .theme-enterprise a.bg-blue-600,
   .theme-enterprise button.bg-slate-900,
   .theme-enterprise a.bg-slate-900,
+  .theme-enterprise button.w-full:not(.pb-3\.5),
   .theme-enterprise input[type="submit"] {
     background: linear-gradient(90deg, #8b5cf6 0%, #a78bfa 40%, #e2e8f0 80%, #ffffff 100%) !important;
     color: #0f0b1b !important;
@@ -222,13 +220,13 @@
     text-shadow: 0 1px 0 rgba(255, 255, 255, 0.4) !important;
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
   }
-  .theme-enterprise button:hover,
   .theme-enterprise .bg-blue-600:hover,
   .theme-enterprise .bg-blue-650:hover,
   .theme-enterprise button.bg-blue-600:hover,
   .theme-enterprise a.bg-blue-600:hover,
   .theme-enterprise button.bg-slate-900:hover,
   .theme-enterprise a.bg-slate-900:hover,
+  .theme-enterprise button.w-full:not(.pb-3\.5):hover,
   .theme-enterprise .hover\:bg-blue-700:hover,
   .theme-enterprise .hover\:bg-blue-750:hover,
   .theme-enterprise input[type="submit"]:hover {

@@ -38,6 +38,10 @@ export default function JobDetails() {
   const [isAgentDropdownOpen, setIsAgentDropdownOpen] = useState(false);
   const agentDropdownRef = useRef<HTMLDivElement>(null);
 
+  // Custom status filter dropdown states
+  const [isStatusDropdownOpen, setIsStatusDropdownOpen] = useState(false);
+  const statusDropdownRef = useRef<HTMLDivElement>(null);
+
   const handleAgentChange = async (newAgent: string) => {
     if (!job) return;
     setUpdatingAgent(true);
@@ -100,6 +104,9 @@ export default function JobDetails() {
     function handleClickOutside(event: MouseEvent) {
       if (agentDropdownRef.current && !agentDropdownRef.current.contains(event.target as Node)) {
         setIsAgentDropdownOpen(false);
+      }
+      if (statusDropdownRef.current && !statusDropdownRef.current.contains(event.target as Node)) {
+        setIsStatusDropdownOpen(false);
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
@@ -621,21 +628,54 @@ export default function JobDetails() {
               />
             </div>
             
-            {/* Dropdown status */}
-            <div className="w-full sm:w-48">
-              <select
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
-                className="w-full border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-950 font-medium bg-white focus:outline-none focus:border-blue-600 transition-all appearance-none cursor-pointer"
+            {/* Custom Dropdown status */}
+            <div className="w-full sm:w-48 relative" ref={statusDropdownRef}>
+              <button
+                type="button"
+                onClick={() => setIsStatusDropdownOpen(!isStatusDropdownOpen)}
+                className="w-full flex items-center justify-between border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-950 font-bold bg-white focus:outline-none focus:border-blue-600 transition-all cursor-pointer shadow-sm"
               >
-                <option value="">All Pipeline Statuses</option>
-                <option value="APPLIED">Applied</option>
-                <option value="SHORTLISTED">Shortlisted</option>
-                <option value="INTERVIEW_SCHEDULED">Interview Scheduled</option>
-                <option value="INTERVIEWED">Interviewed</option>
-                <option value="REJECTED">Rejected</option>
-                <option value="HIRED">Hired</option>
-              </select>
+                <span>
+                  {statusFilter === "APPLIED" ? "Applied" :
+                   statusFilter === "SHORTLISTED" ? "Shortlisted" :
+                   statusFilter === "INTERVIEW_SCHEDULED" ? "Interview Scheduled" :
+                   statusFilter === "INTERVIEWED" ? "Interviewed" :
+                   statusFilter === "REJECTED" ? "Rejected" :
+                   statusFilter === "HIRED" ? "Hired" :
+                   "All Pipeline Statuses"}
+                </span>
+                <span className="text-[9px] text-slate-400">▼</span>
+              </button>
+
+              {isStatusDropdownOpen && (
+                <div className="absolute right-0 left-0 mt-1.5 z-50 bg-white border border-slate-200 rounded-xl shadow-lg overflow-hidden divide-y divide-slate-100 premium-dropdown">
+                  {[
+                    { value: "", label: "All Pipeline Statuses" },
+                    { value: "APPLIED", label: "Applied" },
+                    { value: "SHORTLISTED", label: "Shortlisted" },
+                    { value: "INTERVIEW_SCHEDULED", label: "Interview Scheduled" },
+                    { value: "INTERVIEWED", label: "Interviewed" },
+                    { value: "REJECTED", label: "Rejected" },
+                    { value: "HIRED", label: "Hired" },
+                  ].map((item) => (
+                    <button
+                      key={item.value}
+                      type="button"
+                      onClick={() => {
+                        setStatusFilter(item.value);
+                        setIsStatusDropdownOpen(false);
+                      }}
+                      className={`w-full text-left px-3.5 py-2.5 text-xs transition-colors block ${
+                        statusFilter === item.value
+                          ? "bg-blue-50/40 text-blue-700 font-extrabold"
+                          : "text-slate-650 hover:bg-slate-50 font-medium"
+                      }`}
+                    >
+                      {item.label}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Slider Min score */}

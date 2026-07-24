@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { 
@@ -20,6 +20,10 @@ export default function CandidateWorkspace() {
   const [updating, setUpdating] = useState(false);
   const [error, setError] = useState("");
   const [activeTab, setActiveTab] = useState<"profile" | "resume" | "skills_test">("profile");
+  
+  // Custom status dropdown states
+  const [isStatusDropdownOpen, setIsStatusDropdownOpen] = useState(false);
+  const statusDropdownRef = useRef<HTMLDivElement>(null);
   
   // Interactive triggers states
   const [statusAlert, setStatusAlert] = useState<{ type: "success" | "warning"; message: string } | null>(null);
@@ -99,6 +103,16 @@ export default function CandidateWorkspace() {
       fetchSkillsTest();
     }
   }, [activeTab]);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (statusDropdownRef.current && !statusDropdownRef.current.contains(event.target as Node)) {
+        setIsStatusDropdownOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const handleGenerateTest = async () => {
     setGeneratingTest(true);
@@ -360,23 +374,53 @@ export default function CandidateWorkspace() {
         <div className="flex items-center gap-3 border-t md:border-t-0 md:border-l border-slate-100 pt-6 md:pt-0 md:pl-8 flex-shrink-0">
           <div className="space-y-1">
             <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider block">Candidate Status</label>
-            <div className="relative">
-              <select
+            <div className="relative" ref={statusDropdownRef}>
+              <button
+                type="button"
+                onClick={() => !updating && setIsStatusDropdownOpen(!isStatusDropdownOpen)}
                 disabled={updating}
-                value={candidate.status}
-                onChange={(e) => handleStatusChange(e.target.value)}
-                className="w-48 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-950 font-bold bg-white focus:outline-none focus:border-blue-600 transition-all appearance-none cursor-pointer disabled:opacity-50"
+                className="w-48 flex items-center justify-between border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-950 font-bold bg-white focus:outline-none focus:border-blue-600 transition-all cursor-pointer disabled:opacity-50 shadow-sm"
               >
-                <option value="APPLIED">Applied</option>
-                <option value="SHORTLISTED">Shortlisted</option>
-                <option value="INTERVIEW_SCHEDULED">Interview Scheduled</option>
-                <option value="INTERVIEWED">Interviewed</option>
-                <option value="REJECTED">Rejected</option>
-                <option value="HIRED">Hired</option>
-              </select>
-              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-400 font-bold text-[10px]">
-                {updating ? "⏳" : "▼"}
-              </div>
+                <span>
+                  {candidate.status === "APPLIED" ? "Applied" :
+                   candidate.status === "SHORTLISTED" ? "Shortlisted" :
+                   candidate.status === "INTERVIEW_SCHEDULED" ? "Interview Scheduled" :
+                   candidate.status === "INTERVIEWED" ? "Interviewed" :
+                   candidate.status === "REJECTED" ? "Rejected" :
+                   candidate.status === "HIRED" ? "Hired" :
+                   candidate.status}
+                </span>
+                <span className="text-[9px] text-slate-400">{updating ? "⏳" : "▼"}</span>
+              </button>
+
+              {isStatusDropdownOpen && (
+                <div className="absolute right-0 left-0 mt-1.5 z-50 bg-white border border-slate-200 rounded-xl shadow-lg overflow-hidden divide-y divide-slate-100 premium-dropdown">
+                  {[
+                    { value: "APPLIED", label: "Applied" },
+                    { value: "SHORTLISTED", label: "Shortlisted" },
+                    { value: "INTERVIEW_SCHEDULED", label: "Interview Scheduled" },
+                    { value: "INTERVIEWED", label: "Interviewed" },
+                    { value: "REJECTED", label: "Rejected" },
+                    { value: "HIRED", label: "Hired" },
+                  ].map((item) => (
+                    <button
+                      key={item.value}
+                      type="button"
+                      onClick={() => {
+                        handleStatusChange(item.value);
+                        setIsStatusDropdownOpen(false);
+                      }}
+                      className={`w-full text-left px-3.5 py-2.5 text-xs transition-colors block ${
+                        candidate.status === item.value
+                          ? "bg-blue-50/40 text-blue-700 font-extrabold"
+                          : "text-slate-650 hover:bg-slate-50 font-medium"
+                      }`}
+                    >
+                      {item.label}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -506,13 +550,45 @@ export default function CandidateWorkspace() {
               </div>
             </details>
 
+            {/* Recruiter Notes & Interview Feedback (Moved here from Right Sidebar) */}
+            <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm premium-border space-y-4">
+              <div className="flex items-center gap-2 pb-3 border-b border-slate-100">
+                <Settings size={18} className="text-blue-600" />
+                <h3 className="font-bold text-slate-900">Recruiter Evaluation Notes</h3>
+              </div>
+              
+              <div className="space-y-3 text-slate-950">
+                <textarea
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                  placeholder="Type candidate interview notes, custom highlights, or recruiter evaluations here..."
+                  className="w-full min-h-[140px] text-xs font-medium border border-slate-200 rounded-xl p-3 outline-none focus:ring-2 focus:ring-blue-600 bg-white text-slate-900 leading-relaxed transition"
+                />
+                
+                <button
+                  type="button"
+                  onClick={handleSaveNotes}
+                  disabled={isSavingNotes}
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 rounded-xl text-xs transition active:scale-95 flex items-center justify-center gap-2 disabled:opacity-75"
+                >
+                  {isSavingNotes ? (
+                    <>
+                      <Loader className="animate-spin" size={14} /> Saving Notes...
+                    </>
+                  ) : (
+                    "Save Evaluation Notes"
+                  )}
+                </button>
+              </div>
+            </div>
+
           </div>
 
           {/* Right Side: AI Copilot Scores, recommendations and concerns */}
-          <div className="space-y-6">
+          <div className="space-y-6 flex flex-col justify-stretch">
             
             {/* Score Breakdowns */}
-            <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm premium-border space-y-6">
+            <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm premium-border space-y-6 flex-shrink-0">
               <div className="flex items-center gap-2 pb-3 border-b border-slate-100">
                 <Award size={18} className="text-blue-600" />
                 <h3 className="font-bold text-slate-900">Evaluation Breakdown</h3>
@@ -555,32 +631,34 @@ export default function CandidateWorkspace() {
             </div>
 
             {/* Copilot Advice box */}
-            <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm premium-border space-y-6">
-              <div className="flex items-center gap-2 pb-3 border-b border-slate-100">
-                <Bot size={18} className="text-blue-600" />
-                <h3 className="font-bold text-slate-900">AI Copilot Analysis</h3>
-              </div>
+            <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm premium-border flex-grow flex flex-col justify-between space-y-6">
+              <div>
+                <div className="flex items-center gap-2 pb-3 border-b border-slate-100 mb-6">
+                  <Bot size={18} className="text-blue-600" />
+                  <h3 className="font-bold text-slate-900">AI Copilot Analysis</h3>
+                </div>
 
-              {/* Strengths */}
-              <div className="space-y-3">
-                <h4 className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wide flex items-center gap-1.5">
-                  <Check className="text-emerald-500 border border-emerald-100 bg-emerald-50 rounded-full p-0.5" size={14} /> Key Recommendations
-                </h4>
-                <div className="text-xs text-slate-600 leading-relaxed font-semibold space-y-2">
-                  {candidate.ai_summary ? (
-                    candidate.ai_summary.split("\n").map((line, idx) => (
-                      <p key={idx} className="pl-1">
-                        {line.startsWith("-") ? line.substring(1).trim() : line}
-                      </p>
-                    ))
-                  ) : (
-                    <p>Qualifies according to the experience guidelines.</p>
-                  )}
+                {/* Strengths */}
+                <div className="space-y-3">
+                  <h4 className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wide flex items-center gap-1.5">
+                    <Check className="text-emerald-500 border border-emerald-100 bg-emerald-50 rounded-full p-0.5" size={14} /> Key Recommendations
+                  </h4>
+                  <div className="text-xs text-slate-600 leading-relaxed font-semibold space-y-2">
+                    {candidate.ai_summary ? (
+                      candidate.ai_summary.split("\n").map((line, idx) => (
+                        <p key={idx} className="pl-1">
+                          {line.startsWith("-") ? line.substring(1).trim() : line}
+                        </p>
+                      ))
+                    ) : (
+                      <p>Qualifies according to the experience guidelines.</p>
+                    )}
+                  </div>
                 </div>
               </div>
 
               {/* Concerns */}
-              <div className="space-y-3 pt-2">
+              <div className="space-y-3 pt-6 border-t border-slate-150/50">
                 <h4 className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wide flex items-center gap-1.5">
                   <AlertTriangle className="text-amber-500" size={14} /> Potential Gaps
                 </h4>
@@ -597,38 +675,6 @@ export default function CandidateWorkspace() {
                 </div>
               </div>
 
-            </div>
-
-            {/* Recruiter Notes & Interview Feedback */}
-            <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm premium-border space-y-4">
-              <div className="flex items-center gap-2 pb-3 border-b border-slate-100">
-                <Settings size={18} className="text-blue-600" />
-                <h3 className="font-bold text-slate-900">Recruiter Evaluation Notes</h3>
-              </div>
-              
-              <div className="space-y-3 text-slate-950">
-                <textarea
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
-                  placeholder="Type candidate interview notes, custom highlights, or recruiter evaluations here..."
-                  className="w-full min-h-[140px] text-xs font-medium border border-slate-200 rounded-xl p-3 outline-none focus:ring-2 focus:ring-blue-600 bg-white text-slate-900 leading-relaxed transition"
-                />
-                
-                <button
-                  type="button"
-                  onClick={handleSaveNotes}
-                  disabled={isSavingNotes}
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 rounded-xl text-xs transition active:scale-95 flex items-center justify-center gap-2 disabled:opacity-75"
-                >
-                  {isSavingNotes ? (
-                    <>
-                      <Loader className="animate-spin" size={14} /> Saving Notes...
-                    </>
-                  ) : (
-                    "Save Evaluation Notes"
-                  )}
-                </button>
-              </div>
             </div>
 
           </div>
