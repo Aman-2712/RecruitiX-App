@@ -191,24 +191,43 @@
   }
 
   /* Premium Amethyst & Platinum Gradient for Enterprise Plan Buttons & glows */
+  .theme-enterprise button,
   .theme-enterprise .bg-blue-600,
   .theme-enterprise .bg-blue-650,
   .theme-enterprise button.bg-blue-600,
-  .theme-enterprise a.bg-blue-600 {
-    background: linear-gradient(90deg, #8b5cf6 0%, #e2e8f0 100%) !important;
+  .theme-enterprise a.bg-blue-600,
+  .theme-enterprise button.bg-slate-900,
+  .theme-enterprise a.bg-slate-900,
+  .theme-enterprise input[type="submit"] {
+    background: linear-gradient(90deg, #8b5cf6 0%, #a78bfa 40%, #e2e8f0 80%, #ffffff 100%) !important;
     color: #0f0b1b !important;
-    font-weight: 700 !important;
+    font-weight: 800 !important;
     letter-spacing: 0.05em !important;
-    border: none !important;
-    box-shadow: 0 4px 14px rgba(139, 92, 246, 0.3) !important;
+    border: 1px solid rgba(255, 255, 255, 0.4) !important;
+    box-shadow: 
+      0 4px 15px rgba(139, 92, 246, 0.4),
+      inset 0 1px 1px rgba(255, 255, 255, 0.6),
+      inset 0 -2px 1px rgba(0, 0, 0, 0.15) !important;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.4) !important;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
   }
+  .theme-enterprise button:hover,
+  .theme-enterprise .bg-blue-600:hover,
+  .theme-enterprise .bg-blue-650:hover,
+  .theme-enterprise button.bg-blue-600:hover,
+  .theme-enterprise a.bg-blue-600:hover,
+  .theme-enterprise button.bg-slate-900:hover,
+  .theme-enterprise a.bg-slate-900:hover,
   .theme-enterprise .hover\:bg-blue-700:hover,
   .theme-enterprise .hover\:bg-blue-750:hover,
-  .theme-enterprise button.bg-blue-600:hover,
-  .theme-enterprise a.bg-blue-600:hover {
-    background: linear-gradient(90deg, #7c3aed 0%, #cbd5e1 100%) !important;
+  .theme-enterprise input[type="submit"]:hover {
+    background: linear-gradient(90deg, #7c3aed 0%, #9061f9 40%, #cbd5e1 80%, #ffffff 100%) !important;
     color: #0f0b1b !important;
-    box-shadow: 0 6px 20px rgba(139, 92, 246, 0.45) !important;
+    box-shadow: 
+      0 6px 20px rgba(139, 92, 246, 0.55),
+      inset 0 1px 1px rgba(255, 255, 255, 0.8),
+      inset 0 -2px 1px rgba(0, 0, 0, 0.1) !important;
+    transform: translateY(-1px) !important;
   }
 }
 
