@@ -352,7 +352,7 @@ def simulate_candidate_interview(
     # Parse experiences
     experiences_str = ""
     for exp in cand.experiences:
-        experiences_str += f"- {exp.role} at {exp.company} ({exp.start_date or ''} to {exp.end_date or 'Present'}): {exp.description or ''}\n"
+        experiences_str += f"- {exp.title} at {exp.company} ({exp.start_date or ''} to {exp.end_date or 'Present'}): {exp.description or ''}\n"
     
     educations_str = ""
     for edu in cand.educations:
