@@ -474,7 +474,7 @@ def invite_talent_pool_candidates(
             new_exp = CandidateExperience(
                 candidate_id=new_cand.id,
                 company=exp.company,
-                role=exp.role,
+                title=exp.title,
                 start_date=exp.start_date,
                 end_date=exp.end_date,
                 description=exp.description
