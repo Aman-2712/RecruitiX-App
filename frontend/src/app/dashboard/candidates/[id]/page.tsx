@@ -172,6 +172,18 @@ export default function CandidateWorkspace() {
           ...prev,
           test_questions: data.test_questions
         }));
+        
+        // Merge starter codes of all test questions (including the new one) into candidateCodes
+        setCandidateCodes((prevCodes) => {
+          const updated = { ...prevCodes };
+          data.test_questions.forEach((q: any) => {
+            if (updated[q.id] === undefined || updated[q.id] === "") {
+              updated[q.id] = q.starter_code || "";
+            }
+          });
+          return updated;
+        });
+
         // Select the new question automatically!
         if (data.test_questions.length > 0) {
           const newQ = data.test_questions[data.test_questions.length - 1];
