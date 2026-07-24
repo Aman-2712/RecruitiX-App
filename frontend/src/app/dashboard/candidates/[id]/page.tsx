@@ -310,7 +310,7 @@ export default function CandidateWorkspace() {
         </Link>
         <button 
           onClick={handleDelete}
-          className="flex items-center gap-1.5 px-4 py-2 border border-slate-200 text-slate-500 hover:text-red-600 hover:bg-red-50 hover:border-red-100 rounded-xl text-xs font-bold transition-all self-end sm:self-center"
+          className="flex items-center gap-1.5 px-4 py-2 bg-blue-600 text-white rounded-xl text-xs font-bold transition-all self-end sm:self-center"
         >
           <Trash2 size={14} /> Delete Evaluation
         </button>

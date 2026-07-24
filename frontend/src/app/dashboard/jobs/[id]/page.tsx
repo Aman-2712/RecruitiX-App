@@ -690,7 +690,10 @@ export default function JobDetails() {
                 max={100}
                 value={minScore}
                 onChange={(e) => setMinScore(parseInt(e.target.value))}
-                className="w-full h-1 bg-slate-100 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                className="w-full h-2 rounded-lg appearance-none cursor-pointer accent-[#a78bfa] border border-slate-700 bg-transparent"
+                style={{
+                  background: `linear-gradient(to right, #8b5cf6 0%, #a78bfa ${minScore}%, rgba(255, 255, 255, 0.05) ${minScore}%, rgba(255, 255, 255, 0.05) 100%)`
+                }}
               />
             </div>
 
