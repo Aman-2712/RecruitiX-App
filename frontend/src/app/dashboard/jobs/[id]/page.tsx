@@ -200,13 +200,7 @@ export default function JobDetails() {
     setLoadingTalent(true);
     setSelectedTalentIds([]);
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/api/jobs/${jobId}/talent-pool`, {
-        headers: {
-          "Authorization": `Bearer ${localStorage.getItem("hirecue_token") || ""}`
-        }
-      });
-      if (!res.ok) throw new Error("Failed to load talent pool matches.");
-      const data = await res.json();
+      const data = await api.getTalentPoolMatches(jobId);
       setTalentPoolCandidates(data);
     } catch (err: any) {
       alert(err.message || "Failed to load talent pool.");
@@ -219,18 +213,7 @@ export default function JobDetails() {
     if (selectedTalentIds.length === 0 || invitingTalent) return;
     setInvitingTalent(true);
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/api/jobs/${jobId}/talent-pool/invite`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${localStorage.getItem("hirecue_token") || ""}`
-        },
-        body: JSON.stringify({
-          candidate_ids: selectedTalentIds
-        })
-      });
-      if (!res.ok) throw new Error("Failed to send invitations.");
-      const data = await res.json();
+      const data = await api.inviteTalentPoolCandidates(jobId, selectedTalentIds);
       alert(`🎉 Successfully re-engaged and invited ${data.invited_count} candidate(s) to this job opening!`);
       setIsTalentPoolOpen(false);
       await fetchData(); // refresh candidates list

@@ -451,4 +451,15 @@ export const api = {
     });
   },
 
+  async getTalentPoolMatches(jobId: number): Promise<any[]> {
+    return request<any[]>(`/api/jobs/${jobId}/talent-pool`);
+  },
+
+  async inviteTalentPoolCandidates(jobId: number, candidateIds: number[]): Promise<{ status: string; invited_count: number }> {
+    return request<{ status: string; invited_count: number }>(`/api/jobs/${jobId}/talent-pool/invite`, {
+      method: "POST",
+      body: JSON.stringify({ candidate_ids: candidateIds }),
+    });
+  },
+
 };

@@ -316,14 +316,14 @@ def parse_job_description(text: str = Form(...), db: Session = Depends(get_db), 
 def auto_classify_candidates(
     request: Request,
     job_id: int, 
+    min_score: Optional[int] = None,
     db: Session = Depends(get_db), 
     current_user: User = Depends(get_current_user)
 ):
     """
-    Automatically classifies candidates for a given job based on their match score:
-    - Match Score >= 80%: SHORTLISTED
-    - Match Score < 50%: REJECTED
-    - Others: Left as APPLIED (or unchanged)
+    Automatically classifies candidates for a given job based on their match score and min_score threshold:
+    - Match Score >= threshold: SHORTLISTED
+    - Match Score < threshold: REJECTED
     """
     from app.models import Candidate
     
@@ -332,26 +332,32 @@ def auto_classify_candidates(
     if not job:
         raise HTTPException(status_code=403, detail="Job not found or access denied")
         
-    # 2. Fetch candidates for the job
-    candidates = db.query(Candidate).filter(Candidate.job_id == job_id).all()
+    # 2. Fetch candidates in active pipeline statuses
+    candidates = db.query(Candidate).filter(
+        Candidate.job_id == job_id,
+        Candidate.status.in_(["APPLIED", "SHORTLISTED", "REJECTED"])
+    ).all()
     
     shortlisted_count = 0
     rejected_count = 0
     unchanged_count = 0
     
+    threshold = min_score if min_score is not None else 50
+    
     for candidate in candidates:
-        # We only auto-classify candidates who are currently in APPLIED status
-        if candidate.status == "APPLIED":
-            if candidate.match_score >= 80:
-                candidate.status = "SHORTLISTED"
+        old_status = candidate.status
+        if candidate.match_score >= threshold:
+            candidate.status = "SHORTLISTED"
+            if old_status != "SHORTLISTED":
                 shortlisted_count += 1
-            elif candidate.match_score < 50:
-                candidate.status = "REJECTED"
-                rejected_count += 1
             else:
                 unchanged_count += 1
         else:
-            unchanged_count += 1
+            candidate.status = "REJECTED"
+            if old_status != "REJECTED":
+                rejected_count += 1
+            else:
+                unchanged_count += 1
             
     db.commit()
     
