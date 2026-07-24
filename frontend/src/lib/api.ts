@@ -445,8 +445,9 @@ export const api = {
     });
   },
 
-  async autoClassifyCandidates(jobId: number): Promise<{ shortlisted: number; rejected: number; unchanged: number; total_processed: number }> {
-    return request<{ shortlisted: number; rejected: number; unchanged: number; total_processed: number }>(`/api/jobs/${jobId}/auto-classify`, {
+  async autoClassifyCandidates(jobId: number, minScore?: number): Promise<{ shortlisted: number; rejected: number; unchanged: number; total_processed: number }> {
+    const queryString = minScore !== undefined ? `?min_score=${minScore}` : "";
+    return request<{ shortlisted: number; rejected: number; unchanged: number; total_processed: number }>(`/api/jobs/${jobId}/auto-classify${queryString}`, {
       method: "POST",
     });
   },

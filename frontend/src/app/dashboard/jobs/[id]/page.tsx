@@ -113,10 +113,21 @@ export default function JobDetails() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Trigger search on enter or when user finishes typing
-  const handleSearchSubmit = (e: React.FormEvent) => {
+  // Trigger search on enter or when user clicks search button
+  const handleSearchSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    fetchData();
+    setRefreshing(true);
+    try {
+      // Dynamically auto-classify/update candidate database statuses based on current minScore
+      await api.autoClassifyCandidates(jobId, minScore);
+      await fetchData();
+    } catch (err: any) {
+      console.error("Auto-classification during search failed:", err);
+      // Fallback to normal fetch if pipeline triggers error limits
+      await fetchData();
+    } finally {
+      setRefreshing(false);
+    }
   };
 
   const handleRefresh = async () => {
