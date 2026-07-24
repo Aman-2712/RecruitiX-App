@@ -44,7 +44,7 @@ export default function JobDetails() {
       await api.updateJobAiModel(jobId, newAgent);
       setJob(prev => prev ? { ...prev, ai_model: newAgent } : null);
       setInfoMessage(`Active AI Recruiter Agent changed to ${
-        newAgent === "GEMINI" ? "Nexora 120-X" :
+        newAgent === "GEMINI" ? "NEX" :
         newAgent === "CLAUDE" ? "Aura-Sonnet 5.0" :
         "Vortex-4o"
       }.`);
@@ -471,7 +471,7 @@ export default function JobDetails() {
                 disabled={updatingAgent || uploading}
                 className="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-800 bg-white focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100 transition-all cursor-pointer disabled:bg-slate-50 disabled:text-slate-400"
               >
-                <option value="GEMINI">Nexora 120-X (Cognitive Analytics & Deep Matching)</option>
+                <option value="GEMINI">NEX (Cognitive Analytics & Deep Matching)</option>
                 <option value="CLAUDE">Aura-Sonnet 5.0 (Semantic Integrity & Precise Screening)</option>
                 <option value="GPT">Vortex-4o (High-Speed Throughput & Pipeline Sync)</option>
               </select>
