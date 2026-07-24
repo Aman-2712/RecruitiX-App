@@ -213,6 +213,7 @@ def startup_event():
 
 @app.get("/")
 def read_root():
+    # Production deployment configuration trigger comment
     return {
         "app": "Hirecue API Gateway",
         "status": "online",
