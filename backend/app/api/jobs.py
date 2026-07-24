@@ -312,7 +312,7 @@ def parse_job_description(text: str = Form(...), db: Session = Depends(get_db), 
     }
 
 @router.post("/{job_id}/auto-classify", response_model=dict)
-@limiter.limit("5/minute")
+@limiter.limit("30/minute")
 def auto_classify_candidates(
     request: Request,
     job_id: int, 

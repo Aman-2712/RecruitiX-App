@@ -20,6 +20,7 @@ export default function JobDetails() {
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState("");
   const [classifying, setClassifying] = useState(false);
+  const [classifyingSearch, setClassifyingSearch] = useState(false);
   const [infoMessage, setInfoMessage] = useState("");
 
   // Filters
@@ -98,7 +99,8 @@ export default function JobDetails() {
     const plan = localStorage.getItem("hirecue_plan") || "STARTER";
     setCurrentPlan(plan);
     fetchData().finally(() => setLoading(false));
-  }, [jobId, statusFilter, minScore]);
+  // NOTE: minScore intentionally NOT in deps - slider only acts on Search click, not on change
+  }, [jobId, statusFilter]);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -113,20 +115,32 @@ export default function JobDetails() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Trigger search on enter or when user clicks search button
+  // Search button: re-classifies ALL candidates in DB by the current minScore threshold,
+  // then reloads the full list so newly SHORTLISTED candidates are immediately visible.
   const handleSearchSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setRefreshing(true);
+    setClassifyingSearch(true);
+    setInfoMessage("");
+    setError("");
     try {
-      // Dynamically auto-classify/update candidate database statuses based on current minScore
-      await api.autoClassifyCandidates(jobId, minScore);
-      await fetchData();
+      // Step 1: Update every candidate's status in the database based on the threshold
+      const result = await api.autoClassifyCandidates(jobId, minScore > 0 ? minScore : undefined);
+      setInfoMessage(`✅ Pipeline updated: ${result.shortlisted} shortlisted, ${result.rejected} rejected based on ${minScore > 0 ? minScore + "% threshold" : "default threshold"}.`);
+      // Step 2: Fetch the full list without score-filter so ALL updated statuses are visible
+      const candidateList = await api.getCandidates({
+        job_id: jobId,
+        status: statusFilter,
+        query: searchQuery,
+        // No min_score filter here — we want to SEE all candidates with their new statuses
+      });
+      setCandidates(candidateList);
+      setError("");
     } catch (err: any) {
-      console.error("Auto-classification during search failed:", err);
-      // Fallback to normal fetch if pipeline triggers error limits
+      setError(err.message || "Failed to run search pipeline.");
+      // Fallback: just reload normally
       await fetchData();
     } finally {
-      setRefreshing(false);
+      setClassifyingSearch(false);
     }
   };
 
@@ -691,8 +705,22 @@ export default function JobDetails() {
               />
             </div>
 
-            <button type="submit" className="hidden sm:inline-block bg-slate-900 hover:bg-slate-800 text-white font-semibold px-4 py-2 rounded-xl text-xs transition-all shadow-sm">
-              Search
+            <button
+              type="submit"
+              disabled={classifyingSearch}
+              className="hidden sm:inline-flex items-center gap-2 bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 disabled:opacity-60 disabled:cursor-not-allowed text-white font-bold px-5 py-2.5 rounded-xl text-xs transition-all shadow-lg shadow-violet-500/20 whitespace-nowrap"
+            >
+              {classifyingSearch ? (
+                <>
+                  <Loader size={13} className="animate-spin" />
+                  Updating...
+                </>
+              ) : (
+                <>
+                  <Sparkles size={13} />
+                  Search & Rank
+                </>
+              )}
             </button>
           </form>
 
