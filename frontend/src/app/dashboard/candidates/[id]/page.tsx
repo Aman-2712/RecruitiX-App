@@ -462,10 +462,10 @@ export default function CandidateWorkspace() {
 
       {/* Dynamic Tabs Content */}
       {activeTab === "profile" && (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
           
           {/* Left Side: Structured work timeline & education (Col span 2) */}
-          <div className="lg:col-span-2 space-y-8">
+          <div className="lg:col-span-2 space-y-8 flex flex-col justify-stretch h-full">
             
             {/* Experience timeline */}
             <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm premium-border space-y-6">
@@ -585,7 +585,7 @@ export default function CandidateWorkspace() {
           </div>
 
           {/* Right Side: AI Copilot Scores, recommendations and concerns */}
-          <div className="space-y-6 flex flex-col justify-stretch">
+          <div className="space-y-6 flex flex-col h-full grow">
             
             {/* Score Breakdowns */}
             <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm premium-border space-y-6 flex-shrink-0">

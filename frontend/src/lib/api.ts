@@ -176,7 +176,17 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
     let errorMessage = "An error occurred";
     try {
       const errorData = await response.json();
-      errorMessage = errorData.detail || errorMessage;
+      if (errorData.detail) {
+        if (typeof errorData.detail === "string") {
+          errorMessage = errorData.detail;
+        } else if (Array.isArray(errorData.detail)) {
+          errorMessage = errorData.detail.map((err: any) => `${err.loc ? err.loc.join(".") : "error"}: ${err.msg}`).join("; ");
+        } else if (typeof errorData.detail === "object") {
+          errorMessage = errorData.detail.message || JSON.stringify(errorData.detail);
+        }
+      } else {
+        errorMessage = errorData.message || errorMessage;
+      }
     } catch {
       // ignore
     }

@@ -142,10 +142,13 @@ def delete_job(job_id: int, db: Session = Depends(get_db), current_user: User = 
     db.commit()
     return None
 
+class AiModelUpdateRequest(BaseModel):
+    ai_model: str
+
 @router.patch("/{job_id}/ai-model")
 def update_job_ai_model(
     job_id: int, 
-    payload: Dict[str, str], 
+    req: AiModelUpdateRequest, 
     db: Session = Depends(get_db), 
     current_user: User = Depends(get_current_user)
 ):
@@ -153,7 +156,7 @@ def update_job_ai_model(
     if not job:
         raise HTTPException(status_code=404, detail="Job not found or access denied")
     
-    new_model = payload.get("ai_model")
+    new_model = req.ai_model
     if not new_model:
         raise HTTPException(status_code=400, detail="ai_model field required")
         

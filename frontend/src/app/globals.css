@@ -183,16 +183,21 @@
 
   /* Active navigation sidebar item highlight styling */
   .theme-enterprise .bg-blue-50 {
-    background: rgba(139, 92, 246, 0.15) !important;
-    border-left: 4px solid #a78bfa !important;
-    border: none !important;
-    box-shadow: none !important;
+    background: linear-gradient(90deg, #8b5cf6 0%, #a78bfa 40%, #e2e8f0 80%, #ffffff 100%) !important;
+    border-left: none !important;
+    border: 1px solid rgba(255, 255, 255, 0.4) !important;
+    box-shadow: 
+      0 4px 15px rgba(139, 92, 246, 0.4),
+      inset 0 1px 1px rgba(255, 255, 255, 0.6),
+      inset 0 -2px 1px rgba(0, 0, 0, 0.15) !important;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.4) !important;
     padding-left: 0.75rem !important;
   }
   .theme-enterprise .bg-blue-50,
   .theme-enterprise .bg-blue-50 *,
   .theme-enterprise .bg-blue-50 .text-blue-600 {
-    color: #e2e8f0 !important;
+    color: #0f0b1b !important;
+    font-weight: 800 !important;
   }
   .theme-enterprise .hover\:bg-slate-50:hover {
     background-color: rgba(139, 92, 246, 0.1) !important;
@@ -331,27 +336,28 @@
     border: 1px solid rgba(139, 92, 246, 0.3) !important;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7) !important;
   }
-  .theme-enterprise .premium-dropdown button {
+  .theme-enterprise .premium-dropdown button.w-full,
+  .theme-enterprise .premium-dropdown button.w-full * {
     background: transparent !important;
     border: none !important;
     box-shadow: none !important;
     color: #cbd5e1 !important;
     font-weight: 500 !important;
     text-shadow: none !important;
+    transform: none !important;
   }
-  .theme-enterprise .premium-dropdown button:hover {
+  .theme-enterprise .premium-dropdown button.w-full:hover,
+  .theme-enterprise .premium-dropdown button.w-full:hover * {
     background: rgba(139, 92, 246, 0.15) !important;
     color: #ffffff !important;
     transform: none !important;
     box-shadow: none !important;
   }
-  .theme-enterprise .premium-dropdown .bg-blue-50\/40 {
+  .theme-enterprise .premium-dropdown .bg-blue-50\/40,
+  .theme-enterprise .premium-dropdown .bg-blue-50\/40 * {
     background: rgba(139, 92, 246, 0.25) !important;
     color: #a78bfa !important;
     font-weight: 800 !important;
-  }
-  .theme-enterprise .premium-dropdown .bg-blue-50\/40 * {
-    color: #a78bfa !important;
   }
 }
 
