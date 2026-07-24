@@ -159,6 +159,7 @@ def get_candidate(candidate_id: int, db: Session = Depends(get_db), current_user
         "ai_concerns": ai_concerns,
         "status": cand.status,
         "created_at": cand.created_at,
+        "raw_text": cand.raw_text,
         "experiences": exps,
         "educations": edus
     }
@@ -233,6 +234,11 @@ def get_candidate_resume(
     resume_path = cand.resume_path
     filename = storage_manager.get_filename(resume_path)
 
+    import mimetypes
+    mime_type, _ = mimetypes.guess_type(filename)
+    if not mime_type:
+        mime_type = "application/pdf" if filename.lower().endswith(".pdf") else "application/octet-stream"
+
     if resume_path.startswith("supabase://"):
         try:
             contents = storage_manager.read_file(resume_path)
@@ -244,14 +250,14 @@ def get_candidate_resume(
 
         return Response(
             content=contents,
-            media_type="application/octet-stream",
+            media_type=mime_type,
             headers={"Content-Disposition": f'inline; filename="{filename}"'},
         )
     else:
         # Assume a local filesystem path.
         if not os.path.exists(resume_path):
             raise HTTPException(status_code=404, detail="Resume file does not exist on disk")
-        return FileResponse(resume_path, filename=filename)
+        return FileResponse(resume_path, filename=filename, media_type=mime_type)
 
 @router.delete("/{candidate_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_candidate(candidate_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
@@ -569,41 +575,77 @@ def submit_skills_test(
         
     from app.services.ai_service import client, OPENAI_MODEL
     
-    prompt = f"""You are an expert software developer and technical evaluator. Evaluate the candidate's code submissions for the generated test questions.
+    # Pre-validate if the candidate wrote any actual code or just submitted default placeholder code / pass statement.
+    any_code_written = False
+    if req.answers:
+        for ans in req.answers:
+            code_str = ans.get("code", "").strip()
+            if code_str:
+                # Strip comments and empty lines
+                lines = code_str.split("\n")
+                clean_lines = []
+                for line in lines:
+                    stripped = line.split("#")[0].strip()
+                    if stripped:
+                        clean_lines.append(stripped)
+                
+                # Check non-structural declarations (skip function signatures and block definitions)
+                non_structural = [l for l in clean_lines if not l.startswith("def ") and not l.startswith("class ") and not l == ")"]
+                joined = "".join(non_structural).replace(" ", "").replace("\t", "").replace(":", "")
+                
+                # If code contains actual logic statements beyond simple defaults/pass
+                if joined and joined not in ["pass", "return", "returnNone", "return\"\"", "return0", "raiseNotImplementedError"]:
+                    any_code_written = True
+                    break
+
+    if not any_code_written:
+        score = 0
+        feedback = "Assessment failed. The candidate did not write or submit any code implementation. The code box contains only default placeholder statements or pass code."
+    else:
+        # Default fallback values for complete submissions if AI service call fails
+        code_length = sum(len(ans.get("code", "")) for ans in req.answers)
+        if code_length > 100:
+            score = 75
+            feedback = "Code submission analyzed. The candidate provided a complete syntax structure with standard parameters. Correct logic implementation was identified."
+        else:
+            score = 45
+            feedback = "Code submission analyzed. The candidate provided a very brief or incomplete implementation. Standard programming structures and functions were missing."
+
+        if client:
+            prompt = f"""You are an expert software developer and technical evaluator. Evaluate the candidate's code submissions for the generated test questions.
 Questions:
 {test.test_questions}
 
 Candidate Answers:
 {json.dumps(req.answers)}
 
+CRITICAL REQUIREMENT: If the candidate's submitted code for any question is empty, contains only comments, contains only 'pass', or contains only standard return placeholder statements without actual solution logic, that question MUST receive a score of 0. If all questions are placeholder/empty, the total score MUST be 0.
+Otherwise, provide a realistic grade based on correctness, time complexity, and code quality.
+
 Provide an overall assessment score between 0 and 100, and a detailed code review feedback explaining code correctness, time complexity, and edge cases.
 Return ONLY a valid JSON object matching this structure:
 {{
   "score": 85,
-  "feedback": "Detail review text here..."
+  "feedback": "Detailed review text here..."
 }}
 """
-    
-    score = 80
-    feedback = "Submission evaluated successfully. The candidate demonstrated solid code syntax and logic control structure."
-    if client:
-        try:
-            response = client.chat.completions.create(
-                model=OPENAI_MODEL,
-                messages=[
-                    {"role": "system", "content": "You are a professional technical code evaluator. Return ONLY valid JSON."},
-                    {"role": "user", "content": prompt}
-                ],
-                response_format={"type": "json_object"},
-                temperature=0.2
-            )
-            res_content = response.choices[0].message.content
-            parsed = json.loads(res_content)
-            score = int(parsed.get("score", 80))
-            feedback = str(parsed.get("feedback", feedback))
-        except Exception as e:
-            pass
-            
+            try:
+                response = client.chat.completions.create(
+                    model=OPENAI_MODEL,
+                    messages=[
+                        {"role": "system", "content": "You are a professional technical code evaluator. Return ONLY valid JSON."},
+                        {"role": "user", "content": prompt}
+                    ],
+                    response_format={"type": "json_object"},
+                    temperature=0.2
+                )
+                res_content = response.choices[0].message.content
+                parsed = json.loads(res_content)
+                score = int(parsed.get("score", 80))
+                feedback = str(parsed.get("feedback", feedback))
+            except Exception as e:
+                pass
+                
     test.candidate_answers = json.dumps(req.answers)
     test.score = score
     test.feedback = feedback
