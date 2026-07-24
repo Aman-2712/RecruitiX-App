@@ -30,6 +30,7 @@ export interface Job {
   status: "ACTIVE" | "ARCHIVED";
   created_at: string;
   candidate_count?: number;
+  ai_model?: string;
 }
 
 export interface Candidate {
@@ -309,6 +310,13 @@ export const api = {
     return request<Omit<Job, "id" | "status" | "created_at" | "candidate_count">>("/api/jobs/parse-text", {
       method: "POST",
       body: formData,
+    });
+  },
+
+  async updateJobAiModel(id: number, aiModel: string): Promise<{ status: string; ai_model: string }> {
+    return request<{ status: string; ai_model: string }>(`/api/jobs/${id}/ai-model`, {
+      method: "PATCH",
+      body: JSON.stringify({ ai_model: aiModel }),
     });
   },
 

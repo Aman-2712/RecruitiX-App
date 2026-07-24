@@ -142,6 +142,32 @@ def delete_job(job_id: int, db: Session = Depends(get_db), current_user: User = 
     db.commit()
     return None
 
+@router.patch("/{job_id}/ai-model")
+def update_job_ai_model(
+    job_id: int, 
+    payload: Dict[str, str], 
+    db: Session = Depends(get_db), 
+    current_user: User = Depends(get_current_user)
+):
+    job = db.query(Job).filter(Job.id == job_id, Job.organization_id == current_user.organization_id).first()
+    if not job:
+        raise HTTPException(status_code=404, detail="Job not found or access denied")
+    
+    new_model = payload.get("ai_model")
+    if not new_model:
+        raise HTTPException(status_code=400, detail="ai_model field required")
+        
+    model_upper = new_model.upper()
+    if model_upper in ["GEMINI", "CLAUDE", "GPT", "GPT4O"]:
+        if model_upper == "GPT4O":
+            model_upper = "GPT"
+        job.ai_model = model_upper
+        db.commit()
+        db.refresh(job)
+        return {"status": "success", "ai_model": job.ai_model}
+    else:
+        raise HTTPException(status_code=400, detail="Invalid AI model selection")
+
 # AI job parsing helper endpoint
 @router.post("/parse-text")
 def parse_job_description(text: str = Form(...), db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):

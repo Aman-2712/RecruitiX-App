@@ -19,7 +19,6 @@ export default function NewJobPosting() {
   const [location, setLocation] = useState("Remote");
   const [minExperience, setMinExperience] = useState(0);
   const [education, setEducation] = useState("Bachelor's Degree");
-  const [aiModel, setAiModel] = useState("GEMINI");
   const [currentPlan, setCurrentPlan] = useState("STARTER");
 
   useEffect(() => {
@@ -106,7 +105,7 @@ export default function NewJobPosting() {
         min_experience: minExperience,
         education_required: education,
         location,
-        ai_model: aiModel
+        ai_model: "GEMINI"
       };
       await api.createJob(payload);
       router.push("/dashboard/jobs");
@@ -313,38 +312,6 @@ export default function NewJobPosting() {
               placeholder="Provide the complete responsibilities, qualifications, and role specifics..."
               className="w-full border border-slate-200 rounded-xl p-4 text-slate-900 focus:outline-none focus:border-blue-600 text-slate-800 placeholder:text-slate-400 font-medium transition-all"
             />
-          </div>
-
-          {/* AI Model Selection */}
-          <div className="space-y-1.5">
-            <label className="text-xs font-extrabold text-slate-700 uppercase tracking-wider block">AI Match Screening Model</label>
-            <div className="relative">
-              <select
-                value={aiModel}
-                onChange={(e) => {
-                  const val = e.target.value;
-                  if (val !== "GEMINI" && currentPlan !== "ENTERPRISE") {
-                    alert("⚠️ Multi-AI model selection is an Enterprise Plan exclusive feature. Upgrade to select Claude 3.5 Sonnet or GPT-4o!");
-                    setAiModel("GEMINI");
-                  } else {
-                    setAiModel(val);
-                  }
-                }}
-                className="w-full border border-slate-200 rounded-xl px-4 py-3 text-slate-900 focus:outline-none focus:border-blue-600 font-medium transition-all bg-white appearance-none cursor-pointer"
-              >
-                <option value="GEMINI">Google Gemini 1.5 Pro (Default - Balanced & Deep Reasoning)</option>
-                <option value="CLAUDE">Anthropic Claude 3.5 Sonnet (Enterprise - Maximum Accuracy) {currentPlan !== "ENTERPRISE" ? "🔒" : ""}</option>
-                <option value="GPT">OpenAI GPT-4o (Enterprise - High Speed) {currentPlan !== "ENTERPRISE" ? "🔒" : ""}</option>
-              </select>
-              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-500">
-                <Sparkles size={16} />
-              </div>
-            </div>
-            {currentPlan !== "ENTERPRISE" && (
-              <span className="text-[10px] text-slate-450 font-bold block mt-1">
-                ⭐ Upgrade to **Enterprise Plan** to unlock advanced screening engines from Anthropic and OpenAI.
-              </span>
-            )}
           </div>
 
           <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
