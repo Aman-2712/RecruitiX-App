@@ -183,11 +183,22 @@
 
   /* Active navigation sidebar item highlight styling */
   .theme-enterprise .bg-blue-50 {
-    background: rgba(139, 92, 246, 0.15) !important;
-    border-left: 4px solid #a78bfa !important;
+    background: linear-gradient(90deg, #8b5cf6 0%, #a78bfa 40%, #e2e8f0 80%, #ffffff 100%) !important;
+    border-left: none !important;
+    border: 1px solid rgba(255, 255, 255, 0.4) !important;
+    box-shadow: 
+      0 4px 12px rgba(139, 92, 246, 0.35),
+      inset 0 1px 1px rgba(255, 255, 255, 0.6) !important;
+    padding-left: 1rem !important;
   }
-  .theme-enterprise .text-blue-600 {
-    color: #e2e8f0 !important;
+  .theme-enterprise .bg-blue-50,
+  .theme-enterprise .bg-blue-50 *,
+  .theme-enterprise .bg-blue-50 .text-blue-600 {
+    color: #0f0b1b !important;
+  }
+  .theme-enterprise .hover\:bg-slate-50:hover {
+    background-color: rgba(139, 92, 246, 0.1) !important;
+    color: #ffffff !important;
   }
 
   /* Premium Amethyst & Platinum Gradient for Enterprise Plan Buttons & glows */
