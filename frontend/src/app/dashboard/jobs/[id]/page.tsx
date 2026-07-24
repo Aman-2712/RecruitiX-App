@@ -35,6 +35,8 @@ export default function JobDetails() {
 
   // Branded AI Agent Switcher state
   const [updatingAgent, setUpdatingAgent] = useState(false);
+  const [isAgentDropdownOpen, setIsAgentDropdownOpen] = useState(false);
+  const agentDropdownRef = useRef<HTMLDivElement>(null);
 
   const handleAgentChange = async (newAgent: string) => {
     if (!job) return;
@@ -93,6 +95,16 @@ export default function JobDetails() {
     setCurrentPlan(plan);
     fetchData().finally(() => setLoading(false));
   }, [jobId, statusFilter, minScore]);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (agentDropdownRef.current && !agentDropdownRef.current.contains(event.target as Node)) {
+        setIsAgentDropdownOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   // Trigger search on enter or when user finishes typing
   const handleSearchSubmit = (e: React.FormEvent) => {
@@ -459,25 +471,71 @@ export default function JobDetails() {
             <h3 className="font-bold text-slate-900">Upload Resumes</h3>
           </div>
 
-          {/* Branded AI Agent Selection Dropdown */}
-          <div className="space-y-2 p-4 bg-slate-50/50 rounded-xl border border-slate-100">
+          {/* Branded AI Agent Selection Custom Dropdown */}
+          <div className="space-y-2 p-4 bg-slate-50/50 rounded-xl border border-slate-100" ref={agentDropdownRef}>
             <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
               <Bot size={13} className="text-blue-500" /> Assigned AI Recruiter Agent
             </label>
             <div className="relative">
-              <select
-                value={job.ai_model || "GEMINI"}
-                onChange={(e) => handleAgentChange(e.target.value)}
+              <button
+                type="button"
+                onClick={() => !uploading && !updatingAgent && setIsAgentDropdownOpen(!isAgentDropdownOpen)}
                 disabled={updatingAgent || uploading}
-                className="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-800 bg-white focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100 transition-all cursor-pointer disabled:bg-slate-50 disabled:text-slate-400"
+                className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl border border-slate-200 text-xs font-black text-slate-800 bg-white focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100 transition-all cursor-pointer disabled:bg-slate-50 disabled:text-slate-400 shadow-sm"
               >
-                <option value="GEMINI">NEX (Cognitive Analytics & Deep Matching)</option>
-                <option value="CLAUDE">Aura-Sonnet 5.0 (Semantic Integrity & Precise Screening)</option>
-                <option value="GPT">Vortex-4o (High-Speed Throughput & Pipeline Sync)</option>
-              </select>
-              {updatingAgent && (
-                <div className="absolute right-3 top-3">
-                  <Loader className="animate-spin text-blue-600" size={12} />
+                <span>
+                  {job.ai_model === "CLAUDE" ? "Aura-Sonnet 5.0" : job.ai_model === "GPT" ? "Vortex-4o" : "NEX"}
+                </span>
+                <span className="text-[9px] text-slate-400">▼</span>
+              </button>
+
+              {isAgentDropdownOpen && (
+                <div className="absolute left-0 right-0 mt-1.5 z-50 bg-white border border-slate-200 rounded-xl shadow-lg overflow-hidden divide-y divide-slate-100 premium-dropdown">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      handleAgentChange("GEMINI");
+                      setIsAgentDropdownOpen(false);
+                    }}
+                    className={`w-full text-left px-3.5 py-2.5 text-xs transition-colors block ${
+                      (job.ai_model || "GEMINI") === "GEMINI"
+                        ? "bg-blue-50/40 text-blue-700 font-extrabold"
+                        : "text-slate-650 hover:bg-slate-50 font-medium"
+                    }`}
+                  >
+                    <div className="font-bold">NEX</div>
+                    <div className="text-[9px] text-slate-400 font-medium mt-0.5">Cognitive Analytics & Deep Matching</div>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      handleAgentChange("CLAUDE");
+                      setIsAgentDropdownOpen(false);
+                    }}
+                    className={`w-full text-left px-3.5 py-2.5 text-xs transition-colors block ${
+                      job.ai_model === "CLAUDE"
+                        ? "bg-blue-50/40 text-blue-700 font-extrabold"
+                        : "text-slate-650 hover:bg-slate-50 font-medium"
+                    }`}
+                  >
+                    <div className="font-bold">Aura-Sonnet 5.0</div>
+                    <div className="text-[9px] text-slate-400 font-medium mt-0.5">Semantic Integrity & Precise Screening</div>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      handleAgentChange("GPT");
+                      setIsAgentDropdownOpen(false);
+                    }}
+                    className={`w-full text-left px-3.5 py-2.5 text-xs transition-colors block ${
+                      job.ai_model === "GPT"
+                        ? "bg-blue-50/40 text-blue-700 font-extrabold"
+                        : "text-slate-650 hover:bg-slate-50 font-medium"
+                    }`}
+                  >
+                    <div className="font-bold">Vortex-4o</div>
+                    <div className="text-[9px] text-slate-400 font-medium mt-0.5">High-Speed Throughput & Pipeline Sync</div>
+                  </button>
                 </div>
               )}
             </div>

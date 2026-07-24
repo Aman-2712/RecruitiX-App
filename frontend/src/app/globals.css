@@ -240,6 +240,121 @@
       inset 0 -2px 1px rgba(0, 0, 0, 0.1) !important;
     transform: translateY(-1px) !important;
   }
+
+  /* Secondary/Outline Buttons Override for Enterprise Theme */
+  .theme-enterprise button.bg-white,
+  .theme-enterprise a.bg-white,
+  .theme-enterprise button.bg-slate-50,
+  .theme-enterprise a.bg-slate-50,
+  .theme-enterprise button.border-slate-200,
+  .theme-enterprise a.border-slate-200 {
+    background: rgba(255, 255, 255, 0.06) !important;
+    border: 1px solid rgba(139, 92, 246, 0.3) !important;
+    color: #e2e8f0 !important;
+    font-weight: 700 !important;
+    text-shadow: none !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) !important;
+  }
+
+  .theme-enterprise button.bg-white:hover,
+  .theme-enterprise a.bg-white:hover,
+  .theme-enterprise button.bg-slate-50:hover,
+  .theme-enterprise a.bg-slate-50:hover,
+  .theme-enterprise button.border-slate-200:hover,
+  .theme-enterprise a.border-slate-200:hover {
+    background: rgba(139, 92, 246, 0.18) !important;
+    border-color: rgba(139, 92, 246, 0.5) !important;
+    color: #ffffff !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.25) !important;
+  }
+
+  /* Enhance readability and colors of standard badges/text inside the Enterprise theme */
+  .theme-enterprise .bg-emerald-50 {
+    background-color: rgba(52, 211, 153, 0.12) !important;
+  }
+  .theme-enterprise .text-emerald-700,
+  .theme-enterprise .text-emerald-600 {
+    color: #a7f3d0 !important;
+  }
+  .theme-enterprise .border-emerald-100 {
+    border-color: rgba(52, 211, 153, 0.25) !important;
+  }
+
+  .theme-enterprise .bg-blue-50 {
+    background-color: rgba(139, 92, 246, 0.12) !important;
+  }
+  .theme-enterprise .text-blue-700,
+  .theme-enterprise .text-blue-600 {
+    color: #ddd6fe !important;
+  }
+  .theme-enterprise .border-blue-100 {
+    border-color: rgba(139, 92, 246, 0.25) !important;
+  }
+
+  .theme-enterprise .bg-indigo-50 {
+    background-color: rgba(99, 102, 241, 0.12) !important;
+  }
+  .theme-enterprise .text-indigo-700,
+  .theme-enterprise .text-indigo-650 {
+    color: #c7d2fe !important;
+  }
+  .theme-enterprise .border-indigo-100 {
+    border-color: rgba(99, 102, 241, 0.25) !important;
+  }
+
+  .theme-enterprise .bg-red-50 {
+    background-color: rgba(239, 68, 68, 0.12) !important;
+  }
+  .theme-enterprise .text-red-700,
+  .theme-enterprise .text-red-600 {
+    color: #fecaca !important;
+  }
+  .theme-enterprise .border-red-100 {
+    border-color: rgba(239, 68, 68, 0.25) !important;
+  }
+
+  .theme-enterprise .bg-slate-50 {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+  }
+  .theme-enterprise .text-slate-600,
+  .theme-enterprise .text-slate-500 {
+    color: #cbd5e1 !important;
+  }
+  .theme-enterprise .border-slate-200 {
+    border-color: rgba(167, 139, 250, 0.2) !important;
+  }
+
+  /* Premium dropdown overrides for Enterprise Theme */
+  .theme-enterprise .premium-dropdown {
+    background: rgba(18, 16, 28, 0.95) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    border: 1px solid rgba(139, 92, 246, 0.3) !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7) !important;
+  }
+  .theme-enterprise .premium-dropdown button {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    color: #cbd5e1 !important;
+    font-weight: 500 !important;
+    text-shadow: none !important;
+  }
+  .theme-enterprise .premium-dropdown button:hover {
+    background: rgba(139, 92, 246, 0.15) !important;
+    color: #ffffff !important;
+    transform: none !important;
+    box-shadow: none !important;
+  }
+  .theme-enterprise .premium-dropdown .bg-blue-50\/40 {
+    background: rgba(139, 92, 246, 0.25) !important;
+    color: #a78bfa !important;
+    font-weight: 800 !important;
+  }
+  .theme-enterprise .premium-dropdown .bg-blue-50\/40 * {
+    color: #a78bfa !important;
+  }
 }
 
 body {
