@@ -195,9 +195,12 @@
   }
   .theme-enterprise .bg-blue-50,
   .theme-enterprise .bg-blue-50 *,
-  .theme-enterprise .bg-blue-50 .text-blue-600 {
-    color: #0f0b1b !important;
-    font-weight: 800 !important;
+  .theme-enterprise .bg-blue-50 .text-blue-600,
+  .theme-enterprise nav a.bg-blue-50,
+  .theme-enterprise nav a.bg-blue-50 *,
+  .theme-enterprise nav a.bg-blue-50 .text-blue-600 {
+    color: #000000 !important;
+    font-weight: 950 !important;
   }
   .theme-enterprise .hover\:bg-slate-50:hover {
     background-color: rgba(139, 92, 246, 0.1) !important;
@@ -435,21 +438,21 @@
   /* Active tab headers (under profile details, settings tabs) */
   .theme-enterprise button.border-blue-600.text-blue-600,
   .theme-enterprise div.border-blue-600.text-blue-600 {
-    background: linear-gradient(90deg, #8b5cf6 0%, #a78bfa 40%, #e2e8f0 80%, #ffffff 100%) !important;
-    color: #0f0b1b !important;
+    background: rgba(139, 92, 246, 0.18) !important;
+    color: #ffffff !important;
     border-radius: 8px !important;
-    border: 1px solid rgba(255, 255, 255, 0.4) !important;
+    border: 1px solid rgba(139, 92, 246, 0.5) !important;
     box-shadow: 
-      0 4px 15px rgba(139, 92, 246, 0.3),
-      inset 0 1px 1px rgba(255, 255, 255, 0.6) !important;
-    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.4) !important;
+      0 0 12px rgba(139, 92, 246, 0.25),
+      inset 0 1px 1px rgba(255, 255, 255, 0.2) !important;
+    text-shadow: none !important;
     padding-left: 1rem !important;
     padding-right: 1rem !important;
   }
   .theme-enterprise button.border-blue-600.text-blue-600 *,
   .theme-enterprise div.border-blue-600.text-blue-600 * {
-    color: #0f0b1b !important;
-    font-weight: 800 !important;
+    color: #ffffff !important;
+    font-weight: 850 !important;
   }
 }
 
