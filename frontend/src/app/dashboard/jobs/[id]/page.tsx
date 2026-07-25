@@ -771,14 +771,16 @@ export default function JobDetails() {
                   <FileText size={14} />
                   Export CSV
                 </button>
-                <button
-                  type="button"
-                  onClick={handleOpenTalentPool}
-                  className="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 rounded-xl text-xs font-bold transition-all shadow-sm cursor-pointer"
-                >
-                  <Users size={14} />
-                  Re-Engage Talent
-                </button>
+                {currentPlan === "ENTERPRISE" && (
+                  <button
+                    type="button"
+                    onClick={handleOpenTalentPool}
+                    className="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 rounded-xl text-xs font-bold transition-all shadow-sm cursor-pointer"
+                  >
+                    <Users size={14} />
+                    Re-Engage Talent
+                  </button>
+                )}
                 <button
                   type="button"
                   onClick={handleAutoClassify}
@@ -869,12 +871,14 @@ export default function JobDetails() {
                           >
                             Details
                           </Link>
-                          <button
-                            onClick={() => handleOpenSimulator(cand)}
-                            className="bg-white border border-slate-200 text-slate-700 font-semibold py-2 px-3 rounded-xl text-xs hover:bg-slate-50 transition-all shadow-sm flex items-center gap-1.5"
-                          >
-                            <MessageSquare size={13} /> Sandbox
-                          </button>
+                          {currentPlan === "ENTERPRISE" && (
+                            <button
+                              onClick={() => handleOpenSimulator(cand)}
+                              className="bg-white border border-slate-200 text-slate-700 font-semibold py-2 px-3 rounded-xl text-xs hover:bg-slate-50 transition-all shadow-sm flex items-center gap-1.5"
+                            >
+                              <MessageSquare size={13} /> Sandbox
+                            </button>
+                          )}
                           <button
                             onClick={(e) => handleDeleteCandidate(cand.id, e)}
                             className="text-slate-400 hover:text-red-500 hover:bg-red-50 p-2 rounded-xl transition-all"
