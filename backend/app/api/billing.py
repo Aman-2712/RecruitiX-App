@@ -101,6 +101,22 @@ def get_usage(current_user: User = Depends(get_current_user), db: Session = Depe
         db.add(usage)
         db.commit()
         db.refresh(usage)
+
+    # Synchronize real-time usage metrics with actual database record counts
+    real_candidates_count = db.query(Candidate).join(Job).filter(Job.organization_id == org.id).count()
+    real_jobs_count = db.query(Job).filter(Job.organization_id == org.id).count()
+    real_users_count = db.query(User).filter(User.organization_id == org.id).count()
+
+    actual_resumes = max(usage.resumes_processed, real_candidates_count)
+    actual_jobs = max(usage.jobs_created, real_jobs_count)
+    actual_users = max(usage.active_users, real_users_count)
+
+    if usage.resumes_processed != actual_resumes or usage.jobs_created != actual_jobs or usage.active_users != actual_users:
+        usage.resumes_processed = actual_resumes
+        usage.jobs_created = actual_jobs
+        usage.active_users = actual_users
+        db.commit()
+        db.refresh(usage)
         
     plan = db.query(SubscriptionPlan).filter(SubscriptionPlan.name == org.current_plan).first()
     
