@@ -50,8 +50,21 @@ export default function CandidateWorkspace() {
   };
 
   useEffect(() => {
-    const plan = localStorage.getItem("hirecue_plan") || "STARTER";
-    setCurrentPlan(plan);
+    const cachedPlan = localStorage.getItem("hirecue_plan");
+    if (cachedPlan) setCurrentPlan(cachedPlan);
+
+    api.getSubscription()
+      .then((sub) => {
+        if (sub && sub.current_plan) {
+          setCurrentPlan(sub.current_plan);
+          localStorage.setItem("hirecue_plan", sub.current_plan);
+          if (sub.current_plan !== "ENTERPRISE" && activeTab === "skills_test") {
+            setActiveTab("profile");
+          }
+        }
+      })
+      .catch(() => {});
+
     fetchCandidate().finally(() => setLoading(false));
     const savedNotes = localStorage.getItem(`candidate_notes_${candidateId}`);
     if (savedNotes) {
@@ -59,7 +72,7 @@ export default function CandidateWorkspace() {
     } else {
       setNotes("");
     }
-  }, [candidateId]);
+  }, [candidateId, activeTab]);
 
   const fetchSkillsTest = async () => {
     setLoadingTest(true);
@@ -478,16 +491,18 @@ export default function CandidateWorkspace() {
         >
           <FileText size={16} /> Original Resume Document
         </button>
-        <button
-          onClick={() => setActiveTab("skills_test")}
-          className={`pb-3.5 text-sm font-bold border-b-2 transition-all flex items-center gap-2 ${
-            activeTab === "skills_test"
-              ? "border-blue-600 text-blue-600"
-              : "border-transparent text-slate-400 hover:text-slate-700"
-          }`}
-        >
-          <Award size={16} /> AI Skills Test {currentPlan !== "ENTERPRISE" ? "🔒" : ""}
-        </button>
+        {currentPlan === "ENTERPRISE" && (
+          <button
+            onClick={() => setActiveTab("skills_test")}
+            className={`pb-3.5 text-sm font-bold border-b-2 transition-all flex items-center gap-2 ${
+              activeTab === "skills_test"
+                ? "border-blue-600 text-blue-600"
+                : "border-transparent text-slate-400 hover:text-slate-700"
+            }`}
+          >
+            <Award size={16} /> AI Skills Test
+          </button>
+        )}
       </div>
 
       {/* Dynamic Tabs Content */}

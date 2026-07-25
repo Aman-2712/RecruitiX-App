@@ -65,11 +65,19 @@ export default function TeamSettingsPage() {
       const cachedPlan = localStorage.getItem("hirecue_plan");
       if (cachedPlan) {
         setCurrentPlan(cachedPlan);
-      } else {
-        const sub = await api.getSubscription();
-        setCurrentPlan(sub.current_plan);
       }
       
+      try {
+        const sub = await api.getSubscription();
+        if (sub && sub.current_plan) {
+          setCurrentPlan(sub.current_plan);
+          localStorage.setItem("hirecue_plan", sub.current_plan);
+          if (sub.current_plan !== "ENTERPRISE" && (activeTab === "sso" || activeTab === "logs")) {
+            setActiveTab("members");
+          }
+        }
+      } catch (err) {}
+
       const teamData = await api.getTeamMembers();
       setMembers(teamData);
       
@@ -342,30 +350,32 @@ export default function TeamSettingsPage() {
           API & Webhooks
           {!isUnlocked && <Lock size={12} className="text-slate-400" />}
         </button>
-        <button
-          onClick={() => setActiveTab("sso")}
-          className={`flex items-center gap-2 px-5 py-3 border-b-2 font-bold text-sm transition-all whitespace-nowrap ${
-            activeTab === "sso" 
-              ? "border-blue-600 text-blue-600" 
-              : "border-transparent text-slate-500 hover:text-slate-950 hover:border-slate-300"
-          }`}
-        >
-          <Shield size={16} />
-          SAML / SSO
-          {!isEnterprise && <Lock size={12} className="text-slate-400" />}
-        </button>
-        <button
-          onClick={() => setActiveTab("logs")}
-          className={`flex items-center gap-2 px-5 py-3 border-b-2 font-bold text-sm transition-all whitespace-nowrap ${
-            activeTab === "logs" 
-              ? "border-blue-600 text-blue-600" 
-              : "border-transparent text-slate-500 hover:text-slate-950 hover:border-slate-300"
-          }`}
-        >
-          <Settings size={16} />
-          Audit Logs
-          {!isEnterprise && <Lock size={12} className="text-slate-400" />}
-        </button>
+        {isEnterprise && (
+          <button
+            onClick={() => setActiveTab("sso")}
+            className={`flex items-center gap-2 px-5 py-3 border-b-2 font-bold text-sm transition-all whitespace-nowrap ${
+              activeTab === "sso" 
+                ? "border-blue-600 text-blue-600" 
+                : "border-transparent text-slate-500 hover:text-slate-950 hover:border-slate-300"
+            }`}
+          >
+            <Shield size={16} />
+            SAML / SSO
+          </button>
+        )}
+        {isEnterprise && (
+          <button
+            onClick={() => setActiveTab("logs")}
+            className={`flex items-center gap-2 px-5 py-3 border-b-2 font-bold text-sm transition-all whitespace-nowrap ${
+              activeTab === "logs" 
+                ? "border-blue-600 text-blue-600" 
+                : "border-transparent text-slate-500 hover:text-slate-950 hover:border-slate-300"
+            }`}
+          >
+            <Settings size={16} />
+            Audit Logs
+          </button>
+        )}
       </div>
 
       {/* Tab Contents */}

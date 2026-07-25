@@ -96,8 +96,18 @@ export default function JobDetails() {
   };
 
   useEffect(() => {
-    const plan = localStorage.getItem("hirecue_plan") || "STARTER";
-    setCurrentPlan(plan);
+    const cachedPlan = localStorage.getItem("hirecue_plan");
+    if (cachedPlan) setCurrentPlan(cachedPlan);
+
+    api.getSubscription()
+      .then((sub) => {
+        if (sub && sub.current_plan) {
+          setCurrentPlan(sub.current_plan);
+          localStorage.setItem("hirecue_plan", sub.current_plan);
+        }
+      })
+      .catch(() => {});
+
     fetchData().finally(() => setLoading(false));
   // NOTE: minScore intentionally NOT in deps - slider only acts on Search click, not on change
   }, [jobId, statusFilter]);
@@ -486,78 +496,95 @@ export default function JobDetails() {
             <h3 className="font-bold text-slate-900">Upload Resumes</h3>
           </div>
 
-          {/* Branded AI Agent Selection Custom Dropdown */}
-          <div className="space-y-2 p-4 bg-slate-50/50 rounded-xl border border-slate-100" ref={agentDropdownRef}>
-            <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-              <Bot size={13} className="text-blue-500" /> Assigned AI Recruiter Agent
-            </label>
-            <div className="relative">
-              <button
-                type="button"
-                onClick={() => !uploading && !updatingAgent && setIsAgentDropdownOpen(!isAgentDropdownOpen)}
-                disabled={updatingAgent || uploading}
-                className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl border border-slate-200 text-xs font-black text-slate-800 bg-white focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100 transition-all cursor-pointer disabled:bg-slate-50 disabled:text-slate-400 shadow-sm"
-              >
-                <span>
-                  {job.ai_model === "CLAUDE" ? "Aura-Sonnet 5.0" : job.ai_model === "GPT" ? "Vortex-4o" : "NEX"}
-                </span>
-                <span className="text-[9px] text-slate-400">▼</span>
-              </button>
+          {/* Branded AI Agent Selection - Interactive Dropdown for Enterprise, Fixed NEX for Starter/Growth */}
+          {currentPlan === "ENTERPRISE" ? (
+            <div className="space-y-2 p-4 bg-slate-50/50 rounded-xl border border-slate-100" ref={agentDropdownRef}>
+              <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+                <Bot size={13} className="text-blue-500" /> Assigned AI Recruiter Agent
+              </label>
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => !uploading && !updatingAgent && setIsAgentDropdownOpen(!isAgentDropdownOpen)}
+                  disabled={updatingAgent || uploading}
+                  className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl border border-slate-200 text-xs font-black text-slate-800 bg-white focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100 transition-all cursor-pointer disabled:bg-slate-50 disabled:text-slate-400 shadow-sm"
+                >
+                  <span>
+                    {job?.ai_model === "CLAUDE" ? "Aura-Sonnet 5.0" : job?.ai_model === "GPT" ? "Vortex-4o" : "NEX"}
+                  </span>
+                  <span className="text-[9px] text-slate-400">▼</span>
+                </button>
 
-              {isAgentDropdownOpen && (
-                <div className="absolute left-0 right-0 mt-1.5 z-50 bg-white border border-slate-200 rounded-xl shadow-lg overflow-hidden divide-y divide-slate-100 premium-dropdown">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      handleAgentChange("GEMINI");
-                      setIsAgentDropdownOpen(false);
-                    }}
-                    className={`w-full text-left px-3.5 py-2.5 text-xs transition-colors block ${
-                      (job.ai_model || "GEMINI") === "GEMINI"
-                        ? "bg-blue-50/40 text-blue-700 font-extrabold"
-                        : "text-slate-650 hover:bg-slate-50 font-medium"
-                    }`}
-                  >
-                    <div className="font-bold">NEX</div>
-                    <div className="text-[9px] text-slate-400 font-medium mt-0.5">Cognitive Analytics & Deep Matching</div>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      handleAgentChange("CLAUDE");
-                      setIsAgentDropdownOpen(false);
-                    }}
-                    className={`w-full text-left px-3.5 py-2.5 text-xs transition-colors block ${
-                      job.ai_model === "CLAUDE"
-                        ? "bg-blue-50/40 text-blue-700 font-extrabold"
-                        : "text-slate-650 hover:bg-slate-50 font-medium"
-                    }`}
-                  >
-                    <div className="font-bold">Aura-Sonnet 5.0</div>
-                    <div className="text-[9px] text-slate-400 font-medium mt-0.5">Semantic Integrity & Precise Screening</div>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      handleAgentChange("GPT");
-                      setIsAgentDropdownOpen(false);
-                    }}
-                    className={`w-full text-left px-3.5 py-2.5 text-xs transition-colors block ${
-                      job.ai_model === "GPT"
-                        ? "bg-blue-50/40 text-blue-700 font-extrabold"
-                        : "text-slate-650 hover:bg-slate-50 font-medium"
-                    }`}
-                  >
-                    <div className="font-bold">Vortex-4o</div>
-                    <div className="text-[9px] text-slate-400 font-medium mt-0.5">High-Speed Throughput & Pipeline Sync</div>
-                  </button>
-                </div>
-              )}
+                {isAgentDropdownOpen && (
+                  <div className="absolute left-0 right-0 mt-1.5 z-50 bg-white border border-slate-200 rounded-xl shadow-lg overflow-hidden divide-y divide-slate-100 premium-dropdown">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        handleAgentChange("GEMINI");
+                        setIsAgentDropdownOpen(false);
+                      }}
+                      className={`w-full text-left px-3.5 py-2.5 text-xs transition-colors block ${
+                        (job?.ai_model || "GEMINI") === "GEMINI"
+                          ? "bg-blue-50/40 text-blue-700 font-extrabold"
+                          : "text-slate-650 hover:bg-slate-50 font-medium"
+                      }`}
+                    >
+                      <div className="font-bold">NEX</div>
+                      <div className="text-[9px] text-slate-400 font-medium mt-0.5">Cognitive Analytics & Deep Matching</div>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        handleAgentChange("CLAUDE");
+                        setIsAgentDropdownOpen(false);
+                      }}
+                      className={`w-full text-left px-3.5 py-2.5 text-xs transition-colors block ${
+                        job?.ai_model === "CLAUDE"
+                          ? "bg-blue-50/40 text-blue-700 font-extrabold"
+                          : "text-slate-650 hover:bg-slate-50 font-medium"
+                      }`}
+                    >
+                      <div className="font-bold">Aura-Sonnet 5.0</div>
+                      <div className="text-[9px] text-slate-400 font-medium mt-0.5">Semantic Integrity & Precise Screening</div>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        handleAgentChange("GPT");
+                        setIsAgentDropdownOpen(false);
+                      }}
+                      className={`w-full text-left px-3.5 py-2.5 text-xs transition-colors block ${
+                        job?.ai_model === "GPT"
+                          ? "bg-blue-50/40 text-blue-700 font-extrabold"
+                          : "text-slate-650 hover:bg-slate-50 font-medium"
+                      }`}
+                    >
+                      <div className="font-bold">Vortex-4o</div>
+                      <div className="text-[9px] text-slate-400 font-medium mt-0.5">High-Speed Throughput & Pipeline Sync</div>
+                    </button>
+                  </div>
+                )}
+              </div>
+              <p className="text-[9px] text-slate-400 font-semibold mt-1">
+                Select the cognitive model to parse, match, and rate candidate compatibility.
+              </p>
             </div>
-            <p className="text-[9px] text-slate-400 font-semibold mt-1">
-              Select the cognitive model to parse, match, and rate candidate compatibility.
-            </p>
-          </div>
+          ) : (
+            <div className="space-y-1.5 p-4 bg-slate-50/50 rounded-xl border border-slate-100">
+              <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+                <Bot size={13} className="text-blue-500" /> Assigned AI Recruiter Agent
+              </label>
+              <div className="px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-extrabold text-slate-800 bg-white shadow-sm flex items-center justify-between">
+                <span className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                  NEX (Standard AI Recruiter)
+                </span>
+                <span className="text-[9px] font-extrabold text-slate-400 uppercase tracking-wide bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
+                  Default Engine
+                </span>
+              </div>
+            </div>
+          )}
 
           <div 
             onClick={() => fileInputRef.current?.click()}
@@ -572,7 +599,7 @@ export default function JobDetails() {
               <p className="text-sm font-bold text-slate-700">Drag & Drop resumes here</p>
               <p className="text-xs text-slate-400 font-semibold">Supports PDF and DOCX files (Bulk available)</p>
             </div>
-            <button className="bg-white border border-slate-200 text-slate-700 font-semibold py-2 px-4 rounded-xl text-xs shadow-sm hover:bg-slate-50 transition-all">
+            <button className="bg-blue-600 hover:bg-blue-700 text-white font-extrabold py-2.5 px-5 rounded-xl text-xs shadow-md transition-all">
               Choose Files
             </button>
             <input
@@ -698,9 +725,15 @@ export default function JobDetails() {
                 max={100}
                 value={minScore}
                 onChange={(e) => setMinScore(parseInt(e.target.value))}
-                className="w-full h-2 rounded-lg appearance-none cursor-pointer accent-[#a78bfa] border border-slate-700 bg-transparent"
+                className={`w-full h-2 rounded-lg appearance-none cursor-pointer border border-slate-700 bg-transparent ${
+                  currentPlan === "GROWTH" ? "accent-[#CBB067]" : currentPlan === "ENTERPRISE" ? "accent-[#a78bfa]" : "accent-[#116466]"
+                }`}
                 style={{
-                  background: `linear-gradient(to right, #8b5cf6 0%, #a78bfa ${minScore}%, rgba(255, 255, 255, 0.05) ${minScore}%, rgba(255, 255, 255, 0.05) 100%)`
+                  background: currentPlan === "GROWTH"
+                    ? `linear-gradient(to right, #CBB067 0%, #F0E6C5 ${minScore}%, rgba(255, 255, 255, 0.05) ${minScore}%, rgba(255, 255, 255, 0.05) 100%)`
+                    : currentPlan === "ENTERPRISE"
+                    ? `linear-gradient(to right, #8b5cf6 0%, #a78bfa ${minScore}%, rgba(255, 255, 255, 0.05) ${minScore}%, rgba(255, 255, 255, 0.05) 100%)`
+                    : `linear-gradient(to right, #116466 0%, #167a7d ${minScore}%, rgba(255, 255, 255, 0.05) ${minScore}%, rgba(255, 255, 255, 0.05) 100%)`
                 }}
               />
             </div>
@@ -708,7 +741,7 @@ export default function JobDetails() {
             <button
               type="submit"
               disabled={classifyingSearch}
-              className="hidden sm:inline-flex items-center gap-2 bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 disabled:opacity-60 disabled:cursor-not-allowed text-white font-bold px-5 py-2.5 rounded-xl text-xs transition-all shadow-lg shadow-violet-500/20 whitespace-nowrap"
+              className="hidden sm:inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-60 disabled:cursor-not-allowed text-white font-bold px-5 py-2.5 rounded-xl text-xs transition-all shadow-md whitespace-nowrap"
             >
               {classifyingSearch ? (
                 <>
