@@ -28,7 +28,7 @@ export default function PricingPage() {
         "Email Support",
         "Bulk Resume Upload (up to 15 at once)"
       ],
-      unlocked: [true, true, true, true, false, true, false, false, false, false, false],
+      unlocked: [true, true, true, true, false, true, false, false, false, false, false, false],
       cta: "Start 1-Day Free Trial",
       popular: false,
       color: "border-slate-200 bg-white"
@@ -50,13 +50,13 @@ export default function PricingPage() {
         "Candidate Management",
         "Advanced Analytics",
         "Priority Support",
-        "AI HR Copilot Insights",
+        "CSV Candidate Data Export",
         "Bulk Resume Upload (up to 50 at once)",
         "Advanced Search & Filters",
         "API Integration Access",
         "Hiring Funnel Analytics"
       ],
-      unlocked: [true, true, true, true, true, true, true, true, true, true, false],
+      unlocked: [true, true, true, true, true, true, true, false, false, false, false, false],
       cta: "Choose Growth Plan",
       popular: true,
       color: "border-blue-600 bg-white shadow-xl shadow-blue-600/5 ring-1 ring-blue-100"
@@ -73,16 +73,16 @@ export default function PricingPage() {
       ],
       features: [
         "Everything in Growth",
+        "Multi-Model AI Agents (NEX, Aura, Vortex)",
+        "Talent Pool Re-Engagement Agent",
+        "Candidate AI Simulator (Clone Chat)",
+        "AI Coding Skills Test Generator & Sandbox",
+        "AI HR Copilot Insights",
         "Unlimited Bulk Resume Uploads",
-        "ATS Integrations",
-        "SSO Authentication",
-        "White Labeling",
-        "Audit logs & Compliance",
         "Dedicated Account Manager",
-        "Custom AI Models",
         "Advanced Security Controls"
       ],
-      unlocked: [true, true, true, true, true, true, true, true, true, true, true],
+      unlocked: [true, true, true, true, true, true, true, true, true, true, true, true],
       cta: "Contact Enterprise Sales",
       popular: false,
       color: "border-slate-900 bg-slate-900 text-slate-900"
@@ -94,13 +94,14 @@ export default function PricingPage() {
     { category: "Core Parsing", name: "AI Candidate Matching", desc: "Compatibility score mapping against job requirements" },
     { category: "Core Parsing", name: "AI Candidate Ranking", desc: "Rank lists sorted by overall compatibility rating" },
     { category: "Collaboration", name: "Candidate Pipeline Funnel", desc: "Applied, Shortlisted, Interviewed stages workflow" },
-    { category: "AI Copilot", name: "HR Copilot Insights", desc: "Written recommendations and gaps analysis" },
-    { category: "AI Copilot", name: "Bulk Resume Upload", desc: "Upload files in bulk: Starter (15), Growth (50), Enterprise (Unlimited)" },
+    { category: "AI & Export", name: "CSV Candidate Export", desc: "Export ranked candidate data to CSV spreadsheets" },
+    { category: "AI & Export", name: "Bulk Resume Upload", desc: "Upload files in bulk: Starter (15), Growth (50), Enterprise (Unlimited)" },
     { category: "Analytics", name: "Advanced Search & Filters", desc: "Detailed search bar + match score sliders" },
-    { category: "Analytics", name: "Hiring Funnel Analytics", desc: "Pipeline stage distributions histograms" },
-    { category: "Integration", name: "API Access", desc: "Programmatic access to matching and parsing engines" },
-    { category: "Integration", name: "SSO & ATS Integrations", desc: "SAML, Okta SSO and Greenhouse/Workday links" },
-    { category: "Security", name: "White Labeling & Audit Logs", desc: "Custom domains and activity compliance logs" },
+    { category: "Enterprise AI", name: "AI HR Copilot Insights", desc: "Written recommendations and gaps analysis" },
+    { category: "Enterprise AI", name: "Multi-Model AI Recruiter Agents", desc: "Switch between NEX, Aura-Sonnet 5.0, and Vortex-4o" },
+    { category: "Enterprise AI", name: "Candidate AI Simulator (Clone Chat)", desc: "Interactive chat with simulated candidate profile" },
+    { category: "Enterprise AI", name: "Talent Pool Re-Engagement Agent", desc: "Rediscover & invite candidate matches across historical job pools" },
+    { category: "Enterprise AI", name: "AI Skills Test Generator & Evaluator", desc: "Auto-generate 3-question coding tests with error-triggered dynamic questions" },
   ];
 
   return (
