@@ -109,7 +109,7 @@ class TestHirecueBilling(unittest.TestCase):
         self.assertEqual(res.status_code, 200)
         sub_data = res.json()
         self.assertEqual(sub_data["current_plan"], "STARTER")
-        self.assertEqual(sub_data["plan_status"], "ACTIVE")
+        self.assertEqual(sub_data["plan_status"], "TRIAL")
         org_id = sub_data["organization_id"]
 
         # 3. Create Jobs (Starter limit is 3)

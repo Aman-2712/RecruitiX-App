@@ -94,8 +94,16 @@ COMMON_SKILLS = [
     "Cold Calling", "Lead Generation", "CRM", "Negotiation", "Pitching", "Sales", "Marketing",
     "HubSpot", "Google Analytics", "SEO", "SEM", "Content Strategy", "Copywriting",
     "Product Strategy", "User Research", "Agile", "Jira", "Figma",
-    # Healthcare
-    "Nursing", "CPR", "ACLS", "BLS", "Patient Care", "Clinical", "Acute Care", "ICU"
+    # Healthcare & Pharma
+    "Nursing", "CPR", "ACLS", "BLS", "Patient Care", "Clinical", "Acute Care", "ICU", "Pharmacology", "Phlebotomy",
+    # Finance, Accounting & Banking
+    "Financial Analysis", "Accounting", "Tally", "Financial Modeling", "Auditing", "Taxation", "GST", "CPA", "CFA", "Risk Management", "Banking",
+    # Legal & HR
+    "Corporate Law", "Contract Drafting", "Legal Research", "Compliance", "Talent Acquisition", "Employee Relations", "Payroll", "HRMS",
+    # Construction, Engineering & Manufacturing
+    "AutoCAD", "Revit", "Civil Engineering", "Project Management", "PMP", "Six Sigma", "Quality Control", "OSHA", "Supply Chain", "Logistics",
+    # Retail, Hospitality & Education
+    "Customer Service", "Inventory Management", "Point of Sale", "Teaching", "Curriculum Development", "Public Speaking"
 ]
 
 
@@ -394,8 +402,11 @@ def mock_match_resume(candidate_json: Dict[str, Any], job_data: Dict[str, Any]) 
         exp.get("description", "") for exp in candidate_json.get("experiences", [])
     ]).lower() + " " + " ".join(cand_skills)
     
-    matches = [word for word in ["react", "api", "database", "scale", "cloud", "aws", "architecture", "lead", "senior"] if word in text_to_search and word in desc]
-    relevance_score += len(matches) * 3
+    # Extract domain-agnostic meaningful words from JD (works for Healthcare, Legal, Finance, Tech, etc.)
+    stopwords = {"with", "that", "this", "from", "have", "will", "your", "must", "work", "team", "their", "about", "which", "would", "there", "other", "should", "ability", "experience", "candidate", "role", "position"}
+    jd_words = set(re.findall(r'\b[a-z]{4,}\b', desc)) - stopwords
+    matches = [word for word in jd_words if word in text_to_search]
+    relevance_score += min(15, len(matches) * 2)
     relevance_score = min(100, relevance_score)
 
     match_score = int(skill_score * 0.4 + exp_score * 0.4 + relevance_score * 0.2)

@@ -333,31 +333,36 @@ def auto_classify_candidates(
         raise HTTPException(status_code=403, detail="Job not found or access denied")
         
     # 2. Fetch candidates in active pipeline statuses
-    candidates = db.query(Candidate).filter(
-        Candidate.job_id == job_id,
-        Candidate.status.in_(["APPLIED", "SHORTLISTED", "REJECTED"])
-    ).all()
+    candidates = db.query(Candidate).filter(Candidate.job_id == job_id).all()
     
     shortlisted_count = 0
     rejected_count = 0
     unchanged_count = 0
     
-    threshold = min_score if min_score is not None else 50
+    shortlist_threshold = min_score if min_score is not None else 70
+    reject_threshold = 50
     
     for candidate in candidates:
         old_status = candidate.status
-        if candidate.match_score >= threshold:
+        # Only auto-classify candidates in APPLIED, SHORTLISTED, or REJECTED status
+        if old_status not in ["APPLIED", "SHORTLISTED", "REJECTED"]:
+            unchanged_count += 1
+            continue
+
+        if candidate.match_score >= shortlist_threshold:
             candidate.status = "SHORTLISTED"
             if old_status != "SHORTLISTED":
                 shortlisted_count += 1
             else:
                 unchanged_count += 1
-        else:
+        elif candidate.match_score < reject_threshold:
             candidate.status = "REJECTED"
             if old_status != "REJECTED":
                 rejected_count += 1
             else:
                 unchanged_count += 1
+        else:
+            unchanged_count += 1
             
     db.commit()
     

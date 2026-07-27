@@ -52,10 +52,10 @@ def register(request: Request, user_in: UserRegister, background_tasks: Backgrou
     org_name = f"{user_in.full_name or user_in.email.split('@')[0]}'s Team"
     org = Organization(
         name=org_name, 
-        current_plan="NONE", 
-        plan_status="ONBOARDING",
-        trial_end_date=None,
-        subscription_start=None,
+        current_plan="STARTER", 
+        plan_status="TRIAL",
+        trial_end_date=datetime.utcnow() + timedelta(days=1),
+        subscription_start=datetime.utcnow(),
         subscription_end=None
     )
     db.add(org)
@@ -289,10 +289,10 @@ def google_auth(request: Request, payload: GoogleTokenRequest, background_tasks:
         org_name = f"{full_name or email.split('@')[0]}'s Team"
         org = Organization(
             name=org_name, 
-            current_plan="NONE", 
-            plan_status="ONBOARDING",
-            trial_end_date=None,
-            subscription_start=None,
+            current_plan="STARTER", 
+            plan_status="TRIAL",
+            trial_end_date=datetime.utcnow() + timedelta(days=1),
+            subscription_start=datetime.utcnow(),
             subscription_end=None
         )
         db.add(org)

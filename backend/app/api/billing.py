@@ -6,7 +6,7 @@ from pydantic import BaseModel
 from typing import List, Optional
 from app.core.database import get_db
 from app.core.security import get_current_user
-from app.models import SubscriptionPlan, Organization, UsageTracking, User, Job, PromoCode
+from app.models import SubscriptionPlan, Organization, UsageTracking, User, Job, Candidate, PromoCode
 from app.services.payment_service import create_razorpay_order, verify_razorpay_signature
 from app.services.email_service import send_promo_exhausted_notification
 router = APIRouter(prefix="/api/billing", tags=["billing"])
@@ -214,9 +214,8 @@ def cancel_subscription(current_user: User = Depends(get_current_user), db: Sess
     if not org:
         raise HTTPException(status_code=400, detail="User does not belong to an organization")
         
-    # In a real app we might downgrade at period end. Here we mark cancelled and lock them out.
-    org.plan_status = "INACTIVE"
-    org.current_plan = "NONE"
+    org.plan_status = "CANCELLED"
+    org.current_plan = "STARTER"
     db.commit()
     return {
         "status": "success",

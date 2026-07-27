@@ -19,19 +19,45 @@ export default function DashboardOverview() {
 
   const fetchData = async () => {
     try {
-      const analyticData = await api.getAnalytics();
-      setAnalytics(analyticData);
+      let hasSuccess = false;
       
-      const candidateList = await api.getCandidates();
-      setCandidates(candidateList.slice(0, 5));
-      
-      const usageInfo = await api.getUsage();
-      setUsage(usageInfo);
-      
-      const subInfo = await api.getSubscription();
-      setSubscription(subInfo);
-      
-      setError("");
+      try {
+        const analyticData = await api.getAnalytics();
+        setAnalytics(analyticData);
+        hasSuccess = true;
+      } catch (err) {
+        console.error("Failed to fetch analytics", err);
+      }
+
+      try {
+        const candidateList = await api.getCandidates();
+        setCandidates(candidateList.slice(0, 5));
+        hasSuccess = true;
+      } catch (err) {
+        console.error("Failed to fetch candidates", err);
+      }
+
+      try {
+        const usageInfo = await api.getUsage();
+        setUsage(usageInfo);
+        hasSuccess = true;
+      } catch (err) {
+        console.error("Failed to fetch usage", err);
+      }
+
+      try {
+        const subInfo = await api.getSubscription();
+        setSubscription(subInfo);
+        hasSuccess = true;
+      } catch (err) {
+        console.error("Failed to fetch subscription", err);
+      }
+
+      if (hasSuccess) {
+        setError("");
+      } else {
+        setError("Failed to load dashboard data. Ensure the backend server is running.");
+      }
     } catch (err: any) {
       setError("Failed to load dashboard data. Ensure the backend server is running.");
     }
@@ -124,15 +150,6 @@ export default function DashboardOverview() {
         </div>
       </div>
 
-      {error && (
-        <div className="flex items-start gap-3 bg-amber-50 border border-amber-200 text-amber-800 p-4 rounded-xl font-medium">
-          <AlertCircle className="flex-shrink-0 mt-0.5" size={18} />
-          <div className="text-sm">
-            {error} <br/>
-            <span className="font-normal text-xs text-amber-700">Make sure the FastAPI server is running locally on port 8000.</span>
-          </div>
-        </div>
-      )}
 
       {/* Trial Mode Banner */}
       {subscription?.plan_status === "TRIAL" && (
