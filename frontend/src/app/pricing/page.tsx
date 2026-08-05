@@ -57,7 +57,7 @@ export default function PricingPage() {
         "Hiring Funnel Analytics"
       ],
       unlocked: [true, true, true, true, true, true, true, false, false, false, false, false],
-      cta: "Choose Growth Plan",
+      cta: "Start 2-Month Free Trial",
       popular: true,
       color: "border-blue-600 bg-white shadow-xl shadow-blue-600/5 ring-1 ring-blue-100"
     },
@@ -83,7 +83,7 @@ export default function PricingPage() {
         "Advanced Security Controls"
       ],
       unlocked: [true, true, true, true, true, true, true, true, true, true, true, true],
-      cta: "Contact Enterprise Sales",
+      cta: "Start 2-Month Free Trial",
       popular: false,
       color: "border-slate-900 bg-slate-900 text-slate-900"
     }
