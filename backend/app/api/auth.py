@@ -54,7 +54,7 @@ def register(request: Request, user_in: UserRegister, background_tasks: Backgrou
         name=org_name, 
         current_plan="STARTER", 
         plan_status="TRIAL",
-        trial_end_date=datetime.utcnow() + timedelta(days=1),
+        trial_end_date=datetime.utcnow() + timedelta(days=60),
         subscription_start=datetime.utcnow(),
         subscription_end=None
     )
@@ -291,7 +291,7 @@ def google_auth(request: Request, payload: GoogleTokenRequest, background_tasks:
             name=org_name, 
             current_plan="STARTER", 
             plan_status="TRIAL",
-            trial_end_date=datetime.utcnow() + timedelta(days=1),
+            trial_end_date=datetime.utcnow() + timedelta(days=60),
             subscription_start=datetime.utcnow(),
             subscription_end=None
         )

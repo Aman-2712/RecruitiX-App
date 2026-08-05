@@ -171,7 +171,7 @@ export default function BillingWorkspace() {
         <div className="flex items-start gap-3 bg-amber-50 border border-amber-200 text-amber-800 p-5 rounded-2xl font-medium shadow-sm">
           <AlertCircle className="flex-shrink-0 mt-0.5" size={22} />
           <div>
-            <h3 className="text-lg font-bold">Your 1-day trial is over</h3>
+            <h3 className="text-lg font-bold">Your 2-month trial is over</h3>
             <p className="text-sm mt-1 opacity-90">Please choose a premium plan to continue using the features.</p>
           </div>
         </div>

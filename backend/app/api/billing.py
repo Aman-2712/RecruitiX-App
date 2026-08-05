@@ -156,12 +156,12 @@ def start_trial(current_user: User = Depends(get_current_user), db: Session = De
     org.current_plan = "STARTER"
     org.plan_status = "TRIAL"
     org.subscription_start = datetime.datetime.utcnow()
-    org.subscription_end = datetime.datetime.utcnow() + datetime.timedelta(days=1)
+    org.subscription_end = datetime.datetime.utcnow() + datetime.timedelta(days=60)
     org.trial_end_date = org.subscription_end
     db.commit()
     return {
         "status": "success",
-        "message": "1-Day Free Trial started.",
+        "message": "2-Month Free Trial started.",
         "trial_end_date": org.trial_end_date
     }
 

@@ -251,7 +251,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                   }}
                   className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 px-4 rounded-xl transition-all shadow-md"
                 >
-                  Start my 1-Day Free Trial
+                  Start my 2-Month Free Trial
                 </button>
                 <button 
                   onClick={() => {
