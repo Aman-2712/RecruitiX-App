@@ -21,6 +21,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const [currentPlan, setCurrentPlan] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [showAnnouncement, setShowAnnouncement] = useState(true);
 
   useEffect(() => {
     const token = localStorage.getItem("hirecue_token");
@@ -275,6 +276,24 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <Logo className="h-6" />
           <div className="w-6"></div> {/* placeholder to align header */}
         </header>
+
+        {/* Top 2-Month Free Announcement Banner */}
+        {showAnnouncement && (
+          <div className="bg-gradient-to-r from-emerald-600 via-teal-600 to-blue-600 text-white px-6 py-2.5 flex items-center justify-between shadow-sm text-xs font-bold z-10 flex-shrink-0 border-b border-emerald-500/20">
+            <div className="flex items-center gap-2 font-medium overflow-hidden text-ellipsis whitespace-nowrap">
+              <span className="bg-white/20 px-2 py-0.5 rounded-full uppercase text-[10px] font-black tracking-wider flex-shrink-0">🎉 SPECIAL ANNOUNCEMENT</span>
+              <span className="truncate">HireCue is 100% FREE for 2 Full Months across ALL Plans! Explore AI Recruiter Agents, Candidate Simulators & Coding Generators.</span>
+            </div>
+            <div className="flex items-center gap-3 flex-shrink-0 ml-4">
+              <Link href="/dashboard/billing" className="bg-white text-slate-900 hover:bg-slate-100 font-extrabold px-3 py-1 rounded-lg transition-all text-[11px] shadow-sm">
+                Explore Plans
+              </Link>
+              <button onClick={() => setShowAnnouncement(false)} className="text-white/80 hover:text-white transition-colors">
+                <X size={16} />
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Dynamic Page Scroll Area */}
         <main className="flex-1 overflow-y-auto px-6 py-8 md:p-10">

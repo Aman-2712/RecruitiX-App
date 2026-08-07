@@ -370,3 +370,57 @@ def send_enterprise_welcome_email(to_email: str, user_name: str, org_name: str):
     </html>
     """
     return send_email(to_email, subject, html_content)
+
+def send_free_trial_broadcast_email(to_email: str, user_name: str):
+    name_display = user_name if user_name else "there"
+    subject = "🎉 Special Announcement: 2 Months 100% FREE Access on ALL HireCue Plans!"
+    html_content = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="utf-8">
+        <title>2-Month Free Unlimited Access</title>
+    </head>
+    <body style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8fafc; color: #0f172a; margin: 0; padding: 40px 20px;">
+        <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 24px; padding: 40px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05); border: 1px solid #f1f5f9;">
+            <div style="text-align: center; margin-bottom: 30px;">
+                <div style="font-size: 28px; font-weight: 800; color: #1e3a8a; letter-spacing: -0.025em;">hire<span style="color: #2563eb;">cue</span></div>
+                <div style="font-size: 11px; font-weight: 700; color: #16a34a; text-transform: uppercase; letter-spacing: 0.1em; margin-top: 4px; background-color: #dcfce7; display: inline-block; padding: 4px 12px; border-radius: 20px;">🎉 Special Announcement</div>
+            </div>
+            
+            <p style="font-size: 16px; font-weight: 700; line-height: 1.6; color: #0f172a;">Hi {name_display},</p>
+            
+            <p style="font-size: 14px; line-height: 1.6; color: #334155;">
+                We have some incredible news for your hiring team! To help you scale your recruitment effort and experience the full power of AI-assisted hiring, <strong>HireCue is now 100% FREE for 2 full months across ALL plans!</strong>
+            </p>
+            
+            <div style="background-color: #eff6ff; border: 1px solid #bfdbfe; border-radius: 16px; padding: 20px; margin: 25px 0;">
+                <h3 style="color: #1e40af; margin-top: 0; margin-bottom: 12px; font-size: 15px; font-weight: 800;">🔥 What You Get With Your 2-Month Free Access:</h3>
+                <ul style="font-size: 13px; color: #1e3a8a; line-height: 1.8; margin: 0; padding-left: 18px;">
+                    <li><strong>Starter, Growth & Enterprise Plans Unlocked:</strong> Test any plan tier with zero restrictions.</li>
+                    <li>🤖 <strong>Multi-Model AI Recruiter Agents:</strong> Switch between NEX, Aura-Sonnet 5.0, and Vortex-4o for high-accuracy candidate screening.</li>
+                    <li>💬 <strong>Candidate AI Interview Simulator:</strong> Text-based candidate interaction sandbox to test candidate responses.</li>
+                    <li>📝 <strong>AI Coding Skills Test Generator:</strong> Auto-create technical coding assessments with live grading & dynamic error-triggered questions.</li>
+                    <li>📈 <strong>Talent Pool Re-Engagement Agent:</strong> Instantly match and invite top candidates from your historical talent pools.</li>
+                </ul>
+            </div>
+            
+            <p style="font-size: 14px; line-height: 1.6; color: #334155;">
+                Whether you are screening 10 resumes or 5,000 resumes, you can test out every single AI feature without paying a dime for the next 60 days.
+            </p>
+            
+            <div style="margin: 35px 0; text-align: center;">
+                <a href="{FRONTEND_URL}/dashboard" style="background-color: #2563eb; color: #ffffff; text-decoration: none; padding: 14px 32px; font-size: 14px; font-weight: 700; border-radius: 12px; display: inline-block; box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.25);">Start Exploring Free Features Now</a>
+            </div>
+            
+            <p style="font-size: 12px; line-height: 1.6; color: #64748b; border-top: 1px solid #f1f5f9; padding-top: 20px; margin-top: 40px;">
+                Happy Hiring!<br>
+                The HireCue Team<br>
+                <a href="https://hirecue.online" style="color: #2563eb; text-decoration: none; font-weight: 600;">Hirecue.online</a>
+            </p>
+        </div>
+    </body>
+    </html>
+    """
+    return send_email(to_email, subject, html_content)
+
