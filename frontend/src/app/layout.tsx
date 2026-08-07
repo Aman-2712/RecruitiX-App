@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Exo_2 } from "next/font/google";
 import "./globals.css";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const exo2 = Exo_2({
   variable: "--font-exo2",
@@ -46,6 +47,7 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col">
         <SplashScreen />
         {children}
+        <SpeedInsights />
       </body>
     </html>
   );
