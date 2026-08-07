@@ -164,6 +164,32 @@ export default function DashboardOverview() {
         </div>
       )}
 
+      {/* Trial Expiration Countdown Nudge (Day 45 Guardrail) */}
+      {subscription?.plan_status === "TRIAL" && subscription?.trial_end_date && (
+        (() => {
+          const endDate = new Date(subscription.trial_end_date);
+          const now = new Date();
+          const diffDays = Math.max(0, Math.ceil((endDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)));
+          if (diffDays <= 15) {
+            return (
+              <div className="flex items-center justify-between gap-4 bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 text-white p-4 rounded-xl font-medium shadow-md">
+                <div className="flex items-center gap-3">
+                  <Clock className="flex-shrink-0" size={20} />
+                  <div className="text-xs">
+                    <span className="font-extrabold text-sm block">⏰ Trial Ending Soon! ({diffDays} Days Remaining)</span>
+                    <span>Your 2-Month Free Trial is expiring. Upgrade now with code <strong className="bg-white/20 px-1.5 py-0.5 rounded uppercase">FOUNDER50</strong> to lock in 50% OFF your first 3 months!</span>
+                  </div>
+                </div>
+                <Link href="/dashboard/billing" className="bg-white text-slate-900 hover:bg-slate-100 font-extrabold px-4 py-2 rounded-lg transition-all text-xs whitespace-nowrap shadow-sm">
+                  Upgrade & Claim 50% Off &rarr;
+                </Link>
+              </div>
+            );
+          }
+          return null;
+        })()
+      )}
+
       {/* Usage Limit Gating Warning */}
       {usage && (
         (usage.jobs_limit !== -1 && usage.jobs_created >= usage.jobs_limit) ||

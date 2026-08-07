@@ -91,7 +91,7 @@ def startup_event():
                 "monthly_price": 2999,
                 "yearly_price": 29990,
                 "job_limit": 3,
-                "resume_limit": 500,
+                "resume_limit": 300,
                 "user_limit": 2,
                 "features_json": json.dumps([
                     "AI Resume Parsing",

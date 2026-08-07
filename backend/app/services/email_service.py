@@ -424,3 +424,49 @@ def send_free_trial_broadcast_email(to_email: str, user_name: str):
     """
     return send_email(to_email, subject, html_content)
 
+def send_trial_nudge_email(to_email: str, user_name: str, days_remaining: int, candidates_count: int):
+    name_display = user_name if user_name else "there"
+    subject = f"⏰ Your HireCue 2-Month Free Trial ends in {days_remaining} days!"
+    html_content = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="utf-8">
+        <title>Trial Ending Soon</title>
+    </head>
+    <body style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8fafc; color: #0f172a; margin: 0; padding: 40px 20px;">
+        <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 24px; padding: 40px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); border: 1px solid #f1f5f9;">
+            <div style="text-align: center; margin-bottom: 30px;">
+                <div style="font-size: 28px; font-weight: 800; color: #1e3a8a; letter-spacing: -0.025em;">hire<span style="color: #2563eb;">cue</span></div>
+                <div style="font-size: 11px; font-weight: 700; color: #d97706; text-transform: uppercase; letter-spacing: 0.1em; margin-top: 4px; background-color: #fef3c7; display: inline-block; padding: 4px 12px; border-radius: 20px;">⏰ Trial Expiring Soon</div>
+            </div>
+            
+            <p style="font-size: 16px; font-weight: 700; line-height: 1.6; color: #0f172a;">Hi {name_display},</p>
+            
+            <p style="font-size: 14px; line-height: 1.6; color: #334155;">
+                We hope you are enjoying your 2-Month Free Trial on HireCue! In the past 45 days, your hiring team has processed <strong>{candidates_count} candidates</strong> and saved estimated <strong>35+ hours</strong> of manual resume screening.
+            </p>
+            
+            <div style="background-color: #fffbeb; border: 1px solid #fde68a; border-radius: 16px; padding: 20px; margin: 25px 0;">
+                <h3 style="color: #92400e; margin-top: 0; margin-bottom: 8px; font-size: 15px; font-weight: 800;">🎁 Special Early Upgrade Offer:</h3>
+                <p style="font-size: 13px; color: #78350f; line-height: 1.6; margin: 0;">
+                    Your free trial expires in <strong>{days_remaining} days</strong>. Upgrade today and use promo code <strong style="background-color: #fef3c7; padding: 2px 6px; border-radius: 4px;">FOUNDER50</strong> to lock in <strong>50% OFF</strong> your first 3 months!
+                </p>
+            </div>
+            
+            <div style="margin: 35px 0; text-align: center;">
+                <a href="{FRONTEND_URL}/dashboard/billing" style="background-color: #2563eb; color: #ffffff; text-decoration: none; padding: 14px 32px; font-size: 14px; font-weight: 700; border-radius: 12px; display: inline-block; box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.25);">Upgrade & Claim 50% Off</a>
+            </div>
+            
+            <p style="font-size: 12px; line-height: 1.6; color: #64748b; border-top: 1px solid #f1f5f9; padding-top: 20px; margin-top: 40px;">
+                Best regards,<br>
+                The HireCue Customer Success Team<br>
+                <a href="https://hirecue.online" style="color: #2563eb; text-decoration: none; font-weight: 600;">Hirecue.online</a>
+            </p>
+        </div>
+    </body>
+    </html>
+    """
+    return send_email(to_email, subject, html_content)
+
+
