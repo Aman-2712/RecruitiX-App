@@ -18,13 +18,18 @@ def main():
     fail_count = 0
     
     for i, u in enumerate(users, start=1):
-        if not u.email:
+        if not u.email or "example.com" in u.email:
             continue
-        print(f"[{i}/{len(users)}] Sending broadcast to {u.email} ({u.full_name or 'No Name'})...")
-        success = send_free_trial_broadcast_email(u.email, u.full_name)
-        if success:
-            sent_count += 1
-        else:
+        try:
+            safe_name = u.full_name.encode("ascii", "ignore").decode("ascii") if u.full_name else "No Name"
+            print(f"[{i}/{len(users)}] Sending broadcast to {u.email} ({safe_name})...")
+            success = send_free_trial_broadcast_email(u.email, u.full_name)
+            if success:
+                sent_count += 1
+            else:
+                fail_count += 1
+        except Exception as e:
+            print(f"Error processing {u.email}: {e}")
             fail_count += 1
         # Brief pause between emails to avoid hitting rate limits
         time.sleep(0.3)

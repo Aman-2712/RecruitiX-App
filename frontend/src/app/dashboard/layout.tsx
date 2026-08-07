@@ -74,6 +74,16 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     }
   }, [currentPlan]);
 
+  useEffect(() => {
+    if (typeof window !== "undefined" && "serviceWorker" in navigator) {
+      navigator.serviceWorker.register("/sw.js").then((reg) => {
+        if ("Notification" in window && Notification.permission === "default") {
+          Notification.requestPermission();
+        }
+      }).catch(() => {});
+    }
+  }, []);
+
   const handleLogout = () => {
     api.logout();
     localStorage.removeItem("hirecue_plan");

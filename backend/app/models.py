@@ -173,3 +173,13 @@ class SkillsTest(Base):
 
     # Relationships
     candidate = relationship("Candidate", back_populates="skills_tests")
+
+class PushSubscription(Base):
+    __tablename__ = "push_subscriptions"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    endpoint = Column(Text, nullable=False)
+    keys_json = Column(Text, nullable=True)
+    created_at = Column(DateTime, default=datetime.datetime.utcnow)
+
