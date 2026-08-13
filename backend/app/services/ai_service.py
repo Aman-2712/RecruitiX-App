@@ -11,19 +11,40 @@ from openai import OpenAI
 logger = logging.getLogger("hirecue.ai_service")
 
 # Setup NVIDIA NIM API Client & OpenAI Client
-nvidia_api_key = os.getenv("NVIDIA_API_KEY", "")
+nvidia_api_key = os.getenv("NVIDIA_API_KEY", "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")
 NVIDIA_MODEL = os.getenv("NVIDIA_MODEL", "meta/llama-3.3-70b-instruct")
 
 nvidia_client = None
 if nvidia_api_key:
-    nvidia_client = OpenAI(api_key=nvidia_api_key, base_url="https://integrate.api.nvidia.com/v1")
+    try:
+        nvidia_client = OpenAI(api_key=nvidia_api_key, base_url="https://integrate.api.nvidia.com/v1")
+    except Exception as e:
+        logger.error(f"Failed to initialize NVIDIA NIM client: {e}")
 
 # Setup OpenAI Client
 openai_api_key = os.getenv("OPENAI_API_KEY", "")
 OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
 client = None
 if openai_api_key:
-    client = OpenAI(api_key=openai_api_key)
+    try:
+        client = OpenAI(api_key=openai_api_key)
+    except Exception as e:
+        logger.error(f"Failed to initialize OpenAI client: {e}")
+
+def get_active_ai_client(model_choice: str = "GEMINI"):
+    """
+    Returns (active_client_instance, model_name)
+    Prioritizes NVIDIA NIM 70B parameter model if NVIDIA API key is available.
+    """
+    if nvidia_client and nvidia_api_key:
+        return nvidia_client, NVIDIA_MODEL
+        
+    if client and openai_api_key:
+        if model_choice in ["CLAUDE", "GPT"]:
+            return client, "gpt-4o"
+        return client, "gpt-4o-mini"
+        
+    return None, None
 
 def clean_extracted_text(text: str) -> str:
     text = text.replace("\x00", " ")
@@ -561,22 +582,12 @@ Your output must be a valid JSON object matching this schema:
 """
 
 def parse_resume_with_openai(text: str, ai_model: str = "GEMINI") -> Dict[str, Any]:
-    if not client:
+    active_cli, model_name = get_active_ai_client(ai_model)
+    if not active_cli:
         return {}
-    
-    # Map branded agent names to actual valid OpenAI model identifiers
-    # NEX (GEMINI) -> gpt-4o-mini (fast, cost-effective)
-    # Aura-Sonnet (CLAUDE) -> gpt-4o (most capable)
-    # Vortex (GPT) -> gpt-4o (full power)
-    if ai_model == "CLAUDE":
-        model_name = "gpt-4o"          # Aura-Sonnet 5.0 - premium accuracy
-    elif ai_model == "GPT":
-        model_name = "gpt-4o"          # Vortex-4o - full power GPT-4o
-    else:  # GEMINI / NEX (default)
-        model_name = "gpt-4o-mini"     # NEX - fast and efficient
 
     try:
-        response = client.chat.completions.create(
+        response = active_cli.chat.completions.create(
             model=model_name,
             messages=[
                 {"role": "system", "content": "You are a helpful ATS resume extractor. Return ONLY valid JSON."},
@@ -588,34 +599,29 @@ def parse_resume_with_openai(text: str, ai_model: str = "GEMINI") -> Dict[str, A
         result_content = response.choices[0].message.content
         return json.loads(result_content)
     except Exception as e:
-        logger.warning(f"AI parsing with model {model_name} failed: {e}. Falling back to gpt-4o-mini.")
-        try:
-            response = client.chat.completions.create(
-                model="gpt-4o-mini",
-                messages=[
-                    {"role": "system", "content": "You are a helpful ATS resume extractor. Return ONLY valid JSON."},
-                    {"role": "user", "content": PARSE_PROMPT.format(text=text)}
-                ],
-                response_format={"type": "json_object"},
-                temperature=0.1
-            )
-            result_content = response.choices[0].message.content
-            return json.loads(result_content)
-        except Exception as fallback_err:
-            logger.error(f"Fallback OpenAI parsing failed: {fallback_err}")
-            return {}
+        logger.warning(f"AI parsing with model {model_name} failed: {e}.")
+        if client and active_cli != client:
+            try:
+                response = client.chat.completions.create(
+                    model="gpt-4o-mini",
+                    messages=[
+                        {"role": "system", "content": "You are a helpful ATS resume extractor. Return ONLY valid JSON."},
+                        {"role": "user", "content": PARSE_PROMPT.format(text=text)}
+                    ],
+                    response_format={"type": "json_object"},
+                    temperature=0.1
+                )
+                result_content = response.choices[0].message.content
+                return json.loads(result_content)
+            except Exception as fallback_err:
+                logger.error(f"Fallback OpenAI parsing failed: {fallback_err}")
+                return {}
+        return {}
 
 def match_resume_with_openai(candidate_json: Dict[str, Any], job_data: Dict[str, Any], ai_model: str = "GEMINI") -> Dict[str, Any]:
-    if not client:
+    active_cli, model_name = get_active_ai_client(ai_model)
+    if not active_cli:
         return {}
-        
-    # Same model mapping as above for consistency
-    if ai_model == "CLAUDE":
-        model_name = "gpt-4o"
-    elif ai_model == "GPT":
-        model_name = "gpt-4o"
-    else:  # GEMINI / NEX
-        model_name = "gpt-4o-mini"
         
     try:
         req_skills_str = ", ".join(job_data.get("skills_required", []))
@@ -629,7 +635,7 @@ def match_resume_with_openai(candidate_json: Dict[str, Any], job_data: Dict[str,
             job_description=job_data.get("description", ""),
             candidate_json=json.dumps(candidate_json)
         )
-        response = client.chat.completions.create(
+        response = active_cli.chat.completions.create(
             model=model_name,
             messages=[
                 {"role": "system", "content": "You are a helpful hiring manager matching agent. Return ONLY valid JSON."},
@@ -641,33 +647,35 @@ def match_resume_with_openai(candidate_json: Dict[str, Any], job_data: Dict[str,
         result_content = response.choices[0].message.content
         return json.loads(result_content)
     except Exception as e:
-        logger.warning(f"AI matching with model {model_name} failed: {e}. Falling back to gpt-4o-mini.")
-        try:
-            req_skills_str = ", ".join(job_data.get("skills_required", []))
-            pref_skills_str = ", ".join(job_data.get("skills_preferred", []))
-            prompt = MATCH_PROMPT.format(
-                job_title=job_data.get("title", ""),
-                job_location=job_data.get("location", ""),
-                job_min_exp=job_data.get("min_experience", 0),
-                job_req_skills=req_skills_str,
-                job_pref_skills=pref_skills_str,
-                job_description=job_data.get("description", ""),
-                candidate_json=json.dumps(candidate_json)
-            )
-            response = client.chat.completions.create(
-                model="gpt-4o-mini",
-                messages=[
-                    {"role": "system", "content": "You are a helpful hiring manager matching agent. Return ONLY valid JSON."},
-                    {"role": "user", "content": prompt}
-                ],
-                response_format={"type": "json_object"},
-                temperature=0.1
-            )
-            result_content = response.choices[0].message.content
-            return json.loads(result_content)
-        except Exception as fallback_err:
-            logger.error(f"Fallback OpenAI matching failed: {fallback_err}")
-            return {}
+        logger.warning(f"AI matching with model {model_name} failed: {e}.")
+        if client and active_cli != client:
+            try:
+                req_skills_str = ", ".join(job_data.get("skills_required", []))
+                pref_skills_str = ", ".join(job_data.get("skills_preferred", []))
+                prompt = MATCH_PROMPT.format(
+                    job_title=job_data.get("title", ""),
+                    job_location=job_data.get("location", ""),
+                    job_min_exp=job_data.get("min_experience", 0),
+                    job_req_skills=req_skills_str,
+                    job_pref_skills=pref_skills_str,
+                    job_description=job_data.get("description", ""),
+                    candidate_json=json.dumps(candidate_json)
+                )
+                response = client.chat.completions.create(
+                    model="gpt-4o-mini",
+                    messages=[
+                        {"role": "system", "content": "You are a helpful hiring manager matching agent. Return ONLY valid JSON."},
+                        {"role": "user", "content": prompt}
+                    ],
+                    response_format={"type": "json_object"},
+                    temperature=0.1
+                )
+                result_content = response.choices[0].message.content
+                return json.loads(result_content)
+            except Exception as fallback_err:
+                logger.error(f"Fallback OpenAI matching failed: {fallback_err}")
+                return {}
+        return {}
 
 def ensure_list(value: Any) -> List[Any]:
     if isinstance(value, list):
