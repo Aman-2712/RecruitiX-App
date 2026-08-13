@@ -214,9 +214,15 @@ export const api = {
   },
 
   async register(email: string, password: string, full_name: string, role: string): Promise<{ message: string }> {
+    let device_fingerprint = undefined;
+    try {
+      const { getDeviceFingerprint } = await import("./device");
+      device_fingerprint = getDeviceFingerprint();
+    } catch (e) {}
+
     const res = await request<{ message: string }>("/api/auth/register", {
       method: "POST",
-      body: JSON.stringify({ email, password, full_name, role }),
+      body: JSON.stringify({ email, password, full_name, role, device_fingerprint }),
     });
     return res;
   },
@@ -408,9 +414,10 @@ export const api = {
     return request<UsageTracking>("/api/billing/usage");
   },
 
-  async startTrial(): Promise<any> {
+  async startTrial(planName: string = "STARTER", deviceFingerprint?: string): Promise<any> {
     return request<any>("/api/billing/start-trial", {
       method: "POST",
+      body: JSON.stringify({ plan_name: planName, device_fingerprint: deviceFingerprint }),
     });
   },
 

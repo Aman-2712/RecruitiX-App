@@ -6,6 +6,7 @@ import {
   BarChart3, Zap, Receipt, Sparkles, HelpCircle, Shield, Bot 
 } from "lucide-react";
 import { api, Organization, UsageTracking, Invoice, SubscriptionPlan } from "@/lib/api";
+import { getDeviceFingerprint } from "@/lib/device";
 
 export default function BillingWorkspace() {
   const [subscription, setSubscription] = useState<Organization | null>(null);
@@ -141,6 +142,22 @@ export default function BillingWorkspace() {
       await fetchData();
     } catch (err: any) {
       setError(err.message || "Failed to cancel subscription.");
+    } finally {
+      setUpdating(false);
+    }
+  };
+
+  const handleStartTrialOnPlan = async (planName: string) => {
+    setUpdating(true);
+    setError("");
+    setSuccess("");
+    try {
+      const macToken = getDeviceFingerprint();
+      const res = await api.startTrial(planName, macToken);
+      setSuccess(`🎉 2-Month Free Trial activated on ${planName} Plan!`);
+      await fetchData();
+    } catch (err: any) {
+      setError(err.message || "Failed to start trial.");
     } finally {
       setUpdating(false);
     }
@@ -403,22 +420,29 @@ export default function BillingWorkspace() {
                       </ul>
                     </div>
 
-                    <div className="pt-6">
-                      {isCurrent ? (
+                    <div className="pt-6 space-y-2">
+                      {isCurrent && subscription?.plan_status === "ACTIVE" ? (
                         <span className="w-full text-center text-xs font-bold text-slate-400 border border-slate-150 py-2.5 rounded-xl block bg-slate-50">
-                          Current Plan
+                          Current Active Plan
                         </span>
                       ) : (
-                        <button
-                          onClick={() => handleUpgrade(p.name)}
-                          disabled={updating}
-                          className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-bold py-2.5 rounded-xl text-xs shadow-sm hover:shadow transition-all flex items-center justify-center gap-1"
-                        >
-                          {updating ? <Loader className="animate-spin" size={12} /> : "Upgrade"}
-                        </button>
+                        <>
+                          <button
+                            onClick={() => handleStartTrialOnPlan(p.name)}
+                            disabled={updating}
+                            className="w-full bg-emerald-600 hover:bg-emerald-700 disabled:bg-emerald-400 text-white font-bold py-2.5 rounded-xl text-xs shadow-sm hover:shadow transition-all flex items-center justify-center gap-1"
+                          >
+                            {updating ? <Loader className="animate-spin" size={12} /> : `Start 2-Month Trial (${p.name})`}
+                          </button>
+                          <button
+                            onClick={() => handleUpgrade(p.name)}
+                            disabled={updating}
+                            className="w-full bg-slate-900 hover:bg-slate-800 disabled:bg-slate-400 text-white font-bold py-2 rounded-xl text-xs shadow-sm transition-all flex items-center justify-center gap-1"
+                          >
+                            {updating ? <Loader className="animate-spin" size={12} /> : "Upgrade & Pay Now"}
+                          </button>
+                        </>
                       )}
-                      
-
                     </div>
                   </div>
                 );

@@ -18,10 +18,12 @@ class UserRegister(BaseModel):
     password: str
     full_name: Optional[str] = None
     role: Optional[str] = "RECRUITER"  # ADMIN, HR_MANAGER, RECRUITER
+    device_fingerprint: Optional[str] = None
 
 class UserLogin(BaseModel):
     email: EmailStr
     password: str
+    device_fingerprint: Optional[str] = None
 
 class UserResponse(BaseModel):
     id: int
@@ -56,7 +58,8 @@ def register(request: Request, user_in: UserRegister, background_tasks: Backgrou
         plan_status="TRIAL",
         trial_end_date=datetime.utcnow() + timedelta(days=60),
         subscription_start=datetime.utcnow(),
-        subscription_end=None
+        subscription_end=None,
+        device_fingerprint=user_in.device_fingerprint
     )
     db.add(org)
     db.commit()
@@ -77,7 +80,8 @@ def register(request: Request, user_in: UserRegister, background_tasks: Backgrou
         role=user_in.role.upper(),
         organization_id=org.id,
         is_email_verified=False,
-        verification_token=verification_token
+        verification_token=verification_token,
+        device_fingerprint=user_in.device_fingerprint
     )
     db.add(user)
     db.commit()

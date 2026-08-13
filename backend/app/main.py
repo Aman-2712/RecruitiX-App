@@ -88,8 +88,8 @@ def startup_event():
         plans_data = [
             {
                 "name": "STARTER",
-                "monthly_price": 2999,
-                "yearly_price": 29990,
+                "monthly_price": 999,
+                "yearly_price": 9990,
                 "job_limit": 3,
                 "resume_limit": 300,
                 "user_limit": 2,
@@ -105,8 +105,8 @@ def startup_event():
             },
             {
                 "name": "GROWTH",
-                "monthly_price": 9999,
-                "yearly_price": 99990,
+                "monthly_price": 2999,
+                "yearly_price": 29990,
                 "job_limit": 20,
                 "resume_limit": 5000,
                 "user_limit": 10,
@@ -129,8 +129,8 @@ def startup_event():
             },
             {
                 "name": "ENTERPRISE",
-                "monthly_price": 49999,
-                "yearly_price": 499990,
+                "monthly_price": 4999,
+                "yearly_price": 49990,
                 "job_limit": -1,
                 "resume_limit": -1,
                 "user_limit": -1,

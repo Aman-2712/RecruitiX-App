@@ -28,6 +28,7 @@ class Organization(Base):
     trial_end_date = Column(DateTime, nullable=True)
     subscription_start = Column(DateTime, default=datetime.datetime.utcnow)
     subscription_end = Column(DateTime, nullable=True)
+    device_fingerprint = Column(String, nullable=True, index=True) # MAC address / Machine ID fingerprint hash
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
 
     # Relationships
@@ -63,6 +64,7 @@ class User(Base):
     is_email_verified = Column(Boolean, default=False)
     verification_token = Column(String, nullable=True)
     reset_password_token = Column(String, nullable=True)
+    device_fingerprint = Column(String, nullable=True, index=True) # MAC address / Device authentication fingerprint
     reset_password_expires = Column(DateTime, nullable=True)
     organization_id = Column(Integer, ForeignKey("organizations.id", ondelete="SET NULL"), nullable=True)
     created_at = Column(DateTime, default=datetime.datetime.utcnow)

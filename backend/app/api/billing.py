@@ -144,16 +144,30 @@ def get_usage(current_user: User = Depends(get_current_user), db: Session = Depe
         "billing_period_end": usage.billing_period_end
     }
 
+class StartTrialRequest(BaseModel):
+    plan_name: Optional[str] = "STARTER"
+    device_fingerprint: Optional[str] = None
+
 @router.post("/start-trial")
-def start_trial(current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+def start_trial(
+    req: Optional[StartTrialRequest] = None,
+    current_user: User = Depends(get_current_user), 
+    db: Session = Depends(get_db)
+):
     org = current_user.organization
     if not org:
         raise HTTPException(status_code=400, detail="User does not belong to an organization")
-        
-    if org.plan_status != "ONBOARDING":
-        raise HTTPException(status_code=400, detail="Cannot start trial. Organization is not in ONBOARDING status.")
-        
-    org.current_plan = "STARTER"
+
+    target_plan = (req.plan_name if req and req.plan_name else "STARTER").upper()
+    if target_plan not in ["STARTER", "GROWTH", "ENTERPRISE"]:
+        target_plan = "STARTER"
+
+    device_mac = req.device_fingerprint if req else None
+    if device_mac:
+        current_user.device_fingerprint = device_mac
+        org.device_fingerprint = device_mac
+
+    org.current_plan = target_plan
     org.plan_status = "TRIAL"
     org.subscription_start = datetime.datetime.utcnow()
     org.subscription_end = datetime.datetime.utcnow() + datetime.timedelta(days=60)
@@ -161,7 +175,8 @@ def start_trial(current_user: User = Depends(get_current_user), db: Session = De
     db.commit()
     return {
         "status": "success",
-        "message": "2-Month Free Trial started.",
+        "message": f"2-Month Free Trial activated on {target_plan} plan.",
+        "plan_name": target_plan,
         "trial_end_date": org.trial_end_date
     }
 

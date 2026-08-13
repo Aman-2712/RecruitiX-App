@@ -12,11 +12,11 @@ export default function PricingPage() {
     {
       name: "Starter Plan",
       description: "For small teams and startups starting to build their talent pool.",
-      monthlyPrice: 2999,
-      yearlyPrice: 29990, // ₹2,499/mo equivalent
+      monthlyPrice: 999,
+      yearlyPrice: 9990, // ₹832/mo equivalent
       limits: [
         "3 Active Job Postings",
-        "500 Resume Uploads / mo",
+        "300 Resume Uploads / mo",
         "2 Team Members"
       ],
       features: [
@@ -36,8 +36,8 @@ export default function PricingPage() {
     {
       name: "Growth Plan",
       description: "Perfect for scaling startups and active hiring agencies.",
-      monthlyPrice: 9999,
-      yearlyPrice: 99990, // ₹8,333/mo equivalent
+      monthlyPrice: 2999,
+      yearlyPrice: 29990, // ₹2,499/mo equivalent
       limits: [
         "20 Active Job Postings",
         "5,000 Resume Uploads / mo",
@@ -64,8 +64,8 @@ export default function PricingPage() {
     {
       name: "Enterprise Plan",
       description: "For large talent acquisition teams needing unlimited capacity.",
-      monthlyPrice: 49999,
-      yearlyPrice: 499990, // ₹41,666/mo equivalent
+      monthlyPrice: 4999,
+      yearlyPrice: 49990, // ₹4,166/mo equivalent
       limits: [
         "Unlimited Job Postings",
         "Unlimited Resume Processing",
