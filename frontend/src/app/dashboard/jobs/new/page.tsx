@@ -234,18 +234,18 @@ export default function NewJobPosting() {
             <label className="text-xs font-extrabold text-slate-700 uppercase tracking-wider block">
               Required Skills <span className="text-red-500">*</span>
             </label>
-            <div className="flex gap-2">
+            <div className="flex gap-2 min-w-0">
               <input
                 type="text"
                 value={skillInput}
                 onChange={(e) => setSkillInput(e.target.value)}
                 placeholder="React (press Add)"
-                className="flex-1 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-600 text-slate-900 placeholder:text-slate-400 font-medium transition-all"
+                className="flex-1 min-w-0 border border-slate-200 rounded-xl px-3 sm:px-4 py-3 focus:outline-none focus:border-blue-600 text-slate-900 placeholder:text-slate-400 font-medium transition-all text-xs sm:text-sm"
               />
               <button
                 type="button"
                 onClick={handleAddRequiredSkill}
-                className="bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 font-semibold px-4 py-3 rounded-xl flex items-center gap-1 transition-all"
+                className="bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 font-semibold px-3.5 sm:px-4 py-3 rounded-xl flex items-center gap-1 transition-all text-xs flex-shrink-0"
               >
                 <Plus size={16} /> Add
               </button>
@@ -269,18 +269,18 @@ export default function NewJobPosting() {
           {/* Preferred Skills Input */}
           <div className="space-y-3">
             <label className="text-xs font-extrabold text-slate-700 uppercase tracking-wider block">Preferred / Nice-to-Have Skills</label>
-            <div className="flex gap-2">
+            <div className="flex gap-2 min-w-0">
               <input
                 type="text"
                 value={prefSkillInput}
                 onChange={(e) => setPrefSkillInput(e.target.value)}
                 placeholder="AWS (press Add)"
-                className="flex-1 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-600 text-slate-900 placeholder:text-slate-400 font-medium transition-all"
+                className="flex-1 min-w-0 border border-slate-200 rounded-xl px-3 sm:px-4 py-3 focus:outline-none focus:border-blue-600 text-slate-900 placeholder:text-slate-400 font-medium transition-all text-xs sm:text-sm"
               />
               <button
                 type="button"
                 onClick={handleAddPreferredSkill}
-                className="bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 font-semibold px-4 py-3 rounded-xl flex items-center gap-1 transition-all"
+                className="bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 font-semibold px-3.5 sm:px-4 py-3 rounded-xl flex items-center gap-1 transition-all text-xs flex-shrink-0"
               >
                 <Plus size={16} /> Add
               </button>

@@ -302,10 +302,10 @@ export default function TeamSettingsPage() {
       </div>
 
       {/* Tabs Menu */}
-      <div className="flex border-b border-slate-200 gap-1 overflow-x-auto pb-px">
+      <div className="flex border-b border-slate-200 gap-1 overflow-x-auto whitespace-nowrap scrollbar-none w-full max-w-full pb-px">
         <button
           onClick={() => setActiveTab("members")}
-          className={`flex items-center gap-2 px-5 py-3 border-b-2 font-bold text-sm transition-all whitespace-nowrap ${
+          className={`flex items-center gap-2 px-4 sm:px-5 py-3 border-b-2 font-bold text-xs sm:text-sm transition-all whitespace-nowrap flex-shrink-0 ${
             activeTab === "members" 
               ? "border-blue-600 text-blue-600" 
               : "border-transparent text-slate-500 hover:text-slate-950 hover:border-slate-300"
@@ -316,7 +316,7 @@ export default function TeamSettingsPage() {
         </button>
         <button
           onClick={() => setActiveTab("ats")}
-          className={`flex items-center gap-2 px-5 py-3 border-b-2 font-bold text-sm transition-all whitespace-nowrap ${
+          className={`flex items-center gap-2 px-4 sm:px-5 py-3 border-b-2 font-bold text-xs sm:text-sm transition-all whitespace-nowrap flex-shrink-0 ${
             activeTab === "ats" 
               ? "border-blue-600 text-blue-600" 
               : "border-transparent text-slate-500 hover:text-slate-950 hover:border-slate-300"
@@ -328,7 +328,7 @@ export default function TeamSettingsPage() {
         </button>
         <button
           onClick={() => setActiveTab("workflows")}
-          className={`flex items-center gap-2 px-5 py-3 border-b-2 font-bold text-sm transition-all whitespace-nowrap ${
+          className={`flex items-center gap-2 px-4 sm:px-5 py-3 border-b-2 font-bold text-xs sm:text-sm transition-all whitespace-nowrap flex-shrink-0 ${
             activeTab === "workflows" 
               ? "border-blue-600 text-blue-600" 
               : "border-transparent text-slate-500 hover:text-slate-950 hover:border-slate-300"
@@ -340,7 +340,7 @@ export default function TeamSettingsPage() {
         </button>
         <button
           onClick={() => setActiveTab("api")}
-          className={`flex items-center gap-2 px-5 py-3 border-b-2 font-bold text-sm transition-all whitespace-nowrap ${
+          className={`flex items-center gap-2 px-4 sm:px-5 py-3 border-b-2 font-bold text-xs sm:text-sm transition-all whitespace-nowrap flex-shrink-0 ${
             activeTab === "api" 
               ? "border-blue-600 text-blue-600" 
               : "border-transparent text-slate-500 hover:text-slate-950 hover:border-slate-300"
@@ -353,7 +353,7 @@ export default function TeamSettingsPage() {
         {isEnterprise && (
           <button
             onClick={() => setActiveTab("sso")}
-            className={`flex items-center gap-2 px-5 py-3 border-b-2 font-bold text-sm transition-all whitespace-nowrap ${
+            className={`flex items-center gap-2 px-4 sm:px-5 py-3 border-b-2 font-bold text-xs sm:text-sm transition-all whitespace-nowrap flex-shrink-0 ${
               activeTab === "sso" 
                 ? "border-blue-600 text-blue-600" 
                 : "border-transparent text-slate-500 hover:text-slate-950 hover:border-slate-300"
@@ -366,7 +366,7 @@ export default function TeamSettingsPage() {
         {isEnterprise && (
           <button
             onClick={() => setActiveTab("logs")}
-            className={`flex items-center gap-2 px-5 py-3 border-b-2 font-bold text-sm transition-all whitespace-nowrap ${
+            className={`flex items-center gap-2 px-4 sm:px-5 py-3 border-b-2 font-bold text-xs sm:text-sm transition-all whitespace-nowrap flex-shrink-0 ${
               activeTab === "logs" 
                 ? "border-blue-600 text-blue-600" 
                 : "border-transparent text-slate-500 hover:text-slate-950 hover:border-slate-300"
@@ -381,12 +381,12 @@ export default function TeamSettingsPage() {
       {/* Tab Contents */}
       {activeTab === "members" && (
         <div className="space-y-6">
-          <div className="flex justify-between items-center">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <h2 className="text-xl font-bold text-slate-900">Manage Members ({members.length})</h2>
             {isAdmin && (
               <button
                 onClick={() => setIsInviteModalOpen(true)}
-                className="inline-flex items-center gap-2 bg-blue-600 text-white px-5 py-2.5 rounded-xl font-bold hover:bg-blue-700 transition shadow-sm hover:shadow-md active:scale-[0.98]"
+                className="inline-flex items-center justify-center gap-2 bg-blue-600 text-white px-5 py-2.5 rounded-xl font-bold hover:bg-blue-700 transition shadow-sm hover:shadow-md active:scale-[0.98] text-xs sm:text-sm w-full sm:w-auto"
               >
                 <Plus size={18} />
                 Invite Member

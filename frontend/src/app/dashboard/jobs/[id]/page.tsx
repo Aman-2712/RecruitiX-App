@@ -759,9 +759,9 @@ export default function JobDetails() {
 
           {/* Candidate Lists */}
           <div className="bg-white border border-slate-200 rounded-2xl shadow-sm premium-border overflow-hidden">
-            <div className="bg-slate-50 px-6 py-4 border-b border-slate-150 flex items-center justify-between">
+            <div className="bg-slate-50 px-4 sm:px-6 py-4 border-b border-slate-150 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <h3 className="font-extrabold text-xs text-slate-500 uppercase tracking-wider">Candidate Rank Rankings</h3>
-              <div className="flex items-center gap-3">
+              <div className="flex flex-wrap items-center gap-2 sm:gap-3">
                 <button
                   type="button"
                   onClick={handleExportCSV}
@@ -825,15 +825,15 @@ export default function JobDetails() {
                     "bg-slate-50 text-slate-500 border-slate-200";
                     
                   return (
-                    <div key={cand.id} className="p-6 hover:bg-slate-50/50 transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-6 relative group">
+                    <div key={cand.id} className="p-4 sm:p-6 hover:bg-slate-50/50 transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-4 sm:gap-6 relative group">
                       
-                      <div className="space-y-3 min-w-0">
+                      <div className="space-y-2.5 min-w-0 flex-1">
                         {/* Name and Rank */}
-                        <div className="flex items-center gap-2">
+                        <div className="flex flex-wrap items-center gap-2">
                           <span className="text-[10px] font-black text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded">
                             #{idx + 1}
                           </span>
-                          <Link href={`/dashboard/candidates/${cand.id}`} className="text-base font-bold text-slate-900 hover:text-blue-600 hover:underline truncate">
+                          <Link href={`/dashboard/candidates/${cand.id}`} className="text-sm sm:text-base font-bold text-slate-900 hover:text-blue-600 hover:underline truncate">
                             {cand.name || "Unknown Candidate"}
                           </Link>
                           <span className={`inline-block px-2 py-0.5 rounded border text-[9px] font-extrabold uppercase ${badgeColor}`}>
@@ -857,14 +857,14 @@ export default function JobDetails() {
                       </div>
 
                       {/* Score and actions */}
-                      <div className="flex items-center gap-4 flex-shrink-0 self-end sm:self-center">
-                        <div className="text-right">
-                          <div className={`px-3 py-1.5 rounded-xl border text-sm font-extrabold flex items-center justify-center gap-1.5 ${scoreColor}`}>
+                      <div className="flex flex-wrap items-center gap-3 sm:gap-4 flex-shrink-0 w-full sm:w-auto justify-between sm:justify-start pt-3 sm:pt-0 border-t sm:border-t-0 border-slate-100">
+                        <div className="text-left sm:text-right">
+                          <div className={`px-3 py-1.5 rounded-xl border text-xs sm:text-sm font-extrabold flex items-center justify-center gap-1.5 ${scoreColor}`}>
                             <Bot size={15} /> {cand.match_score}% Fit
                           </div>
                         </div>
 
-                        <div className="flex items-center gap-1">
+                        <div className="flex items-center gap-1.5">
                           <Link 
                             href={`/dashboard/candidates/${cand.id}`} 
                             className="bg-white border border-slate-200 text-slate-700 font-semibold py-2 px-3 rounded-xl text-xs hover:bg-slate-50 transition-all shadow-sm"

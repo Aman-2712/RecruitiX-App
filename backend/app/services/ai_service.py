@@ -10,6 +10,14 @@ from openai import OpenAI
 
 logger = logging.getLogger("hirecue.ai_service")
 
+# Setup NVIDIA NIM API Client & OpenAI Client
+nvidia_api_key = os.getenv("NVIDIA_API_KEY", "")
+NVIDIA_MODEL = os.getenv("NVIDIA_MODEL", "meta/llama-3.3-70b-instruct")
+
+nvidia_client = None
+if nvidia_api_key:
+    nvidia_client = OpenAI(api_key=nvidia_api_key, base_url="https://integrate.api.nvidia.com/v1")
+
 # Setup OpenAI Client
 openai_api_key = os.getenv("OPENAI_API_KEY", "")
 OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
@@ -177,7 +185,6 @@ def extract_dates_and_calculate_experience(text: str) -> int:
 def mock_parse_resume(text: str, filename: str) -> Dict[str, Any]:
     # Extract Email
     email_match = re.search(r"[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}", text)
-    email = email_match.group(0) if email_match else "candidate@example.com"
     
     # Extract Phone
     phone_match = re.search(r"(?:\+?\d{1,3}[-.\s]?)?(?:\(?\d{2,5}\)?[-.\s]?)?\d{3,5}[-.\s]?\d{4}", text)
@@ -202,6 +209,13 @@ def mock_parse_resume(text: str, filename: str) -> Dict[str, Any]:
             name = clean_name.title()
     if not name:
         name = "Unknown Candidate"
+
+    # Derive realistic email if not found in PDF raw text
+    if email_match:
+        email = email_match.group(0)
+    else:
+        clean_user = name.lower().replace(" ", ".").replace("..", ".")
+        email = f"{clean_user}@talentpool.io"
 
     # Extract Skills
     found_skills = []

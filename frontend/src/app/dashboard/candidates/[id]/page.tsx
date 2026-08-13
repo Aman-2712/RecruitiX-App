@@ -388,25 +388,25 @@ export default function CandidateWorkspace() {
       )}
 
       {/* Profile Header */}
-      <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm premium-border flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <div className="bg-white border border-slate-200 rounded-2xl p-4 sm:p-6 shadow-sm premium-border flex flex-col md:flex-row md:items-center justify-between gap-6 overflow-hidden">
         {/* Bio */}
-        <div className="flex items-center gap-4">
-          <div className={`h-16 w-16 rounded-2xl flex items-center justify-center font-black text-2xl ${scoreColor}`}>
+        <div className="flex items-start sm:items-center gap-4 min-w-0">
+          <div className={`h-14 w-14 sm:h-16 sm:w-16 rounded-2xl flex-shrink-0 flex items-center justify-center font-black text-xl sm:text-2xl ${scoreColor}`}>
             {candidate.match_score}%
           </div>
-          <div className="space-y-1">
-            <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">{candidate.name || "Unknown Candidate"}</h1>
-            <p className="text-sm text-slate-500 font-semibold leading-none">
+          <div className="space-y-1 min-w-0 flex-1">
+            <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-normal break-words leading-tight">{candidate.name || "Unknown Candidate"}</h1>
+            <p className="text-xs sm:text-sm text-slate-500 font-semibold leading-none truncate">
               Position: <span className="text-slate-800">{candidate.job_title}</span>
             </p>
             {/* Contacts details */}
             <div className="flex flex-wrap items-center gap-y-1 gap-x-4 text-xs font-semibold text-slate-400 pt-1">
-              <span className="flex items-center gap-1 hover:text-blue-600">
-                <Mail size={13} />
-                {candidate.email || "No email"}
+              <span className="flex items-center gap-1 hover:text-blue-600 truncate max-w-full">
+                <Mail size={13} className="flex-shrink-0" />
+                <span className="truncate">{candidate.email || "No email"}</span>
               </span>
               <span className="flex items-center gap-1">
-                <Phone size={13} />
+                <Phone size={13} className="flex-shrink-0" />
                 {candidate.phone || "No phone"}
               </span>
             </div>
@@ -414,15 +414,15 @@ export default function CandidateWorkspace() {
         </div>
 
         {/* Status Dropdown selector */}
-        <div className="flex items-center gap-3 border-t md:border-t-0 md:border-l border-slate-100 pt-6 md:pt-0 md:pl-8 flex-shrink-0">
-          <div className="space-y-1">
+        <div className="flex items-center gap-3 border-t md:border-t-0 md:border-l border-slate-100 pt-4 md:pt-0 md:pl-8 flex-shrink-0">
+          <div className="space-y-1 w-full sm:w-auto">
             <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider block">Candidate Status</label>
             <div className="relative" ref={statusDropdownRef}>
               <button
                 type="button"
                 onClick={() => !updating && setIsStatusDropdownOpen(!isStatusDropdownOpen)}
                 disabled={updating}
-                className="w-48 flex items-center justify-between border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-950 font-bold bg-white focus:outline-none focus:border-blue-600 transition-all cursor-pointer disabled:opacity-50 shadow-sm"
+                className="w-full sm:w-48 flex items-center justify-between border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-950 font-bold bg-white focus:outline-none focus:border-blue-600 transition-all cursor-pointer disabled:opacity-50 shadow-sm"
               >
                 <span>
                   {candidate.status === "APPLIED" ? "Applied" :
@@ -470,10 +470,10 @@ export default function CandidateWorkspace() {
       </div>
 
       {/* Tabs Selector */}
-      <div className="flex border-b border-slate-200 gap-6">
+      <div className="flex border-b border-slate-200 gap-4 sm:gap-6 overflow-x-auto whitespace-nowrap pb-1 scrollbar-none w-full max-w-full">
         <button
           onClick={() => setActiveTab("profile")}
-          className={`pb-3.5 text-sm font-bold border-b-2 transition-all flex items-center gap-2 ${
+          className={`pb-3 text-xs sm:text-sm font-bold border-b-2 transition-all flex items-center gap-2 flex-shrink-0 ${
             activeTab === "profile"
               ? "border-blue-600 text-blue-600"
               : "border-transparent text-slate-400 hover:text-slate-700"
@@ -483,7 +483,7 @@ export default function CandidateWorkspace() {
         </button>
         <button
           onClick={() => setActiveTab("resume")}
-          className={`pb-3.5 text-sm font-bold border-b-2 transition-all flex items-center gap-2 ${
+          className={`pb-3 text-xs sm:text-sm font-bold border-b-2 transition-all flex items-center gap-2 flex-shrink-0 ${
             activeTab === "resume"
               ? "border-blue-600 text-blue-600"
               : "border-transparent text-slate-400 hover:text-slate-700"
@@ -494,7 +494,7 @@ export default function CandidateWorkspace() {
         {currentPlan === "ENTERPRISE" && (
           <button
             onClick={() => setActiveTab("skills_test")}
-            className={`pb-3.5 text-sm font-bold border-b-2 transition-all flex items-center gap-2 ${
+            className={`pb-3 text-xs sm:text-sm font-bold border-b-2 transition-all flex items-center gap-2 flex-shrink-0 ${
               activeTab === "skills_test"
                 ? "border-blue-600 text-blue-600"
                 : "border-transparent text-slate-400 hover:text-slate-700"
