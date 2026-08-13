@@ -15,6 +15,7 @@ from app.api.candidates import router as candidates_router
 from app.api.analytics import router as analytics_router
 from app.api.billing import router as billing_router
 from app.api.team import router as team_router
+from app.api.notifications import router as notifications_router
 
 # Create database tables
 Base.metadata.create_all(bind=engine)
@@ -74,14 +75,25 @@ app.include_router(candidates_router)
 app.include_router(analytics_router)
 app.include_router(billing_router)
 app.include_router(team_router)
+app.include_router(notifications_router)
 
 @app.on_event("startup")
 def startup_event():
-    from app.core.database import SessionLocal
+    from app.core.database import SessionLocal, engine
     from app.models import SubscriptionPlan, User, Organization, UsageTracking, Job, PromoCode
+    from sqlalchemy import text
     import json
     import datetime
     
+    # 0. Auto-migrate database columns if missing on existing PostgreSQL / SQLite databases
+    with engine.connect() as conn:
+        try:
+            conn.execute(text("ALTER TABLE organizations ADD COLUMN IF NOT EXISTS device_fingerprint VARCHAR;"))
+            conn.execute(text("ALTER TABLE users ADD COLUMN IF NOT EXISTS device_fingerprint VARCHAR;"))
+            conn.commit()
+        except Exception as e:
+            print(f"Auto-migration notice: {e}")
+
     db = SessionLocal()
     try:
         # 1. Seed Subscription Plans
