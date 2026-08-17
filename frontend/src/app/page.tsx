@@ -1,9 +1,10 @@
 "use strict";
 
 import Link from "next/link";
-import { ArrowRight, Bot, Cpu, FileText, CheckCircle, Shield, Zap, Briefcase, Sparkles } from "lucide-react";
+import { ArrowRight, Bot, Cpu, FileText, CheckCircle, Shield, Zap, Briefcase, Sparkles, UserCheck } from "lucide-react";
 import Logo from "@/components/Logo";
 import Navbar from "@/components/Navbar";
+import LinkedInIcon from "@/components/LinkedInIcon";
 
 export default function LandingPage() {
   return (
@@ -43,7 +44,7 @@ export default function LandingPage() {
                 <div className="h-3 w-3 rounded-full bg-slate-300"></div>
                 <div className="h-3 w-3 rounded-full bg-slate-300"></div>
               </div>
-              <div className="bg-slate-200/60 px-3 py-1 rounded-md text-xs font-medium text-slate-500">hirecue.com/dashboard</div>
+              <div className="bg-slate-200/60 px-3 py-1 rounded-md text-xs font-medium text-slate-500">hirecue.online/dashboard</div>
               <div className="w-10"></div>
             </div>
             
@@ -53,7 +54,14 @@ export default function LandingPage() {
               <div className="flex items-start justify-between">
                 <div>
                   <div className="h-5 w-40 bg-slate-200 rounded animate-pulse"></div>
-                  <div className="h-3.5 w-24 bg-slate-100 rounded mt-2 animate-pulse"></div>
+                  <a 
+                    href="https://www.linkedin.com/in/nadeem-shaik-458981343?utm_source=share_via&utm_content=profile&utm_medium=member_android"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 bg-[#0A66C2] hover:bg-[#004182] text-white font-bold px-4 py-2.5 rounded-xl text-xs transition-all shadow-md active:scale-95 whitespace-nowrap"
+                  >
+                    <LinkedInIcon className="w-4 h-4" /> Connect on LinkedIn
+                  </a>
                 </div>
                 <div className="flex items-center gap-1 bg-emerald-50 text-emerald-700 border border-emerald-100 px-3 py-1 rounded-full text-sm font-bold">
                   92% Match
@@ -272,14 +280,75 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* Meet the Founder Section */}
+      <section className="py-16 md:py-20 px-6 bg-white border-t border-slate-200">
+        <div className="max-w-5xl mx-auto bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 rounded-3xl p-8 md:p-12 text-white shadow-2xl relative overflow-hidden flex flex-col md:flex-row items-center gap-8 md:gap-12">
+          {/* Background decorative element */}
+          <div className="absolute -right-16 -bottom-16 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+          {/* Founder Avatar Badge */}
+          <div className="flex-shrink-0 relative">
+            <div className="w-28 h-28 md:w-36 md:h-36 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 p-1 shadow-xl">
+              <div className="w-full h-full bg-slate-900 rounded-[14px] flex flex-col items-center justify-center text-center p-2">
+                <span className="text-3xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-300">SN</span>
+                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Founder</span>
+              </div>
+            </div>
+            <div className="absolute -bottom-2 -right-2 bg-blue-600 text-white p-2 rounded-xl shadow-lg">
+              <UserCheck size={16} />
+            </div>
+          </div>
+
+          {/* Founder Bio & LinkedIn CTA */}
+          <div className="space-y-4 text-center md:text-left flex-1">
+            <div className="inline-flex items-center gap-2 bg-blue-500/20 border border-blue-400/30 px-3 py-1 rounded-full text-blue-300 text-xs font-semibold uppercase tracking-wider">
+              <Sparkles size={12} className="fill-blue-300" /> Leadership & Vision
+            </div>
+            
+            <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight text-white">
+              Meet the Founder
+            </h2>
+
+            <p className="text-slate-300 text-sm md:text-base leading-relaxed font-medium">
+              &quot;We built HireCue to empower recruitment teams, founders, and agencies to automate 80% of manual resume screening work with deep AI precision. Our mission is to make intelligent hiring accessible and effortless for every team.&quot;
+            </p>
+
+            <div className="pt-2 flex flex-col sm:flex-row items-center justify-center md:justify-start gap-4">
+              <div>
+                <h3 className="text-lg font-bold text-white leading-tight">Shaik. Nadeem Ahmed</h3>
+                <p className="text-xs font-semibold text-blue-400">Founder & CEO, HireCue</p>
+              </div>
+
+              <a 
+                href="https://www.linkedin.com/in/nadeem-shaik-458981343?utm_source=share_via&utm_content=profile&utm_medium=member_android"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 bg-[#0A66C2] hover:bg-[#004182] text-white font-bold px-4 py-2.5 rounded-xl text-xs transition-all shadow-md active:scale-95 whitespace-nowrap"
+              >
+                <LinkedInIcon className="w-4 h-4" /> Connect on LinkedIn
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Footer */}
       <footer className="mt-auto border-t border-slate-200 bg-white py-12 px-6">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 text-sm text-slate-500">
           <div className="flex items-center gap-2 font-bold text-slate-900">
             <Bot size={16} className="text-blue-600" /> Hirecue
+            <span className="text-xs text-slate-400 font-normal ml-2">Founded by <strong className="text-slate-700">Shaik. Nadeem Ahmed</strong></span>
           </div>
           <div>&copy; 2026 Hirecue Platform. All rights reserved.</div>
-          <div className="flex gap-6">
+          <div className="flex items-center gap-6">
+            <a 
+              href="https://www.linkedin.com/in/nadeem-shaik-458981343?utm_source=share_via&utm_content=profile&utm_medium=member_android"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-blue-600 flex items-center gap-1 font-semibold text-xs text-slate-600"
+            >
+              <LinkedInIcon className="w-4 h-4 text-[#0A66C2]" /> Founder LinkedIn
+            </a>
             <a href="#" className="hover:text-blue-600">Privacy Policy</a>
             <a href="#" className="hover:text-blue-600">Terms of Service</a>
           </div>
