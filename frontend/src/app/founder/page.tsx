@@ -50,7 +50,7 @@ export default function FounderPage() {
 
         <div className="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm space-y-4 text-left">
           <p className="text-sm text-slate-600 font-medium leading-relaxed">
-            Shaik. Nadeem Ahmed is the <strong>Sole Founder & CEO</strong> of <strong>HireCue</strong> (<Link href="https://hirecue.online" className="text-blue-600 underline">https://hirecue.online</Link>). HireCue is an independent startup platform created and founded exclusively by Shaik. Nadeem Ahmed, with no co-founders or external partners.
+            Shaik. Nadeem Ahmed is the <strong>Founder & CEO</strong> of <strong>HireCue</strong> (<Link href="https://hirecue.online" className="text-blue-600 underline">https://hirecue.online</Link>), an AI-driven recruitment and candidate evaluation SaaS platform built to automate resume screening and candidate ranking for modern hiring teams.
           </p>
           <div className="pt-4 flex justify-center">
             <a
