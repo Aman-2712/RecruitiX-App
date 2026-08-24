@@ -278,32 +278,6 @@ export default function PricingPage() {
         </div>
       </section>
 
-      {/* Founder Guarantee & Direct Support */}
-      <section className="px-6 py-12 bg-white border-t border-slate-200">
-        <div className="max-w-4xl mx-auto bg-gradient-to-r from-blue-900 to-indigo-900 rounded-3xl p-8 text-white shadow-xl flex flex-col sm:flex-row items-center justify-between gap-6">
-          <div className="flex items-center gap-4 text-center sm:text-left">
-            <div className="w-16 h-16 rounded-2xl bg-blue-600 flex items-center justify-center font-black text-2xl text-white shadow-md flex-shrink-0">
-              SN
-            </div>
-            <div className="space-y-1">
-              <h3 className="font-extrabold text-lg text-white">Shaik. Nadeem Ahmed</h3>
-              <p className="text-xs font-semibold text-blue-300">Founder & CEO, HireCue</p>
-              <p className="text-xs text-slate-300 font-medium max-w-md pt-1">
-                Have custom enterprise requirements or pricing questions? Reach out to me directly on LinkedIn!
-              </p>
-            </div>
-          </div>
-          <a
-            href="https://www.linkedin.com/in/nadeem-shaik-458981343?utm_source=share_via&utm_content=profile&utm_medium=member_android"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 bg-[#0A66C2] hover:bg-[#004182] text-white font-bold px-5 py-3 rounded-xl text-xs transition-all shadow-md active:scale-95 whitespace-nowrap flex-shrink-0"
-          >
-            <LinkedInIcon className="w-4 h-4" /> Connect on LinkedIn
-          </a>
-        </div>
-      </section>
-
       {/* FAQ */}
       <section className="px-6 py-16 md:py-20 bg-slate-100 border-t border-slate-200">
         <div className="max-w-4xl mx-auto space-y-12">
@@ -354,19 +328,8 @@ export default function PricingPage() {
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 text-sm text-slate-500">
           <div className="flex items-center gap-2 font-bold text-slate-900">
             <Bot size={16} className="text-blue-600" /> Hirecue
-            <span className="text-xs text-slate-400 font-normal ml-2">Founded by <strong className="text-slate-700">Shaik. Nadeem Ahmed</strong></span>
           </div>
           <div>&copy; 2026 Hirecue Platform. All rights reserved.</div>
-          <div className="flex items-center gap-6">
-            <a 
-              href="https://www.linkedin.com/in/nadeem-shaik-458981343?utm_source=share_via&utm_content=profile&utm_medium=member_android"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-blue-600 flex items-center gap-1 font-semibold text-xs text-slate-600"
-            >
-              <LinkedInIcon className="w-4 h-4 text-[#0A66C2]" /> Founder LinkedIn
-            </a>
-          </div>
         </div>
       </footer>
     </div>
