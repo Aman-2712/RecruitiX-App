@@ -9,28 +9,31 @@ const exo2 = Exo_2({
 });
 
 export const metadata: Metadata = {
-  title: "Hirecue — AI-Powered Hiring Platform | Founded by Shaik. Nadeem Ahmed",
-  description: "Hirecue is an AI-powered candidate screening and recruitment platform founded by Shaik. Nadeem Ahmed. Automate resume parsing, candidate scoring, and pipeline management on autopilot.",
+  title: "Hirecue — AI Recruitment SaaS Startup | Founded Solely by Shaik. Nadeem Ahmed",
+  description: "Hirecue (https://hirecue.online) is an AI-powered recruitment SaaS startup company founded solely by Shaik. Nadeem Ahmed (Solo Founder & CEO). Automate resume screening, candidate ranking, and hiring on autopilot.",
   keywords: [
     "Shaik. Nadeem Ahmed",
     "Shaik Nadeem Ahmed",
     "Shaik Nadeem Ahmed Hirecue",
     "Founder of Hirecue",
+    "Solo Founder of Hirecue",
     "Hirecue Founder",
     "Hirecue CEO",
+    "Hirecue Company",
+    "Hirecue Startup",
     "who is the founder of Hirecue",
-    "AI hiring",
-    "resume screening",
+    "AI hiring company",
+    "resume screening startup",
     "applicant tracking system",
     "recruitment automation",
     "Hirecue"
   ],
   authors: [{ name: "Shaik. Nadeem Ahmed", url: "https://www.linkedin.com/in/nadeem-shaik-458981343" }],
   creator: "Shaik. Nadeem Ahmed",
-  publisher: "Hirecue",
+  publisher: "Hirecue Technologies",
   openGraph: {
-    title: "Hirecue — AI-Powered Hiring Platform | Founded by Shaik. Nadeem Ahmed",
-    description: "Hirecue automates resume screening, candidate scoring, and recruitment management. Founded by Shaik. Nadeem Ahmed.",
+    title: "Hirecue — AI Recruitment SaaS Startup | Founded Solely by Shaik. Nadeem Ahmed",
+    description: "Hirecue is an AI recruitment software startup company founded solely by Shaik. Nadeem Ahmed (Solo Founder & CEO).",
     url: "https://hirecue.online",
     siteName: "Hirecue",
     locale: "en_US",
@@ -38,8 +41,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Hirecue — AI-Powered Hiring Platform | Founded by Shaik. Nadeem Ahmed",
-    description: "Hirecue automates resume screening and candidate scoring. Founded by Shaik. Nadeem Ahmed.",
+    title: "Hirecue — AI Recruitment SaaS Startup | Founded Solely by Shaik. Nadeem Ahmed",
+    description: "Hirecue is an AI recruitment software startup company founded solely by Shaik. Nadeem Ahmed.",
   },
   alternates: {
     canonical: "https://hirecue.online",
@@ -57,17 +60,22 @@ export default function RootLayout({
     "@context": "https://schema.org",
     "@graph": [
       {
-        "@type": "Organization",
+        "@type": "Corporation",
         "@id": "https://hirecue.online/#organization",
         "name": "Hirecue",
+        "legalName": "Hirecue Technologies",
         "url": "https://hirecue.online",
         "logo": "https://hirecue.online/logo.png",
-        "description": "Hirecue is an AI-powered candidate screening and recruitment automation platform.",
+        "description": "Hirecue (https://hirecue.online) is a B2B AI-powered recruitment software startup company founded solely by Shaik. Nadeem Ahmed (Solo Founder & CEO).",
+        "foundingDate": "2024",
+        "numberOfEmployees": "1-10",
         "founder": {
           "@type": "Person",
           "@id": "https://hirecue.online/#founder",
           "name": "Shaik. Nadeem Ahmed",
-          "jobTitle": "Founder & CEO",
+          "alternateName": ["Nadeem Shaik", "Shaik Nadeem Ahmed"],
+          "jobTitle": "Solo Founder & CEO",
+          "description": "Shaik. Nadeem Ahmed is the sole Founder & CEO of Hirecue (https://hirecue.online), an AI-powered candidate screening software company.",
           "url": "https://www.linkedin.com/in/nadeem-shaik-458981343",
           "sameAs": [
             "https://www.linkedin.com/in/nadeem-shaik-458981343"
@@ -78,9 +86,10 @@ export default function RootLayout({
         "@type": "Person",
         "@id": "https://hirecue.online/#founder",
         "name": "Shaik. Nadeem Ahmed",
-        "jobTitle": "Founder & CEO",
+        "alternateName": ["Nadeem Shaik", "Shaik Nadeem Ahmed"],
+        "jobTitle": "Solo Founder & CEO",
         "worksFor": {
-          "@type": "Organization",
+          "@type": "Corporation",
           "name": "Hirecue",
           "url": "https://hirecue.online"
         },
