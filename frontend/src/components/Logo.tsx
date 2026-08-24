@@ -1,15 +1,21 @@
 import React from 'react';
+import Image from 'next/image';
 
-export default function Logo({ className = "h-8" }: { className?: string }) {
+export default function Logo({ className = "h-9" }: { className?: string }) {
   return (
-    <div className={`flex items-center gap-2 ${className}`}>
-      {/* Lightning Bolt */}
-      <svg viewBox="0 0 24 24" className="h-full w-auto fill-blue-600" xmlns="http://www.w3.org/2000/svg">
-        <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
-      </svg>
-      {/* Text */}
-      <div className="font-black text-2xl tracking-tighter text-slate-900 flex items-center">
-        <span className="lowercase">hirecue</span>
+    <div className={`flex items-center gap-2.5 ${className}`}>
+      <div className="relative h-full aspect-square flex items-center justify-center overflow-hidden rounded-xl">
+        <Image
+          src="/logo.png"
+          alt="HireCue Logo"
+          width={36}
+          height={36}
+          className="object-contain h-full w-auto"
+          priority
+        />
+      </div>
+      <div className="font-black text-xl md:text-2xl tracking-tighter text-slate-900 flex items-center">
+        <span>Hire</span><span className="text-blue-600">Cue</span>
       </div>
     </div>
   );

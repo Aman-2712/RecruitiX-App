@@ -47,6 +47,16 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "https://hirecue.online",
   },
+  icons: {
+    icon: [
+      { url: "/icon.png" },
+      { url: "/favicon.ico" },
+      { url: "/logo.png" },
+    ],
+    apple: [
+      { url: "/apple-icon.png" },
+    ],
+  },
 };
 
 import SplashScreen from "@/components/SplashScreen";
