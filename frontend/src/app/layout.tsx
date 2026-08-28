@@ -97,7 +97,7 @@ export default function RootLayout({
         "@id": "https://hirecue.online/#founder",
         "name": "Shaik. Nadeem Ahmed",
         "alternateName": ["Nadeem Shaik", "Shaik Nadeem Ahmed"],
-        "jobTitle": "Solo Founder & CEO",
+        "jobTitle": "Founder & CEO",
         "worksFor": {
           "@type": "Corporation",
           "name": "Hirecue",
@@ -106,6 +106,38 @@ export default function RootLayout({
         "sameAs": [
           "https://www.linkedin.com/in/nadeem-shaik-458981343"
         ]
+      },
+      {
+        "@type": "SoftwareApplication",
+        "@id": "https://hirecue.online/#software",
+        "name": "Hirecue",
+        "operatingSystem": "All",
+        "applicationCategory": "BusinessApplication",
+        "description": "Hirecue is an AI-powered candidate screening and recruitment SaaS platform founded solely by Shaik. Nadeem Ahmed (Founder & CEO).",
+        "url": "https://hirecue.online",
+        "author": {
+          "@type": "Person",
+          "name": "Shaik. Nadeem Ahmed",
+          "jobTitle": "Founder & CEO",
+          "url": "https://www.linkedin.com/in/nadeem-shaik-458981343"
+        },
+        "publisher": {
+          "@type": "Corporation",
+          "name": "Hirecue Technologies",
+          "url": "https://hirecue.online"
+        }
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://hirecue.online/#website",
+        "url": "https://hirecue.online",
+        "name": "Hirecue — AI Recruitment Platform",
+        "description": "Official Hirecue AI recruitment platform founded by Shaik. Nadeem Ahmed.",
+        "publisher": {
+          "@type": "Person",
+          "name": "Shaik. Nadeem Ahmed",
+          "jobTitle": "Founder & CEO"
+        }
       }
     ]
   };
@@ -116,6 +148,9 @@ export default function RootLayout({
       className={`${exo2.variable} h-full antialiased`}
     >
       <head>
+        <meta name="author" content="Shaik. Nadeem Ahmed" />
+        <meta name="owner" content="Shaik. Nadeem Ahmed" />
+        <meta name="copyright" content="Hirecue Technologies — Shaik. Nadeem Ahmed" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdSchema) }}
